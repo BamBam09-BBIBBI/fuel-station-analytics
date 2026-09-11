@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shell Car-to-Cash Dashboard (Pro)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Prompt', sans-serif; background-color: #f5f5f5; }
+        .card { background: white; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); padding: 24px; border-top: 4px solid transparent; }
+        .drag-over { border-color: #dd1d21 !important; background-color: #fff8f8 !important; }
+        .shell-yellow { background-color: #fbce07; }
+        .shell-red { background-color: #dd1d21; }
+        .text-shell-red { color: #dd1d21; }
+        .border-shell-yellow { border-color: #fbce07 !important; }
+        .border-shell-red { border-color: #dd1d21 !important; }
+        .toast { transition: all 0.3s ease-in-out; transform: translateX(120%); }
+        .toast.show { transform: translateX(0); }
+        
+        /* ส크รอลบาร์สวยงามสำหรับกล่องตั้งค่าพนักงาน */
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+    </style>
+</head>
+<body class="p-4 md:p-8 text-gray-800 relative overflow-x-hidden">
+
+    <div id="toastContainer" class="fixed top-5 right-5 z-50 flex flex-col gap-2"></div>
+
+    <div class="max-w-7xl mx-auto">
+        <!-- Header -->
+        <header class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4 bg-white p-6 rounded-lg shadow-sm border-l-8 border-shell-red">
+            <div>
+                <h1 class="text-3xl font-bold text-gray-900 flex items-center gap-2">
+                    <span class="text-shell-red">⛽ Car-to-Cash</span> Dashboard
+                </h1>
+                <p class="text-gray-500 mt-1" id="dynamicSiteName">กำลังรอข้อมูล... (อัปโหลด 3 ไฟล์เพื่อเริ่มวิเคราะห์)</p>
+            </div>
+            
+            <div class="flex items-end gap-4">
+                <div class="flex flex-col gap-2 min-w-[200px]">
+                    <label class="text-xs font-bold text-gray-500 uppercase">📅 ตัวกรองวันที่</label>
+                    <select id="dateFilter" class="border p-2 rounded bg-gray-50 text-gray-800 font-medium focus:outline-none focus:border-red-500 disabled:opacity-50" disabled>
+                        <option value="ALL">รวมทุกวัน (All Dates)</option>
+                    </select>
+                </div>
+                <button id="exportBtn" class="hidden h-10 bg-gray-800 text-white px-4 py-2 rounded font-medium hover:bg-gray-900 transition flex items-center gap-2">
+                    📸 บันทึกเป็นรูปภาพ
+                </button>
+            </div>
+        </header>
+
+        <!-- Settings Accordion (UI ใหม่ เป็นมิตรกับผู้ใช้) -->
+        <details class="mb-6 bg-white rounded-lg shadow-sm border border-gray-200">
+            <summary class="p-4 font-semibold cursor-pointer text-gray-700 hover:bg-gray-50">
+                ⚙️ ตั้งค่ารายชื่อพนักงานหน้าลาน (คลิกเพื่อเปิด/ปิด)
+            </summary>
+            <div class="p-4 border-t border-gray-200 bg-gray-50">
+                <p class="text-sm text-gray-600 mb-3">
+                    💡 <b>คำแนะนำ:</b> ใส่รหัสให้ตรงกับระบบ POS หากเป็น <span class="text-red-500 font-medium">ช่าง</span> ให้พิมพ์คำว่า <b>"(ช่าง)"</b> ต่อท้ายชื่อ ระบบจะตัดยอดขายออกจากการประเมินหน้าลานอัตโนมัติ
+                </p>
+                
+                <!-- กล่องบรรจุรายชื่อพนักงาน (ตาราง Grid) -->
+                <div id="empFormContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 mb-4 max-h-60 overflow-y-auto custom-scrollbar p-2 bg-white border border-gray-200 rounded-lg">
+                    <!-- JavaScript จะสร้างช่องกรอกข้อมูลตรงนี้อัตโนมัติ -->
+                </div>
+
+                <div class="flex gap-2">
+                    <button id="addEmpBtn" class="bg-gray-200 text-gray-700 px-4 py-2 rounded font-medium hover:bg-gray-300 transition text-sm">
+                        + เพิ่มช่องรายชื่อ
+                    </button>
+                    <button id="saveConfigBtn" class="shell-red text-white px-4 py-2 rounded font-medium hover:bg-red-700 transition text-sm">
+                        💾 บันทึกและคำนวณใหม่
+                    </button>
+                </div>
+            </div>
+        </details>
+
+        <!-- Upload Zone -->
+        <div id="dropZone" class="card mb-6 border-2 border-dashed border-gray-300 bg-white text-center transition-all duration-200">
+            <h2 class="text-lg font-semibold mb-2">📥 โยนไฟล์วิเคราะห์ 3 ไฟล์ลงที่นี่</h2>
+            <p class="text-sm text-gray-500 mb-4">*ใช้เฉพาะไฟล์ Attendant, HourlyTrends, ProductSales</p>
+            <input type="file" id="fileUpload" multiple accept=".csv, .txt" class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-red-50 file:text-red-700 hover:file:bg-red-100 cursor-pointer mx-auto max-w-md"/>
+            <div id="fileStatus" class="mt-4 flex flex-wrap justify-center gap-2 text-xs font-medium"></div>
+        </div>
+
+        <!-- Dashboard Widgets -->
+        <div id="dashboardSection" class="hidden space-y-6 bg-gray-100 p-4 rounded-lg">
+            
+            <!-- KPIs -->
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+                <div class="card border-shell-yellow bg-white">
+                    <p class="text-gray-500 text-sm font-medium">ปริมาณลิตรรวม</p>
+                    <h3 id="kpiTotalVol" class="text-2xl font-bold text-gray-900 mt-1">-</h3>
+                </div>
+                <div class="card border-shell-red bg-white">
+                    <p class="text-gray-500 text-sm font-medium">รวมรถเข้าลาน (คัน)</p>
+                    <h3 id="kpiTotalCars" class="text-2xl font-bold text-gray-900 mt-1">-</h3>
+                </div>
+                <div class="card border-shell-yellow bg-white">
+                    <p class="text-gray-500 text-sm font-medium text-shell-red">V-Power Mix (% ลิตร)</p>
+                    <h3 id="kpiVpowerMix" class="text-2xl font-bold text-shell-red mt-1">-</h3>
+                </div>
+                <div class="card border-shell-red bg-white">
+                    <p class="text-gray-500 text-sm font-medium">บิล Shell GO+ (%)</p>
+                    <h3 id="kpiGoPlusMix" class="text-2xl font-bold text-gray-900 mt-1">-</h3>
+                </div>
+            </div>
+
+            <!-- Charts -->
+            <div class="grid grid-cols-1 xl:grid-cols-2 gap-6">
+                <div class="card xl:col-span-2 bg-white">
+                    <h2 class="text-xl font-semibold mb-1">👨‍💼 ปริมาณการขาย (ลิตร) และความขยัน แยกตามพนักงาน</h2>
+                    <p class="text-sm text-gray-500 mb-4">*แถบสีแดงคือ V-Power | แสดง % V-Power และจำนวนครั้งที่ยกหัวจ่าย</p>
+                    <canvas id="employeeChart" height="90"></canvas>
+                </div>
+
+                <div class="card bg-white">
+                    <h2 class="text-xl font-semibold mb-1">🚗 พฤติกรรมการเติมแยกตามประเภทรถ</h2>
+                    <p class="text-sm text-gray-500 mb-4">*แสดงสัดส่วน % V-Power เทียบน้ำมันธรรมดา</p>
+                    <div style="position: relative; height: 300px; width: 100%;">
+                        <canvas id="vehicleChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="card bg-white">
+                    <h2 class="text-xl font-semibold mb-1">⏱️ ปริมาณรถเข้าลานรายชั่วโมง (Peak Hours)</h2>
+                    <p class="text-sm text-gray-500 mb-4">*เพื่อช่วยในการจัดกำลังพลหน้าลาน</p>
+                    <div style="position: relative; height: 300px; width: 100%;">
+                        <canvas id="hourlyChart"></canvas>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="text-center text-xs text-gray-400 mt-4">
+                Generated by Shell Car-to-Cash Dashboard System
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- State Management ---
+        let rawAttendant = []; let rawHourly = []; let rawProduct = [];
+        let employeeMapping = {
+            "1": "เฟิร์น", "2": "ตุ้ย", "3": "กี้ (ช่าง)", "4": "เหรียญ", "5": "แต้ม", 
+            "6": "ติ๋ว", "7": "นุช", "8": "เจ (ช่าง)", "9": "แช่ง", "10": "หนึ่ง",
+            "11": "ป่อง", "12": "ติ๋ม", "13": "โอ (ช่าง)", "14": "น้อย", 
+            "15": "อาร์ท", "16": "สุรเศรษฐ์"
+        }; // ค่าเริ่มต้น
+        let charts = { emp: null, hr: null, veh: null };
+        let siteName = "ไม่ระบุสาขา";
+
+        // --- Notification System ---
+        function showToast(message, type = 'info') {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            let bgColor = type === 'error' ? 'bg-red-500' : (type === 'success' ? 'bg-green-500' : 'bg-blue-500');
+            toast.className = `${bgColor} text-white px-6 py-3 rounded shadow-lg font-medium toast flex items-center gap-2 min-w-[250px]`;
+            toast.innerHTML = type === 'error' ? `⚠️ ${message}` : `✅ ${message}`;
+            container.appendChild(toast);
+            setTimeout(() => toast.classList.add('show'), 10);
+            setTimeout(() => { toast.classList.remove('show'); setTimeout(() => toast.remove(), 300); }, 3000);
+        }
+
+        // --- Dynamic Employee Form UI ---
+        const empContainer = document.getElementById('empFormContainer');
+
+        function renderEmpUI() {
+            empContainer.innerHTML = '';
+            Object.entries(employeeMapping).forEach(([id, name]) => {
+                addEmpRow(id, name);
+            });
+        }
+
+        function addEmpRow(id = '', name = '') {
+            const row = document.createElement('div');
+            row.className = 'flex items-center gap-2 bg-gray-50 border border-gray-200 p-2 rounded hover:border-red-300 transition-colors';
+            row.innerHTML = `
+                <input type="text" placeholder="รหัส" value="${id}" class="emp-id w-14 p-1.5 text-center text-sm border rounded focus:outline-none focus:ring-1 focus:ring-red-500 font-medium text-gray-700">
+                <input type="text" placeholder="ชื่อ (ใส่คำว่า '(ช่าง)' ถ้าเป็นช่าง)" value="${name}" class="emp-name flex-1 p-1.5 text-sm border rounded focus:outline-none focus:ring-1 focus:ring-red-500 text-gray-700">
+                <button class="remove-btn text-gray-400 hover:text-red-500 p-1 font-bold text-lg leading-none transition-colors" title="ลบพนักงาน">&times;</button>
+            `;
+            row.querySelector('.remove-btn').addEventListener('click', () => row.remove());
+            empContainer.appendChild(row);
+        }
+
+        document.getElementById('addEmpBtn').addEventListener('click', () => addEmpRow());
+
+        document.getElementById('saveConfigBtn').addEventListener('click', () => {
+            let newMap = {};
+            const rows = empContainer.querySelectorAll('div.flex');
+            rows.forEach(row => {
+                const id = row.querySelector('.emp-id').value.trim();
+                const name = row.querySelector('.emp-name').value.trim();
+                if (id && name) newMap[id] = name;
+            });
+
+            if (Object.keys(newMap).length === 0) {
+                showToast("กรุณาใส่ข้อมูลพนักงานอย่างน้อย 1 คน", "error");
+                return;
+            }
+
+            employeeMapping = newMap;
+            showToast("บันทึกการตั้งค่าพนักงานเรียบร้อย", "success");
+            
+            if (rawAttendant.length > 0) updateDashboard();
+        });
+
+        // Initialize Settings Form on Load
+        renderEmpUI();
+
+        // --- Export Feature ---
+        document.getElementById('exportBtn').addEventListener('click', () => {
+            showToast("กำลังเตรียมรูปภาพ กรุณารอสักครู่...", "info");
+            const dashboard = document.getElementById('dashboardSection');
+            html2canvas(dashboard, { scale: 2, backgroundColor: "#f3f4f6" }).then(canvas => {
+                let link = document.createElement('a');
+                link.download = `Report_${siteName}_${document.getElementById('dateFilter').value}.png`;
+                link.href = canvas.toDataURL("image/png");
+                link.click();
+                showToast("ดาวน์โหลดรายงานสำเร็จ", "success");
+            });
+        });
+
+        // --- File Handlers & Validation ---
+        const fileInput = document.getElementById('fileUpload');
+        const dropZone = document.getElementById('dropZone');
+        const dateFilter = document.getElementById('dateFilter');
+
+        fileInput.addEventListener('change', handleFiles);
+        dropZone.addEventListener('dragover', (e) => { e.preventDefault(); dropZone.classList.add('drag-over'); });
+        dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag-over'));
+        dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropZone.classList.remove('drag-over');
+            fileInput.files = e.dataTransfer.files;
+            handleFiles({ target: fileInput });
+        });
+        dateFilter.addEventListener('change', updateDashboard);
+
+        function handleFiles(e) {
+            const files = e.target.files;
+            if (files.length === 0) return;
+            document.getElementById('fileStatus').innerHTML = '';
+            let filesProcessed = 0;
+            rawAttendant = []; rawHourly = []; rawProduct = [];
+
+            for (let i = 0; i < files.length; i++) {
+                const file = files[i];
+                updateFileBadge(file.name, 'loading');
+
+                Papa.parse(file, {
+                    header: true, skipEmptyLines: true, encoding: "UTF-16", delimiter: "\t",
+                    complete: function(results) {
+                        const data = results.data;
+                        if (data.length > 0) {
+                            const headers = Object.keys(data[0]);
+                            if (!headers.includes("Category Name") || !headers.includes("Sale Value")) {
+                                showToast(`ไฟล์ ${file.name} โครงสร้างไม่ถูกต้อง`, "error");
+                                updateFileBadge(file.name, 'error');
+                                filesProcessed++;
+                                return;
+                            }
+                        }
+
+                        updateFileBadge(file.name, 'success');
+                        
+                        if (data.length > 0 && data[0]['Site Name'] && siteName === "ไม่ระบุสาขา") {
+                            siteName = data[0]['Site Name'];
+                            document.getElementById('dynamicSiteName').innerText = `สาขา: ${siteName}`;
+                        }
+
+                        if (file.name.includes("Attendant")) rawAttendant = rawAttendant.concat(data);
+                        else if (file.name.includes("Hourly")) rawHourly = rawHourly.concat(data);
+                        else if (file.name.includes("Product")) rawProduct = rawProduct.concat(data);
+
+                        filesProcessed++;
+                        if (filesProcessed === files.length) {
+                            if (rawAttendant.length > 0 || rawHourly.length > 0 || rawProduct.length > 0) {
+                                document.getElementById('dashboardSection').classList.remove('hidden');
+                                document.getElementById('exportBtn').classList.remove('hidden');
+                                populateDateFilter();
+                                updateDashboard();
+                                showToast("ประมวลผลข้อมูลสำเร็จ", "success");
+                            } else {
+                                showToast("ไม่พบข้อมูลที่สามารถวิเคราะห์ได้", "error");
+                            }
+                        }
+                    }
+                });
+            }
+        }
+
+        function updateFileBadge(filename, status) {
+            let color = status === 'success' ? 'bg-green-100 text-green-800' : (status === 'error' ? 'bg-red-100 text-red-800' : 'bg-gray-100 text-gray-600');
+            let icon = status === 'success' ? '✅ ' : (status === 'error' ? '❌ ' : '⏳ ');
+            const badgeId = 'badge-' + filename.replace(/[^a-zA-Z0-9]/g, '');
+            let badge = document.getElementById(badgeId);
+            if (!badge) {
+                badge = document.createElement('span');
+                badge.id = badgeId;
+                document.getElementById('fileStatus').appendChild(badge);
+            }
+            badge.className = `px-3 py-1 rounded-full border border-gray-200 ${color}`;
+            badge.innerText = icon + filename.substring(0, 20) + '...';
+        }
+
+        function populateDateFilter() {
+            let dates = new Set();
+            const extractDate = (row) => {
+                let d = row['Open Date'] || row['Date'];
+                if (d) dates.add(d);
+            };
+            rawAttendant.forEach(extractDate);
+            rawHourly.forEach(extractDate);
+            
+            dateFilter.innerHTML = '<option value="ALL">รวมทุกวัน (All Dates)</option>';
+            Array.from(dates).sort().forEach(d => {
+                let opt = document.createElement('option');
+                opt.value = d;
+                opt.innerText = d;
+                dateFilter.appendChild(opt);
+            });
+            dateFilter.disabled = false;
+        }
+
+        // --- Core Processing ---
+        function updateDashboard() {
+            const sd = dateFilter.value;
+            const filterFn = (r) => sd === "ALL" || r['Open Date'] === sd || r['Date'] === sd;
+            processData(rawAttendant.filter(filterFn), rawHourly.filter(filterFn), rawProduct.filter(filterFn));
+        }
+
+        function processData(attData, hrData, prdData) {
+            let globalStats = { totalVol: 0, vpowerVol: 0, totalCars: 0, totalBills: 0, goPlusBills: 0 };
+            
+            let employeeStats = {};
+            let vehicleStats = {
+                "2W": { name: "มอเตอร์ไซค์ (2 ล้อ)", vpower: 0, normal: 0 },
+                "4W": { name: "รถยนต์ (4 ล้อ)", vpower: 0, normal: 0 },
+                "HEAVY": { name: "รถใหญ่ (บรรทุก)", vpower: 0, normal: 0 }
+            };
+
+            attData.forEach(row => {
+                if (row['Category Name'] === 'Fuels') {
+                    let empId = row['Attendant'];
+                    let volume = parseFloat(row['Volume']) || 0;
+                    let deliveryCount = parseInt(row['Delivery Count']) || 0;
+                    let pName = (row['Product Name'] || "").toUpperCase();
+                    let vCode = (row['Vehicle Code'] || "").trim().toUpperCase();
+                    
+                    if (!empId || volume <= 0) return;
+                    let isVpower = pName.includes("VP ") || pName.includes("V-POWER") || pName.includes("VPOWER");
+
+                    let empRawName = employeeMapping[empId] || `รหัส ${empId}`;
+                    if (!empRawName.includes("(ช่าง)")) {
+                        if (!employeeStats[empRawName]) employeeStats[empRawName] = { totalVol: 0, vpowerVol: 0, normalVol: 0, deliveryCount: 0 };
+                        employeeStats[empRawName].totalVol += volume;
+                        employeeStats[empRawName].deliveryCount += deliveryCount;
+                        globalStats.totalVol += volume;
+                        
+                        if (isVpower) {
+                            employeeStats[empRawName].vpowerVol += volume;
+                            globalStats.vpowerVol += volume;
+                        } else {
+                            employeeStats[empRawName].normalVol += volume;
+                        }
+                    }
+
+                    let vGroup = "OTHER";
+                    if(vCode === "2W") vGroup = "2W";
+                    else if(vCode === "4W") vGroup = "4W";
+                    else if(vCode === "HEAVY") vGroup = "HEAVY";
+                    
+                    if (vehicleStats[vGroup]) {
+                        if(isVpower) vehicleStats[vGroup].vpower += volume;
+                        else vehicleStats[vGroup].normal += volume;
+                    }
+                }
+            });
+
+            let hourlyCars = {};
+            hrData.forEach(row => {
+                if (row['Category Name'] === 'Fuels') {
+                    let hourStr = row['Hour'];
+                    let cars = parseInt(row['Delivery Count']) || 0;
+                    if (!hourStr) return;
+                    let cleanHour = hourStr.length === 4 ? "0" + hourStr : hourStr;
+                    if (!hourlyCars[cleanHour]) hourlyCars[cleanHour] = 0;
+                    hourlyCars[cleanHour] += cars;
+                    globalStats.totalCars += cars;
+                }
+            });
+
+            prdData.forEach(row => {
+                if (row['Category Name'] === 'Fuels') {
+                    let loyalty = (row['Loyalty'] || "").toUpperCase();
+                    let count = parseInt(row['Delivery Count']) || parseInt(row['Purchase Count']) || 0;
+                    if(count > 0) {
+                        globalStats.totalBills += count;
+                        if (loyalty.includes("GO+") || (loyalty !== "NOLOYALTY" && loyalty !== "")) {
+                            globalStats.goPlusBills += count;
+                        }
+                    }
+                }
+            });
+
+            document.getElementById('kpiTotalVol').innerText = globalStats.totalVol.toLocaleString(undefined, {maximumFractionDigits: 0});
+            document.getElementById('kpiTotalCars').innerText = globalStats.totalCars.toLocaleString();
+            let vMix = globalStats.totalVol > 0 ? ((globalStats.vpowerVol / globalStats.totalVol) * 100).toFixed(1) : 0;
+            document.getElementById('kpiVpowerMix').innerText = vMix + '%';
+            
+            let goMix = globalStats.totalBills > 0 ? ((globalStats.goPlusBills / globalStats.totalBills) * 100).toFixed(1) : 0;
+            document.getElementById('kpiGoPlusMix').innerText = goMix + '%';
+
+            let sortedEmp = Object.entries(employeeStats).sort((a, b) => b[1].totalVol - a[1].totalVol);
+            let empLabels = sortedEmp.map(item => {
+                let mix = ((item[1].vpowerVol / item[1].totalVol) * 100).toFixed(1);
+                let lifts = item[1].deliveryCount.toLocaleString();
+                return `${item[0]} (VP: ${mix}% | ยก: ${lifts} ครั้ง)`;
+            });
+            renderEmployeeChart(empLabels, sortedEmp.map(i => i[1].vpowerVol), sortedEmp.map(i => i[1].normalVol));
+
+            let vehLabels = []; let vehVP = []; let vehNM = [];
+            ["2W", "4W", "HEAVY"].forEach(vType => {
+                let stat = vehicleStats[vType];
+                let total = stat.vpower + stat.normal;
+                let mix = total > 0 ? ((stat.vpower / total) * 100).toFixed(1) : 0;
+                vehLabels.push(`${stat.name} (VP: ${mix}%)`);
+                vehVP.push(stat.vpower);
+                vehNM.push(stat.normal);
+            });
+            renderVehicleChart(vehLabels, vehVP, vehNM);
+
+            let sortedHours = Object.keys(hourlyCars).sort();
+            renderHourlyChart(sortedHours, sortedHours.map(h => hourlyCars[h]));
+        }
+
+        // --- Chart Renderers ---
+        Chart.defaults.font.family = "'Prompt', sans-serif";
+
+        function renderEmployeeChart(labels, vpowerData, normalData) {
+            const ctx = document.getElementById('employeeChart').getContext('2d');
+            if(charts.emp) charts.emp.destroy();
+            charts.emp = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [
+                        { label: 'V-Power (ลิตร)', data: vpowerData, backgroundColor: '#dd1d21', stack: 'Stack 0' },
+                        { label: 'น้ำมันมาตรฐาน (ลิตร)', data: normalData, backgroundColor: '#fbce07', stack: 'Stack 0' }
+                    ]
+                },
+                options: { responsive: true, plugins: { legend: { position: 'top' }, tooltip: { callbacks: { label: function(context) { return context.dataset.label + ': ' + context.raw.toLocaleString() + ' ลิตร'; } } } }, scales: { x: { stacked: true }, y: { stacked: true, beginAtZero: true } } }
+            });
+        }
+
+        function renderVehicleChart(labels, vpowerData, normalData) {
+            const ctx = document.getElementById('vehicleChart').getContext('2d');
+            if(charts.veh) charts.veh.destroy();
+            charts.veh = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [
+                        { label: 'V-Power (ลิตร)', data: vpowerData, backgroundColor: '#dd1d21', stack: 'Stack 1' },
+                        { label: 'น้ำมันมาตรฐาน (ลิตร)', data: normalData, backgroundColor: '#fbce07', stack: 'Stack 1' }
+                    ]
+                },
+                options: { responsive: true, maintainAspectRatio: false, indexAxis: 'y', plugins: { legend: { position: 'top' }, tooltip: { callbacks: { label: function(context) { return context.dataset.label + ': ' + context.raw.toLocaleString() + ' ลิตร'; } } } }, scales: { x: { stacked: true }, y: { stacked: true } } }
+            });
+        }
+
+        function renderHourlyChart(labels, data) {
+            const ctx = document.getElementById('hourlyChart').getContext('2d');
+            if(charts.hr) charts.hr.destroy();
+            charts.hr = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'รถเข้าลาน (คัน)', data: data,
+                        borderColor: '#dd1d21', backgroundColor: 'rgba(221, 29, 33, 0.1)',
+                        borderWidth: 3, fill: true, tension: 0.3, pointBackgroundColor: '#fbce07'
+                    }]
+                },
+                options: { responsive: true, maintainAspectRatio: false }
+            });
+        }
+    </script>
+</body>
+</html>
