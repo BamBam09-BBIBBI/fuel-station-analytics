@@ -48,7 +48,7 @@
                     </select>
                 </div>
                 <button id="exportBtn" class="hidden h-10 bg-gray-800 text-white px-4 py-2 rounded font-medium hover:bg-gray-900 transition flex items-center gap-2">
-                    📸 บันทึกเป็นรูปภาพ
+                    📸 บันทึกภาพ
                 </button>
             </div>
         </header>
@@ -73,7 +73,7 @@
         <!-- Upload Zone -->
         <div id="dropZone" class="card mb-6 border-2 border-dashed border-gray-300 bg-white text-center transition-all duration-200">
             <h2 class="text-lg font-semibold mb-2">📥 โยนไฟล์วิเคราะห์ 3 ไฟล์ลงที่นี่</h2>
-            <p class="text-sm text-gray-500 mb-4">*ใช้เฉพาะไฟล์ Attendant, HourlyTrends, ProductSales (รองรับไฟล์หลายเดือนพร้อมกัน)</p>
+            <p class="text-sm text-gray-500 mb-4">*ใช้เฉพาะไฟล์ Attendant, HourlyTrends, ProductSales</p>
             <input type="file" id="fileUpload" multiple accept=".csv, .txt" class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-red-50 file:text-red-700 hover:file:bg-red-100 cursor-pointer mx-auto max-w-md"/>
             <div id="fileStatus" class="mt-4 flex flex-wrap justify-center gap-2 text-xs font-medium"></div>
         </div>
@@ -115,16 +115,30 @@
                         <canvas id="vehicleChart"></canvas>
                     </div>
                 </div>
+                
+                <!-- อัปเกรด: กราฟแยกตามวัน -->
                 <div class="card bg-white">
-                    <h2 class="text-xl font-semibold mb-1">⏱️ ปริมาณรถเข้าลานรายชั่วโมง (Peak Hours)</h2>
-                    <p class="text-sm text-gray-500 mb-4">*เพื่อช่วยในการจัดกำลังพลหน้าลาน</p>
+                    <div class="flex justify-between items-start mb-1">
+                        <h2 class="text-xl font-semibold">⏱️ ปริมาณรถเข้าลานเฉลี่ยรายชั่วโมง</h2>
+                        <select id="hourlyDayFilter" class="border p-1.5 rounded text-sm bg-gray-50 font-medium focus:outline-none focus:border-red-500">
+                            <option value="ALL">เฉลี่ยรวมทุกวัน</option>
+                            <option value="1">เฉพาะวันจันทร์</option>
+                            <option value="2">เฉพาะวันอังคาร</option>
+                            <option value="3">เฉพาะวันพุธ</option>
+                            <option value="4">เฉพาะวันพฤหัสบดี</option>
+                            <option value="5">เฉพาะวันศุกร์</option>
+                            <option value="6">เฉพาะวันเสาร์</option>
+                            <option value="0">เฉพาะวันอาทิตย์</option>
+                        </select>
+                    </div>
+                    <p class="text-sm text-gray-500 mb-4">*แสดงค่าเฉลี่ยจำนวนรถต่อวันเพื่อความแม่นยำในการจัดกะ</p>
                     <div style="position: relative; height: 300px; width: 100%;">
                         <canvas id="hourlyChart"></canvas>
                     </div>
                 </div>
             </div>
 
-            <!-- 🌟 ฟีเจอร์ใหม่: วิเคราะห์การเติบโตรายบุคคล -->
+            <!-- Comparative Analytics -->
             <div class="card bg-white border-t-4 border-blue-500 mt-6">
                 <h2 class="text-xl font-semibold mb-1 text-blue-800">📈 วิเคราะห์การเติบโตรายบุคคล (Employee Growth Comparison)</h2>
                 <p class="text-sm text-gray-500 mb-4">เปรียบเทียบประสิทธิภาพการทำงานระหว่าง 2 ช่วงเวลา (เช่น สัปดาห์แรกของเดือน 8 เทียบกับเดือน 9)</p>
@@ -155,9 +169,7 @@
                     </div>
                 </div>
 
-                <!-- ผลลัพธ์การเปรียบเทียบ -->
                 <div id="compResultArea" class="hidden grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <!-- ลิตร -->
                     <div class="border rounded-lg p-4 text-center">
                         <h4 class="text-gray-500 text-sm font-semibold mb-2">ปริมาณลิตรรวม (ลิตร)</h4>
                         <div class="flex justify-between items-center px-4 mb-2">
@@ -166,7 +178,6 @@
                         </div>
                         <div id="rVolDiff" class="text-xl font-bold py-1 rounded bg-gray-100">-</div>
                     </div>
-                    <!-- V-Power -->
                     <div class="border rounded-lg p-4 text-center">
                         <h4 class="text-gray-500 text-sm font-semibold mb-2">สัดส่วน V-Power Mix (%)</h4>
                         <div class="flex justify-between items-center px-4 mb-2">
@@ -175,7 +186,6 @@
                         </div>
                         <div id="rVpDiff" class="text-xl font-bold py-1 rounded bg-gray-100">-</div>
                     </div>
-                    <!-- ยกหัวจ่าย -->
                     <div class="border rounded-lg p-4 text-center">
                         <h4 class="text-gray-500 text-sm font-semibold mb-2">ความขยัน (ครั้งที่ยกหัวจ่าย)</h4>
                         <div class="flex justify-between items-center px-4 mb-2">
@@ -196,6 +206,7 @@
     <script>
         // --- State Management ---
         let rawAttendant = []; let rawHourly = []; let rawProduct = [];
+        let filteredHourlyData = []; // เก็บ State ไว้ให้ Dropdown
         let employeeMapping = {
             "1": "เฟิร์น", "2": "ตุ้ย", "3": "กี้ (ช่าง)", "4": "เหรียญ", "5": "แต้ม", 
             "6": "ติ๋ว", "7": "นุช", "8": "เจ (ช่าง)", "9": "แช่ง", "10": "หนึ่ง",
@@ -275,12 +286,15 @@
         const fileInput = document.getElementById('fileUpload');
         const dropZone = document.getElementById('dropZone');
         const dateFilter = document.getElementById('dateFilter');
+        const hourlyDayFilter = document.getElementById('hourlyDayFilter');
 
         fileInput.addEventListener('change', handleFiles);
         dropZone.addEventListener('dragover', (e) => { e.preventDefault(); dropZone.classList.add('drag-over'); });
         dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag-over'));
         dropZone.addEventListener('drop', (e) => { e.preventDefault(); dropZone.classList.remove('drag-over'); fileInput.files = e.dataTransfer.files; handleFiles({ target: fileInput }); });
+        
         dateFilter.addEventListener('change', updateDashboard);
+        hourlyDayFilter.addEventListener('change', () => processHourlyData(filteredHourlyData));
 
         function handleFiles(e) {
             const files = e.target.files;
@@ -353,10 +367,13 @@
         function updateDashboard() {
             const sd = dateFilter.value;
             const filterFn = (r) => sd === "ALL" || r['Open Date'] === sd || r['Date'] === sd;
-            processData(rawAttendant.filter(filterFn), rawHourly.filter(filterFn), rawProduct.filter(filterFn));
+            
+            filteredHourlyData = rawHourly.filter(filterFn); // เก็บไว้ให้ Hourly Process
+            processData(rawAttendant.filter(filterFn), rawProduct.filter(filterFn));
+            processHourlyData(filteredHourlyData);
         }
 
-        function processData(attData, hrData, prdData) {
+        function processData(attData, prdData) {
             let globalStats = { totalVol: 0, vpowerVol: 0, totalCars: 0, totalBills: 0, goPlusBills: 0 };
             let employeeStats = {};
             let vehicleStats = {
@@ -394,19 +411,6 @@
                 }
             });
 
-            let hourlyCars = {};
-            hrData.forEach(row => {
-                if (row['Category Name'] === 'Fuels') {
-                    let hourStr = row['Hour'];
-                    let cars = parseInt(row['Delivery Count']) || 0;
-                    if (!hourStr) return;
-                    let cleanHour = hourStr.length === 4 ? "0" + hourStr : hourStr;
-                    if (!hourlyCars[cleanHour]) hourlyCars[cleanHour] = 0;
-                    hourlyCars[cleanHour] += cars;
-                    globalStats.totalCars += cars;
-                }
-            });
-
             prdData.forEach(row => {
                 if (row['Category Name'] === 'Fuels') {
                     let loyalty = (row['Loyalty'] || "").toUpperCase();
@@ -419,7 +423,6 @@
             });
 
             document.getElementById('kpiTotalVol').innerText = globalStats.totalVol.toLocaleString(undefined, {maximumFractionDigits: 0});
-            document.getElementById('kpiTotalCars').innerText = globalStats.totalCars.toLocaleString();
             let vMix = globalStats.totalVol > 0 ? ((globalStats.vpowerVol / globalStats.totalVol) * 100).toFixed(1) : 0;
             document.getElementById('kpiVpowerMix').innerText = vMix + '%';
             let goMix = globalStats.totalBills > 0 ? ((globalStats.goPlusBills / globalStats.totalBills) * 100).toFixed(1) : 0;
@@ -441,9 +444,59 @@
                 vehVP.push(stat.vpower); vehNM.push(stat.normal);
             });
             renderVehicleChart(vehLabels, vehVP, vehNM);
+        }
 
+        // --- ระบบประมวลผลเวลาเข้าลานแบบเฉลี่ย ---
+        function processHourlyData(hrData) {
+            let hourlyCars = {};
+            let uniqueDates = new Set();
+            let totalCarsCalculated = 0;
+            let selectedDay = document.getElementById('hourlyDayFilter').value;
+
+            hrData.forEach(row => {
+                if (row['Category Name'] === 'Fuels') {
+                    let dateStr = row['Date'];
+                    let hourStr = row['Hour'];
+                    let cars = parseInt(row['Delivery Count']) || 0;
+                    
+                    if (!hourStr || !dateStr) return;
+
+                    // แปลง Date ป้องกัน Format ผิดเพี้ยน
+                    let dateObj = new Date(dateStr);
+                    if (isNaN(dateObj)) {
+                        let parts = dateStr.split(/[-/]/);
+                        if (parts.length === 3) {
+                            dateObj = parts[0].length === 4 ? new Date(parts[0], parts[1]-1, parts[2]) : new Date(parts[2], parts[1]-1, parts[0]);
+                        }
+                    }
+
+                    if (!isNaN(dateObj)) {
+                        let dayOfWeek = dateObj.getDay(); // 0-6
+                        
+                        // กรองวันตาม Dropdown (ALL = ไม่กรอง)
+                        if (selectedDay !== "ALL" && dayOfWeek !== parseInt(selectedDay)) return;
+
+                        uniqueDates.add(dateStr);
+                        totalCarsCalculated += cars;
+                        
+                        let cleanHour = hourStr.length === 4 ? "0" + hourStr : hourStr;
+                        if (!hourlyCars[cleanHour]) hourlyCars[cleanHour] = 0;
+                        hourlyCars[cleanHour] += cars;
+                    }
+                }
+            });
+            
+            // อัปเดตยอดรถเข้าลานรวมทั้งหมด (ไม่อิง Dropdown กราฟเวลา)
+            if (selectedDay === "ALL") {
+                document.getElementById('kpiTotalCars').innerText = totalCarsCalculated.toLocaleString();
+            }
+
+            // คำนวณค่าเฉลี่ย
+            let numDays = uniqueDates.size || 1;
             let sortedHours = Object.keys(hourlyCars).sort();
-            renderHourlyChart(sortedHours, sortedHours.map(h => hourlyCars[h]));
+            let chartData = sortedHours.map(h => Math.round(hourlyCars[h] / numDays)); // หารเฉลี่ยตามจำนวนวัน
+
+            renderHourlyChart(sortedHours, chartData);
         }
 
         // --- Comparative Analytics Logic ---
@@ -458,19 +511,16 @@
 
             if(!start1 || !end1 || !start2 || !end2) return showToast("กรุณาเลือกช่วงวันที่ให้ครบถ้วน", "error");
             
-            // Helper function for extraction
             const getStatsForPeriod = (start, end) => {
                 let vol = 0, vpVol = 0, lifts = 0;
                 rawAttendant.forEach(row => {
                     let d = row['Open Date'];
                     if(row['Category Name'] === 'Fuels' && d >= start && d <= end) {
                         if(empId !== "ALL" && row['Attendant'] !== empId) return;
-                        // ถ้าเลือก ALL ต้องกรองช่างออก
                         if(empId === "ALL") {
                             let name = employeeMapping[row['Attendant']] || "";
                             if(name.includes("(ช่าง)")) return;
                         }
-                        
                         let v = parseFloat(row['Volume']) || 0;
                         let l = parseInt(row['Delivery Count']) || 0;
                         let pName = (row['Product Name'] || "").toUpperCase();
@@ -485,20 +535,12 @@
             const p1 = getStatsForPeriod(start1, end1);
             const p2 = getStatsForPeriod(start2, end2);
 
-            // UI Update Helper
             const updateDiffUI = (val1, val2, elementId) => {
                 let diff = val1 > 0 ? ((val2 - val1) / val1) * 100 : (val2 > 0 ? 100 : 0);
                 let el = document.getElementById(elementId);
-                if(diff > 0) {
-                    el.innerHTML = `▲ +${diff.toFixed(1)}%`;
-                    el.className = "text-xl font-bold py-1 rounded bg-green-100 text-green-700";
-                } else if(diff < 0) {
-                    el.innerHTML = `▼ ${diff.toFixed(1)}%`;
-                    el.className = "text-xl font-bold py-1 rounded bg-red-100 text-red-700";
-                } else {
-                    el.innerHTML = `- คงที่ (0%)`;
-                    el.className = "text-xl font-bold py-1 rounded bg-gray-100 text-gray-600";
-                }
+                if(diff > 0) { el.innerHTML = `▲ +${diff.toFixed(1)}%`; el.className = "text-xl font-bold py-1 rounded bg-green-100 text-green-700"; } 
+                else if(diff < 0) { el.innerHTML = `▼ ${diff.toFixed(1)}%`; el.className = "text-xl font-bold py-1 rounded bg-red-100 text-red-700"; } 
+                else { el.innerHTML = `- คงที่ (0%)`; el.className = "text-xl font-bold py-1 rounded bg-gray-100 text-gray-600"; }
             };
 
             document.getElementById('rVol1').innerText = p1.vol.toLocaleString(undefined, {maximumFractionDigits:0});
@@ -535,7 +577,7 @@
         function renderHourlyChart(labels, data) {
             const ctx = document.getElementById('hourlyChart').getContext('2d');
             if(charts.hr) charts.hr.destroy();
-            charts.hr = new Chart(ctx, { type: 'line', data: { labels: labels, datasets: [{ label: 'คัน', data: data, borderColor: '#dd1d21', backgroundColor: 'rgba(221, 29, 33, 0.1)', borderWidth: 3, fill: true, tension: 0.3, pointBackgroundColor: '#fbce07' }] }, options: { responsive: true, maintainAspectRatio: false } });
+            charts.hr = new Chart(ctx, { type: 'line', data: { labels: labels, datasets: [{ label: 'เฉลี่ยรถเข้าลาน/วัน (คัน)', data: data, borderColor: '#dd1d21', backgroundColor: 'rgba(221, 29, 33, 0.1)', borderWidth: 3, fill: true, tension: 0.3, pointBackgroundColor: '#fbce07' }] }, options: { responsive: true, maintainAspectRatio: false } });
         }
     </script>
 </body>
