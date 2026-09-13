@@ -20,8 +20,6 @@
         .border-shell-red { border-color: #dd1d21 !important; }
         .toast { transition: all 0.3s ease-in-out; transform: translateX(120%); }
         .toast.show { transform: translateX(0); }
-        
-        /* ส크รอลบาร์สวยงามสำหรับกล่องตั้งค่าพนักงาน */
         .custom-scrollbar::-webkit-scrollbar { width: 6px; }
         .custom-scrollbar::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 4px; }
         .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
@@ -44,7 +42,7 @@
             
             <div class="flex items-end gap-4">
                 <div class="flex flex-col gap-2 min-w-[200px]">
-                    <label class="text-xs font-bold text-gray-500 uppercase">📅 ตัวกรองวันที่</label>
+                    <label class="text-xs font-bold text-gray-500 uppercase">📅 ตัวกรองวันที่ (ภาพรวม)</label>
                     <select id="dateFilter" class="border p-2 rounded bg-gray-50 text-gray-800 font-medium focus:outline-none focus:border-red-500 disabled:opacity-50" disabled>
                         <option value="ALL">รวมทุกวัน (All Dates)</option>
                     </select>
@@ -55,28 +53,19 @@
             </div>
         </header>
 
-        <!-- Settings Accordion (UI ใหม่ เป็นมิตรกับผู้ใช้) -->
+        <!-- Settings Accordion -->
         <details class="mb-6 bg-white rounded-lg shadow-sm border border-gray-200">
             <summary class="p-4 font-semibold cursor-pointer text-gray-700 hover:bg-gray-50">
                 ⚙️ ตั้งค่ารายชื่อพนักงานหน้าลาน (คลิกเพื่อเปิด/ปิด)
             </summary>
             <div class="p-4 border-t border-gray-200 bg-gray-50">
                 <p class="text-sm text-gray-600 mb-3">
-                    💡 <b>คำแนะนำ:</b> ใส่รหัสให้ตรงกับระบบ POS หากเป็น <span class="text-red-500 font-medium">ช่าง</span> ให้พิมพ์คำว่า <b>"(ช่าง)"</b> ต่อท้ายชื่อ ระบบจะตัดยอดขายออกจากการประเมินหน้าลานอัตโนมัติ
+                    💡 <b>คำแนะนำ:</b> ใส่รหัสให้ตรงกับระบบ POS หากเป็น <span class="text-red-500 font-medium">ช่าง</span> ให้พิมพ์คำว่า <b>"(ช่าง)"</b> ต่อท้ายชื่อ
                 </p>
-                
-                <!-- กล่องบรรจุรายชื่อพนักงาน (ตาราง Grid) -->
-                <div id="empFormContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 mb-4 max-h-60 overflow-y-auto custom-scrollbar p-2 bg-white border border-gray-200 rounded-lg">
-                    <!-- JavaScript จะสร้างช่องกรอกข้อมูลตรงนี้อัตโนมัติ -->
-                </div>
-
+                <div id="empFormContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 mb-4 max-h-60 overflow-y-auto custom-scrollbar p-2 bg-white border border-gray-200 rounded-lg"></div>
                 <div class="flex gap-2">
-                    <button id="addEmpBtn" class="bg-gray-200 text-gray-700 px-4 py-2 rounded font-medium hover:bg-gray-300 transition text-sm">
-                        + เพิ่มช่องรายชื่อ
-                    </button>
-                    <button id="saveConfigBtn" class="shell-red text-white px-4 py-2 rounded font-medium hover:bg-red-700 transition text-sm">
-                        💾 บันทึกและคำนวณใหม่
-                    </button>
+                    <button id="addEmpBtn" class="bg-gray-200 text-gray-700 px-4 py-2 rounded font-medium hover:bg-gray-300 transition text-sm">+ เพิ่มช่องรายชื่อ</button>
+                    <button id="saveConfigBtn" class="shell-red text-white px-4 py-2 rounded font-medium hover:bg-red-700 transition text-sm">💾 บันทึกและคำนวณใหม่</button>
                 </div>
             </div>
         </details>
@@ -84,7 +73,7 @@
         <!-- Upload Zone -->
         <div id="dropZone" class="card mb-6 border-2 border-dashed border-gray-300 bg-white text-center transition-all duration-200">
             <h2 class="text-lg font-semibold mb-2">📥 โยนไฟล์วิเคราะห์ 3 ไฟล์ลงที่นี่</h2>
-            <p class="text-sm text-gray-500 mb-4">*ใช้เฉพาะไฟล์ Attendant, HourlyTrends, ProductSales</p>
+            <p class="text-sm text-gray-500 mb-4">*ใช้เฉพาะไฟล์ Attendant, HourlyTrends, ProductSales (รองรับไฟล์หลายเดือนพร้อมกัน)</p>
             <input type="file" id="fileUpload" multiple accept=".csv, .txt" class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-red-50 file:text-red-700 hover:file:bg-red-100 cursor-pointer mx-auto max-w-md"/>
             <div id="fileStatus" class="mt-4 flex flex-wrap justify-center gap-2 text-xs font-medium"></div>
         </div>
@@ -119,7 +108,6 @@
                     <p class="text-sm text-gray-500 mb-4">*แถบสีแดงคือ V-Power | แสดง % V-Power และจำนวนครั้งที่ยกหัวจ่าย</p>
                     <canvas id="employeeChart" height="90"></canvas>
                 </div>
-
                 <div class="card bg-white">
                     <h2 class="text-xl font-semibold mb-1">🚗 พฤติกรรมการเติมแยกตามประเภทรถ</h2>
                     <p class="text-sm text-gray-500 mb-4">*แสดงสัดส่วน % V-Power เทียบน้ำมันธรรมดา</p>
@@ -127,12 +115,74 @@
                         <canvas id="vehicleChart"></canvas>
                     </div>
                 </div>
-
                 <div class="card bg-white">
                     <h2 class="text-xl font-semibold mb-1">⏱️ ปริมาณรถเข้าลานรายชั่วโมง (Peak Hours)</h2>
                     <p class="text-sm text-gray-500 mb-4">*เพื่อช่วยในการจัดกำลังพลหน้าลาน</p>
                     <div style="position: relative; height: 300px; width: 100%;">
                         <canvas id="hourlyChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 🌟 ฟีเจอร์ใหม่: วิเคราะห์การเติบโตรายบุคคล -->
+            <div class="card bg-white border-t-4 border-blue-500 mt-6">
+                <h2 class="text-xl font-semibold mb-1 text-blue-800">📈 วิเคราะห์การเติบโตรายบุคคล (Employee Growth Comparison)</h2>
+                <p class="text-sm text-gray-500 mb-4">เปรียบเทียบประสิทธิภาพการทำงานระหว่าง 2 ช่วงเวลา (เช่น สัปดาห์แรกของเดือน 8 เทียบกับเดือน 9)</p>
+                
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4 bg-blue-50 p-4 rounded-lg mb-6 border border-blue-100">
+                    <div>
+                        <label class="block text-xs font-bold text-gray-600 mb-1">เลือกพนักงาน</label>
+                        <select id="compEmpSelect" class="w-full p-2 border rounded focus:outline-none focus:ring-1 focus:ring-blue-500"></select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-gray-600 mb-1">ช่วงเวลาที่ 1 (ฐาน)</label>
+                        <div class="flex gap-2">
+                            <input type="date" id="comp1Start" class="w-full p-2 border rounded text-sm focus:outline-none focus:ring-1 focus:ring-blue-500">
+                            <input type="date" id="comp1End" class="w-full p-2 border rounded text-sm focus:outline-none focus:ring-1 focus:ring-blue-500">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-gray-600 mb-1">ช่วงเวลาที่ 2 (เปรียบเทียบ)</label>
+                        <div class="flex gap-2">
+                            <input type="date" id="comp2Start" class="w-full p-2 border rounded text-sm focus:outline-none focus:ring-1 focus:ring-blue-500">
+                            <input type="date" id="comp2End" class="w-full p-2 border rounded text-sm focus:outline-none focus:ring-1 focus:ring-blue-500">
+                        </div>
+                    </div>
+                    <div class="flex items-end">
+                        <button id="btnCompare" class="w-full bg-blue-600 text-white p-2 rounded font-medium hover:bg-blue-700 transition shadow">
+                            📊 คำนวณเปรียบเทียบ
+                        </button>
+                    </div>
+                </div>
+
+                <!-- ผลลัพธ์การเปรียบเทียบ -->
+                <div id="compResultArea" class="hidden grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <!-- ลิตร -->
+                    <div class="border rounded-lg p-4 text-center">
+                        <h4 class="text-gray-500 text-sm font-semibold mb-2">ปริมาณลิตรรวม (ลิตร)</h4>
+                        <div class="flex justify-between items-center px-4 mb-2">
+                            <div><p class="text-xs text-gray-400">ช่วงที่ 1</p><p id="rVol1" class="font-bold text-lg text-gray-700">-</p></div>
+                            <div><p class="text-xs text-gray-400">ช่วงที่ 2</p><p id="rVol2" class="font-bold text-lg text-gray-700">-</p></div>
+                        </div>
+                        <div id="rVolDiff" class="text-xl font-bold py-1 rounded bg-gray-100">-</div>
+                    </div>
+                    <!-- V-Power -->
+                    <div class="border rounded-lg p-4 text-center">
+                        <h4 class="text-gray-500 text-sm font-semibold mb-2">สัดส่วน V-Power Mix (%)</h4>
+                        <div class="flex justify-between items-center px-4 mb-2">
+                            <div><p class="text-xs text-gray-400">ช่วงที่ 1</p><p id="rVp1" class="font-bold text-lg text-gray-700">-</p></div>
+                            <div><p class="text-xs text-gray-400">ช่วงที่ 2</p><p id="rVp2" class="font-bold text-lg text-gray-700">-</p></div>
+                        </div>
+                        <div id="rVpDiff" class="text-xl font-bold py-1 rounded bg-gray-100">-</div>
+                    </div>
+                    <!-- ยกหัวจ่าย -->
+                    <div class="border rounded-lg p-4 text-center">
+                        <h4 class="text-gray-500 text-sm font-semibold mb-2">ความขยัน (ครั้งที่ยกหัวจ่าย)</h4>
+                        <div class="flex justify-between items-center px-4 mb-2">
+                            <div><p class="text-xs text-gray-400">ช่วงที่ 1</p><p id="rLift1" class="font-bold text-lg text-gray-700">-</p></div>
+                            <div><p class="text-xs text-gray-400">ช่วงที่ 2</p><p id="rLift2" class="font-bold text-lg text-gray-700">-</p></div>
+                        </div>
+                        <div id="rLiftDiff" class="text-xl font-bold py-1 rounded bg-gray-100">-</div>
                     </div>
                 </div>
             </div>
@@ -151,11 +201,10 @@
             "6": "ติ๋ว", "7": "นุช", "8": "เจ (ช่าง)", "9": "แช่ง", "10": "หนึ่ง",
             "11": "ป่อง", "12": "ติ๋ม", "13": "โอ (ช่าง)", "14": "น้อย", 
             "15": "อาร์ท", "16": "สุรเศรษฐ์"
-        }; // ค่าเริ่มต้น
+        };
         let charts = { emp: null, hr: null, veh: null };
         let siteName = "ไม่ระบุสาขา";
 
-        // --- Notification System ---
         function showToast(message, type = 'info') {
             const container = document.getElementById('toastContainer');
             const toast = document.createElement('div');
@@ -167,13 +216,20 @@
             setTimeout(() => { toast.classList.remove('show'); setTimeout(() => toast.remove(), 300); }, 3000);
         }
 
-        // --- Dynamic Employee Form UI ---
+        // --- UI Setup ---
         const empContainer = document.getElementById('empFormContainer');
+        const compEmpSelect = document.getElementById('compEmpSelect');
 
         function renderEmpUI() {
             empContainer.innerHTML = '';
+            compEmpSelect.innerHTML = '<option value="ALL">รวมพนักงานทุกคนหน้าลาน</option>';
             Object.entries(employeeMapping).forEach(([id, name]) => {
                 addEmpRow(id, name);
+                if (!name.includes("(ช่าง)")) {
+                    let opt = document.createElement('option');
+                    opt.value = id; opt.innerText = `${name} (รหัส ${id})`;
+                    compEmpSelect.appendChild(opt);
+                }
             });
         }
 
@@ -182,52 +238,40 @@
             row.className = 'flex items-center gap-2 bg-gray-50 border border-gray-200 p-2 rounded hover:border-red-300 transition-colors';
             row.innerHTML = `
                 <input type="text" placeholder="รหัส" value="${id}" class="emp-id w-14 p-1.5 text-center text-sm border rounded focus:outline-none focus:ring-1 focus:ring-red-500 font-medium text-gray-700">
-                <input type="text" placeholder="ชื่อ (ใส่คำว่า '(ช่าง)' ถ้าเป็นช่าง)" value="${name}" class="emp-name flex-1 p-1.5 text-sm border rounded focus:outline-none focus:ring-1 focus:ring-red-500 text-gray-700">
-                <button class="remove-btn text-gray-400 hover:text-red-500 p-1 font-bold text-lg leading-none transition-colors" title="ลบพนักงาน">&times;</button>
+                <input type="text" placeholder="ชื่อ (ใส่ (ช่าง) เพื่อยกเว้น)" value="${name}" class="emp-name flex-1 p-1.5 text-sm border rounded focus:outline-none focus:ring-1 focus:ring-red-500 text-gray-700">
+                <button class="remove-btn text-gray-400 hover:text-red-500 p-1 font-bold text-lg leading-none transition-colors" title="ลบ">&times;</button>
             `;
             row.querySelector('.remove-btn').addEventListener('click', () => row.remove());
             empContainer.appendChild(row);
         }
 
         document.getElementById('addEmpBtn').addEventListener('click', () => addEmpRow());
-
         document.getElementById('saveConfigBtn').addEventListener('click', () => {
             let newMap = {};
-            const rows = empContainer.querySelectorAll('div.flex');
-            rows.forEach(row => {
+            empContainer.querySelectorAll('div.flex').forEach(row => {
                 const id = row.querySelector('.emp-id').value.trim();
                 const name = row.querySelector('.emp-name').value.trim();
                 if (id && name) newMap[id] = name;
             });
-
-            if (Object.keys(newMap).length === 0) {
-                showToast("กรุณาใส่ข้อมูลพนักงานอย่างน้อย 1 คน", "error");
-                return;
-            }
-
+            if (Object.keys(newMap).length === 0) return showToast("กรุณาใส่ข้อมูลพนักงานอย่างน้อย 1 คน", "error");
             employeeMapping = newMap;
+            renderEmpUI();
             showToast("บันทึกการตั้งค่าพนักงานเรียบร้อย", "success");
-            
             if (rawAttendant.length > 0) updateDashboard();
         });
-
-        // Initialize Settings Form on Load
         renderEmpUI();
 
-        // --- Export Feature ---
         document.getElementById('exportBtn').addEventListener('click', () => {
             showToast("กำลังเตรียมรูปภาพ กรุณารอสักครู่...", "info");
-            const dashboard = document.getElementById('dashboardSection');
-            html2canvas(dashboard, { scale: 2, backgroundColor: "#f3f4f6" }).then(canvas => {
+            html2canvas(document.getElementById('dashboardSection'), { scale: 2, backgroundColor: "#f3f4f6" }).then(canvas => {
                 let link = document.createElement('a');
                 link.download = `Report_${siteName}_${document.getElementById('dateFilter').value}.png`;
-                link.href = canvas.toDataURL("image/png");
-                link.click();
+                link.href = canvas.toDataURL("image/png"); link.click();
                 showToast("ดาวน์โหลดรายงานสำเร็จ", "success");
             });
         });
 
-        // --- File Handlers & Validation ---
+        // --- File Handlers ---
         const fileInput = document.getElementById('fileUpload');
         const dropZone = document.getElementById('dropZone');
         const dateFilter = document.getElementById('dateFilter');
@@ -235,12 +279,7 @@
         fileInput.addEventListener('change', handleFiles);
         dropZone.addEventListener('dragover', (e) => { e.preventDefault(); dropZone.classList.add('drag-over'); });
         dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag-over'));
-        dropZone.addEventListener('drop', (e) => {
-            e.preventDefault();
-            dropZone.classList.remove('drag-over');
-            fileInput.files = e.dataTransfer.files;
-            handleFiles({ target: fileInput });
-        });
+        dropZone.addEventListener('drop', (e) => { e.preventDefault(); dropZone.classList.remove('drag-over'); fileInput.files = e.dataTransfer.files; handleFiles({ target: fileInput }); });
         dateFilter.addEventListener('change', updateDashboard);
 
         function handleFiles(e) {
@@ -253,32 +292,23 @@
             for (let i = 0; i < files.length; i++) {
                 const file = files[i];
                 updateFileBadge(file.name, 'loading');
-
                 Papa.parse(file, {
                     header: true, skipEmptyLines: true, encoding: "UTF-16", delimiter: "\t",
                     complete: function(results) {
                         const data = results.data;
-                        if (data.length > 0) {
-                            const headers = Object.keys(data[0]);
-                            if (!headers.includes("Category Name") || !headers.includes("Sale Value")) {
-                                showToast(`ไฟล์ ${file.name} โครงสร้างไม่ถูกต้อง`, "error");
-                                updateFileBadge(file.name, 'error');
-                                filesProcessed++;
-                                return;
+                        if (data.length > 0 && data[0]['Category Name'] === undefined) {
+                            showToast(`ไฟล์ ${file.name} โครงสร้างไม่ถูกต้อง`, "error");
+                            updateFileBadge(file.name, 'error');
+                        } else {
+                            updateFileBadge(file.name, 'success');
+                            if (data.length > 0 && data[0]['Site Name'] && siteName === "ไม่ระบุสาขา") {
+                                siteName = data[0]['Site Name'];
+                                document.getElementById('dynamicSiteName').innerText = `สาขา: ${siteName}`;
                             }
+                            if (file.name.includes("Attendant")) rawAttendant = rawAttendant.concat(data);
+                            else if (file.name.includes("Hourly")) rawHourly = rawHourly.concat(data);
+                            else if (file.name.includes("Product")) rawProduct = rawProduct.concat(data);
                         }
-
-                        updateFileBadge(file.name, 'success');
-                        
-                        if (data.length > 0 && data[0]['Site Name'] && siteName === "ไม่ระบุสาขา") {
-                            siteName = data[0]['Site Name'];
-                            document.getElementById('dynamicSiteName').innerText = `สาขา: ${siteName}`;
-                        }
-
-                        if (file.name.includes("Attendant")) rawAttendant = rawAttendant.concat(data);
-                        else if (file.name.includes("Hourly")) rawHourly = rawHourly.concat(data);
-                        else if (file.name.includes("Product")) rawProduct = rawProduct.concat(data);
-
                         filesProcessed++;
                         if (filesProcessed === files.length) {
                             if (rawAttendant.length > 0 || rawHourly.length > 0 || rawProduct.length > 0) {
@@ -287,8 +317,6 @@
                                 populateDateFilter();
                                 updateDashboard();
                                 showToast("ประมวลผลข้อมูลสำเร็จ", "success");
-                            } else {
-                                showToast("ไม่พบข้อมูลที่สามารถวิเคราะห์ได้", "error");
                             }
                         }
                     }
@@ -302,8 +330,7 @@
             const badgeId = 'badge-' + filename.replace(/[^a-zA-Z0-9]/g, '');
             let badge = document.getElementById(badgeId);
             if (!badge) {
-                badge = document.createElement('span');
-                badge.id = badgeId;
+                badge = document.createElement('span'); badge.id = badgeId;
                 document.getElementById('fileStatus').appendChild(badge);
             }
             badge.className = `px-3 py-1 rounded-full border border-gray-200 ${color}`;
@@ -312,24 +339,17 @@
 
         function populateDateFilter() {
             let dates = new Set();
-            const extractDate = (row) => {
-                let d = row['Open Date'] || row['Date'];
-                if (d) dates.add(d);
-            };
-            rawAttendant.forEach(extractDate);
-            rawHourly.forEach(extractDate);
+            const extractDate = (row) => { let d = row['Open Date'] || row['Date']; if (d) dates.add(d); };
+            rawAttendant.forEach(extractDate); rawHourly.forEach(extractDate);
             
             dateFilter.innerHTML = '<option value="ALL">รวมทุกวัน (All Dates)</option>';
             Array.from(dates).sort().forEach(d => {
                 let opt = document.createElement('option');
-                opt.value = d;
-                opt.innerText = d;
-                dateFilter.appendChild(opt);
+                opt.value = d; opt.innerText = d; dateFilter.appendChild(opt);
             });
             dateFilter.disabled = false;
         }
 
-        // --- Core Processing ---
         function updateDashboard() {
             const sd = dateFilter.value;
             const filterFn = (r) => sd === "ALL" || r['Open Date'] === sd || r['Date'] === sd;
@@ -338,7 +358,6 @@
 
         function processData(attData, hrData, prdData) {
             let globalStats = { totalVol: 0, vpowerVol: 0, totalCars: 0, totalBills: 0, goPlusBills: 0 };
-            
             let employeeStats = {};
             let vehicleStats = {
                 "2W": { name: "มอเตอร์ไซค์ (2 ล้อ)", vpower: 0, normal: 0 },
@@ -363,23 +382,14 @@
                         employeeStats[empRawName].totalVol += volume;
                         employeeStats[empRawName].deliveryCount += deliveryCount;
                         globalStats.totalVol += volume;
-                        
-                        if (isVpower) {
-                            employeeStats[empRawName].vpowerVol += volume;
-                            globalStats.vpowerVol += volume;
-                        } else {
-                            employeeStats[empRawName].normalVol += volume;
-                        }
+                        if (isVpower) { employeeStats[empRawName].vpowerVol += volume; globalStats.vpowerVol += volume; } 
+                        else { employeeStats[empRawName].normalVol += volume; }
                     }
 
                     let vGroup = "OTHER";
-                    if(vCode === "2W") vGroup = "2W";
-                    else if(vCode === "4W") vGroup = "4W";
-                    else if(vCode === "HEAVY") vGroup = "HEAVY";
-                    
+                    if(vCode === "2W") vGroup = "2W"; else if(vCode === "4W") vGroup = "4W"; else if(vCode === "HEAVY") vGroup = "HEAVY";
                     if (vehicleStats[vGroup]) {
-                        if(isVpower) vehicleStats[vGroup].vpower += volume;
-                        else vehicleStats[vGroup].normal += volume;
+                        if(isVpower) vehicleStats[vGroup].vpower += volume; else vehicleStats[vGroup].normal += volume;
                     }
                 }
             });
@@ -403,9 +413,7 @@
                     let count = parseInt(row['Delivery Count']) || parseInt(row['Purchase Count']) || 0;
                     if(count > 0) {
                         globalStats.totalBills += count;
-                        if (loyalty.includes("GO+") || (loyalty !== "NOLOYALTY" && loyalty !== "")) {
-                            globalStats.goPlusBills += count;
-                        }
+                        if (loyalty.includes("GO+") || (loyalty !== "NOLOYALTY" && loyalty !== "")) globalStats.goPlusBills += count;
                     }
                 }
             });
@@ -414,7 +422,6 @@
             document.getElementById('kpiTotalCars').innerText = globalStats.totalCars.toLocaleString();
             let vMix = globalStats.totalVol > 0 ? ((globalStats.vpowerVol / globalStats.totalVol) * 100).toFixed(1) : 0;
             document.getElementById('kpiVpowerMix').innerText = vMix + '%';
-            
             let goMix = globalStats.totalBills > 0 ? ((globalStats.goPlusBills / globalStats.totalBills) * 100).toFixed(1) : 0;
             document.getElementById('kpiGoPlusMix').innerText = goMix + '%';
 
@@ -422,18 +429,16 @@
             let empLabels = sortedEmp.map(item => {
                 let mix = ((item[1].vpowerVol / item[1].totalVol) * 100).toFixed(1);
                 let lifts = item[1].deliveryCount.toLocaleString();
-                return `${item[0]} (VP: ${mix}% | ยก: ${lifts} ครั้ง)`;
+                return `${item[0]} (VP: ${mix}% | ยก: ${lifts})`;
             });
             renderEmployeeChart(empLabels, sortedEmp.map(i => i[1].vpowerVol), sortedEmp.map(i => i[1].normalVol));
 
             let vehLabels = []; let vehVP = []; let vehNM = [];
             ["2W", "4W", "HEAVY"].forEach(vType => {
                 let stat = vehicleStats[vType];
-                let total = stat.vpower + stat.normal;
-                let mix = total > 0 ? ((stat.vpower / total) * 100).toFixed(1) : 0;
+                let mix = (stat.vpower + stat.normal) > 0 ? ((stat.vpower / (stat.vpower + stat.normal)) * 100).toFixed(1) : 0;
                 vehLabels.push(`${stat.name} (VP: ${mix}%)`);
-                vehVP.push(stat.vpower);
-                vehNM.push(stat.normal);
+                vehVP.push(stat.vpower); vehNM.push(stat.normal);
             });
             renderVehicleChart(vehLabels, vehVP, vehNM);
 
@@ -441,56 +446,96 @@
             renderHourlyChart(sortedHours, sortedHours.map(h => hourlyCars[h]));
         }
 
-        // --- Chart Renderers ---
-        Chart.defaults.font.family = "'Prompt', sans-serif";
+        // --- Comparative Analytics Logic ---
+        document.getElementById('btnCompare').addEventListener('click', () => {
+            if(rawAttendant.length === 0) return showToast("กรุณาอัปโหลดข้อมูลก่อนทำการเปรียบเทียบ", "error");
+            
+            const empId = document.getElementById('compEmpSelect').value;
+            const start1 = document.getElementById('comp1Start').value;
+            const end1 = document.getElementById('comp1End').value;
+            const start2 = document.getElementById('comp2Start').value;
+            const end2 = document.getElementById('comp2End').value;
 
+            if(!start1 || !end1 || !start2 || !end2) return showToast("กรุณาเลือกช่วงวันที่ให้ครบถ้วน", "error");
+            
+            // Helper function for extraction
+            const getStatsForPeriod = (start, end) => {
+                let vol = 0, vpVol = 0, lifts = 0;
+                rawAttendant.forEach(row => {
+                    let d = row['Open Date'];
+                    if(row['Category Name'] === 'Fuels' && d >= start && d <= end) {
+                        if(empId !== "ALL" && row['Attendant'] !== empId) return;
+                        // ถ้าเลือก ALL ต้องกรองช่างออก
+                        if(empId === "ALL") {
+                            let name = employeeMapping[row['Attendant']] || "";
+                            if(name.includes("(ช่าง)")) return;
+                        }
+                        
+                        let v = parseFloat(row['Volume']) || 0;
+                        let l = parseInt(row['Delivery Count']) || 0;
+                        let pName = (row['Product Name'] || "").toUpperCase();
+                        let isVpower = pName.includes("VP ") || pName.includes("V-POWER") || pName.includes("VPOWER");
+                        
+                        if(v > 0) { vol += v; lifts += l; if(isVpower) vpVol += v; }
+                    }
+                });
+                return { vol, vpVol, mix: vol > 0 ? (vpVol/vol)*100 : 0, lifts };
+            };
+
+            const p1 = getStatsForPeriod(start1, end1);
+            const p2 = getStatsForPeriod(start2, end2);
+
+            // UI Update Helper
+            const updateDiffUI = (val1, val2, elementId) => {
+                let diff = val1 > 0 ? ((val2 - val1) / val1) * 100 : (val2 > 0 ? 100 : 0);
+                let el = document.getElementById(elementId);
+                if(diff > 0) {
+                    el.innerHTML = `▲ +${diff.toFixed(1)}%`;
+                    el.className = "text-xl font-bold py-1 rounded bg-green-100 text-green-700";
+                } else if(diff < 0) {
+                    el.innerHTML = `▼ ${diff.toFixed(1)}%`;
+                    el.className = "text-xl font-bold py-1 rounded bg-red-100 text-red-700";
+                } else {
+                    el.innerHTML = `- คงที่ (0%)`;
+                    el.className = "text-xl font-bold py-1 rounded bg-gray-100 text-gray-600";
+                }
+            };
+
+            document.getElementById('rVol1').innerText = p1.vol.toLocaleString(undefined, {maximumFractionDigits:0});
+            document.getElementById('rVol2').innerText = p2.vol.toLocaleString(undefined, {maximumFractionDigits:0});
+            updateDiffUI(p1.vol, p2.vol, 'rVolDiff');
+
+            document.getElementById('rVp1').innerText = p1.mix.toFixed(1) + '%';
+            document.getElementById('rVp2').innerText = p2.mix.toFixed(1) + '%';
+            let mixDiff = p2.mix - p1.mix;
+            let elMix = document.getElementById('rVpDiff');
+            if(mixDiff > 0) { elMix.innerHTML = `▲ +${mixDiff.toFixed(1)}%`; elMix.className = "text-xl font-bold py-1 rounded bg-green-100 text-green-700"; }
+            else if(mixDiff < 0) { elMix.innerHTML = `▼ ${mixDiff.toFixed(1)}%`; elMix.className = "text-xl font-bold py-1 rounded bg-red-100 text-red-700"; }
+            else { elMix.innerHTML = `- คงที่`; elMix.className = "text-xl font-bold py-1 rounded bg-gray-100 text-gray-600"; }
+
+            document.getElementById('rLift1').innerText = p1.lifts.toLocaleString();
+            document.getElementById('rLift2').innerText = p2.lifts.toLocaleString();
+            updateDiffUI(p1.lifts, p2.lifts, 'rLiftDiff');
+
+            document.getElementById('compResultArea').classList.remove('hidden');
+        });
+
+        // --- Charts ---
+        Chart.defaults.font.family = "'Prompt', sans-serif";
         function renderEmployeeChart(labels, vpowerData, normalData) {
             const ctx = document.getElementById('employeeChart').getContext('2d');
             if(charts.emp) charts.emp.destroy();
-            charts.emp = new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: labels,
-                    datasets: [
-                        { label: 'V-Power (ลิตร)', data: vpowerData, backgroundColor: '#dd1d21', stack: 'Stack 0' },
-                        { label: 'น้ำมันมาตรฐาน (ลิตร)', data: normalData, backgroundColor: '#fbce07', stack: 'Stack 0' }
-                    ]
-                },
-                options: { responsive: true, plugins: { legend: { position: 'top' }, tooltip: { callbacks: { label: function(context) { return context.dataset.label + ': ' + context.raw.toLocaleString() + ' ลิตร'; } } } }, scales: { x: { stacked: true }, y: { stacked: true, beginAtZero: true } } }
-            });
+            charts.emp = new Chart(ctx, { type: 'bar', data: { labels: labels, datasets: [ { label: 'V-Power', data: vpowerData, backgroundColor: '#dd1d21', stack: 'Stack 0' }, { label: 'มาตรฐาน', data: normalData, backgroundColor: '#fbce07', stack: 'Stack 0' } ] }, options: { responsive: true, plugins: { legend: { position: 'top' } }, scales: { x: { stacked: true }, y: { stacked: true, beginAtZero: true } } } });
         }
-
         function renderVehicleChart(labels, vpowerData, normalData) {
             const ctx = document.getElementById('vehicleChart').getContext('2d');
             if(charts.veh) charts.veh.destroy();
-            charts.veh = new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: labels,
-                    datasets: [
-                        { label: 'V-Power (ลิตร)', data: vpowerData, backgroundColor: '#dd1d21', stack: 'Stack 1' },
-                        { label: 'น้ำมันมาตรฐาน (ลิตร)', data: normalData, backgroundColor: '#fbce07', stack: 'Stack 1' }
-                    ]
-                },
-                options: { responsive: true, maintainAspectRatio: false, indexAxis: 'y', plugins: { legend: { position: 'top' }, tooltip: { callbacks: { label: function(context) { return context.dataset.label + ': ' + context.raw.toLocaleString() + ' ลิตร'; } } } }, scales: { x: { stacked: true }, y: { stacked: true } } }
-            });
+            charts.veh = new Chart(ctx, { type: 'bar', data: { labels: labels, datasets: [ { label: 'V-Power', data: vpowerData, backgroundColor: '#dd1d21', stack: 'Stack 1' }, { label: 'มาตรฐาน', data: normalData, backgroundColor: '#fbce07', stack: 'Stack 1' } ] }, options: { responsive: true, maintainAspectRatio: false, indexAxis: 'y', plugins: { legend: { position: 'top' } }, scales: { x: { stacked: true }, y: { stacked: true } } } });
         }
-
         function renderHourlyChart(labels, data) {
             const ctx = document.getElementById('hourlyChart').getContext('2d');
             if(charts.hr) charts.hr.destroy();
-            charts.hr = new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: labels,
-                    datasets: [{
-                        label: 'รถเข้าลาน (คัน)', data: data,
-                        borderColor: '#dd1d21', backgroundColor: 'rgba(221, 29, 33, 0.1)',
-                        borderWidth: 3, fill: true, tension: 0.3, pointBackgroundColor: '#fbce07'
-                    }]
-                },
-                options: { responsive: true, maintainAspectRatio: false }
-            });
+            charts.hr = new Chart(ctx, { type: 'line', data: { labels: labels, datasets: [{ label: 'คัน', data: data, borderColor: '#dd1d21', backgroundColor: 'rgba(221, 29, 33, 0.1)', borderWidth: 3, fill: true, tension: 0.3, pointBackgroundColor: '#fbce07' }] }, options: { responsive: true, maintainAspectRatio: false } });
         }
     </script>
 </body>
