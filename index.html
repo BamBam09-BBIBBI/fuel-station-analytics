@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Shell Car-to-Cash Dashboard (Pro)</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- 🌟 อนุญาตให้ Tailwind ใช้คลาส dark mode -->
     <script>tailwind.config = { darkMode: 'class' }</script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation"></script>
@@ -78,10 +77,7 @@
                         <option value="ALL">รวมทุกวัน (All Dates)</option>
                     </select>
                 </div>
-                <!-- 🌟 (ใหม่) ปุ่มเปิด-ปิด โหมดกลางคืน -->
-                <button id="themeToggleBtn" class="h-9 md:h-10 bg-gray-200 text-gray-800 px-3 md:px-4 py-2 rounded font-medium hover:bg-gray-300 transition flex items-center justify-center text-sm md:text-base" title="สลับโหมดกลางคืน">
-                    🌙
-                </button>
+                <button id="themeToggleBtn" class="h-9 md:h-10 bg-gray-200 text-gray-800 px-3 md:px-4 py-2 rounded font-medium hover:bg-gray-300 transition flex items-center justify-center text-sm md:text-base" title="สลับโหมดกลางคืน">🌙</button>
                 <button id="exportBtn" class="hidden h-9 md:h-10 bg-gray-800 text-white px-3 md:px-4 py-2 rounded font-medium hover:bg-gray-900 transition flex items-center gap-2 text-sm md:text-base">📸 <span class="hidden md:inline">บันทึกภาพ</span></button>
             </div>
         </header>
@@ -154,7 +150,7 @@
                 <div class="card border-shell-yellow bg-white p-3 md:p-6 relative">
                     <p class="text-gray-500 text-xs md:text-sm font-medium leading-tight">V-Power Mix (% ลิตร)</p>
                     <h3 id="kpiVpowerMix" class="text-lg md:text-2xl font-bold text-gray-400 mt-1 transition-colors">-</h3>
-                    <p id="kpiTargetLabel" class="text-[10px] md:text-xs text-gray-400 mt-1 border-t pt-1 truncate">เป้าหมาย: -</p>
+                    <p id="kpiTargetLabel" class="text-[10px] md:text-xs text-gray-400 mt-1 border-t pt-1">เป้าหมาย: -</p>
                 </div>
                 <div class="card border-shell-red bg-white p-3 md:p-6">
                     <p class="text-gray-500 text-xs md:text-sm font-medium leading-tight">บิล Shell GO+ (%)</p>
@@ -239,10 +235,16 @@
                 </div>
             </div>
 
-            <!-- วิเคราะห์การเติบโตรายบุคคล -->
+            <!-- วิเคราะห์การเติบโตรายบุคคล 🌟(เพิ่มปุ่มลัดตรงนี้)🌟 -->
             <div class="card bg-white border-t-4 border-blue-500 mt-4 md:mt-6">
-                <h2 class="text-lg md:text-xl font-semibold mb-1 text-blue-800">📈 วิเคราะห์การเติบโตรายบุคคล</h2>
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-1">
+                    <h2 class="text-lg md:text-xl font-semibold text-blue-800">📈 วิเคราะห์การเติบโตรายบุคคล</h2>
+                    <button id="btnQuickMonth" class="mt-2 md:mt-0 bg-blue-100 text-blue-700 px-3 py-1 rounded text-[10px] md:text-xs font-bold hover:bg-blue-200 transition border border-blue-200">
+                        📅 ดึงข้อมูลเดือนล่าสุด vs เดือนก่อนอัตโนมัติ
+                    </button>
+                </div>
                 <p class="text-xs md:text-sm text-gray-500 mb-4">เปรียบเทียบประสิทธิภาพการทำงาน 2 ช่วงเวลา</p>
+                
                 <div class="grid grid-cols-1 md:grid-cols-4 gap-3 md:gap-4 bg-blue-50 p-3 md:p-4 rounded-lg mb-4 md:mb-6 border border-blue-100">
                     <div>
                         <label class="block text-xs font-bold text-gray-600 mb-1">เลือกพนักงาน</label>
@@ -264,7 +266,7 @@
                     </div>
                     <div class="flex items-end mt-2 md:mt-0">
                         <button id="btnCompare" class="w-full bg-blue-600 text-white p-2 rounded font-medium hover:bg-blue-700 transition shadow text-sm md:text-base">
-                            📊 คำนวณเปรียบเทียบ
+                            📊 คำนวณ
                         </button>
                     </div>
                 </div>
