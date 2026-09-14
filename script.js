@@ -126,13 +126,12 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // 🌟 1. ฟังก์ชันปุ่มลัดเทียบเดือนล่าสุด (Quick Preset)
+    // ฟังก์ชันปุ่มลัดเทียบเดือนล่าสุด
     let btnQuickMonth = document.getElementById('btnQuickMonth');
     if (btnQuickMonth) {
         btnQuickMonth.addEventListener('click', () => {
             if(rawAttendant.length === 0) return showToast("กรุณาอัปโหลดข้อมูลก่อนใช้งานปุ่มลัด", "error");
 
-            // หาเดือนล่าสุดในข้อมูล
             let latest = new Date(0);
             rawAttendant.forEach(row => {
                 let dStr = row['Open Date'] || row['Date'];
@@ -239,31 +238,48 @@ document.addEventListener('DOMContentLoaded', () => {
     renderEmpUI(); 
 });
 
-// 🌟 2. แก้บั๊ก Export ตัดขอบตารางและกราฟ
+// 🌟 2. แก้บั๊ก Export ตัดขอบตารางและกราฟแบบเด็ดขาด (MacBook/iPad Fix)
 let exportBtn = document.getElementById('exportBtn');
 if(exportBtn) {
     exportBtn.addEventListener('click', () => {
-        showToast("กำลังเตรียมรูปภาพ กรุณารอสักครู่...", "info");
+        showToast("กำลังประมวลผลรูปภาพ...", "info");
         let isDark = document.documentElement.classList.contains('dark');
+        let targetEl = document.getElementById('dashboardSection');
         
-        html2canvas(document.getElementById('dashboardSection'), { 
+        // ถอดปลั๊ก Scrollbar ทิ้งชั่วคราว เพื่อบังคับให้ตารางกาง 100%
+        let scrollers = targetEl.querySelectorAll('.overflow-x-auto');
+        scrollers.forEach(el => {
+            el.classList.remove('overflow-x-auto');
+            el.style.overflow = 'visible';
+        });
+
+        html2canvas(targetEl, { 
             scale: 2, 
             backgroundColor: isDark ? "#111827" : "#f3f4f6",
+            windowWidth: 1440, // จำลองจอคอมพิวเตอร์กว้าง 1440px เพื่อให้ Tailwind จัดหน้าแบบ Desktop
             onclone: function(clonedDoc) {
-                // บังคับให้คอนเทนเนอร์หลักกว้างเท่าจอคอม (Desktop Width) เสมอตอนถ่ายรูป
-                // เพื่อไม่ให้ตารางหรือกราฟถูกบีบจนตัวหนังสือตกหล่น
                 let dashSec = clonedDoc.getElementById('dashboardSection');
                 if (dashSec) {
-                    dashSec.style.width = '1200px'; 
-                    dashSec.style.maxWidth = '1200px';
+                    dashSec.style.width = '1440px'; 
+                    dashSec.style.maxWidth = '1440px';
                 }
             }
         }).then(canvas => {
+            // ถ่ายรูปเสร็จ คืนค่า Scrollbar ให้เหมือนเดิม
+            scrollers.forEach(el => {
+                el.classList.add('overflow-x-auto');
+                el.style.overflow = '';
+            });
+
             let link = document.createElement('a');
             let dateVal = document.getElementById('dateFilter') ? document.getElementById('dateFilter').value : 'Export';
             link.download = `Report_${siteName}_${dateVal}.png`;
-            link.href = canvas.toDataURL("image/png"); link.click();
+            link.href = canvas.toDataURL("image/png"); 
+            link.click();
             showToast("ดาวน์โหลดรายงานสำเร็จ", "success");
+        }).catch(err => {
+            scrollers.forEach(el => el.classList.add('overflow-x-auto'));
+            showToast("เกิดข้อผิดพลาดในการสร้างภาพ", "error");
         });
     });
 }
