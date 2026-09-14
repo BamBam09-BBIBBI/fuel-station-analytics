@@ -24,12 +24,11 @@ function showToast(message, type = 'info') {
     setTimeout(() => { toast.classList.remove('show'); setTimeout(() => toast.remove(), 300); }, 3000);
 }
 
-// 🌟 ระบบโหมดกลางคืน (Night Mode) 🌟
+// 🌟 ระบบโหมดกลางคืน (Night Mode)
 function initTheme() {
     const themeBtn = document.getElementById('themeToggleBtn');
     const htmlEl = document.documentElement;
     
-    // โหลดค่าจากความจำเครื่อง
     if (localStorage.getItem('dashboard_theme') === 'dark') {
         htmlEl.classList.add('dark');
         if(themeBtn) themeBtn.innerText = '☀️';
@@ -46,7 +45,6 @@ function initTheme() {
             themeBtn.innerText = isDark ? '☀️' : '🌙';
             updateChartThemeColors(isDark);
             
-            // สั่งวาดกราฟใหม่เพื่อเปลี่ยนสีตัวหนังสือและเส้นบรรทัด
             if(charts.emp) charts.emp.update();
             if(charts.veh) charts.veh.update();
             if(charts.hr) charts.hr.update();
@@ -54,16 +52,15 @@ function initTheme() {
     }
 }
 
-// เปลี่ยนสีตัวหนังสือและเส้นตารางในกราฟให้เข้ากับธีม
 function updateChartThemeColors(isDark) {
-    Chart.defaults.color = isDark ? '#9ca3af' : '#6b7280'; // สีตัวหนังสือ
-    Chart.defaults.scale.grid.color = isDark ? '#374151' : '#e5e7eb'; // สีเส้นตาราง
+    Chart.defaults.color = isDark ? '#9ca3af' : '#6b7280'; 
+    Chart.defaults.scale.grid.color = isDark ? '#374151' : '#e5e7eb'; 
     Chart.defaults.scale.grid.borderColor = isDark ? '#374151' : '#e5e7eb';
 }
 
 // --- UI Setup ---
 document.addEventListener('DOMContentLoaded', () => {
-    initTheme(); // 🌟 รันระบบธีม
+    initTheme(); 
 
     const empContainer = document.getElementById('empFormContainer');
     const compEmpSelect = document.getElementById('compEmpSelect');
@@ -126,6 +123,53 @@ document.addEventListener('DOMContentLoaded', () => {
             renderEmpUI();
             showToast("บันทึกการตั้งค่าเรียบร้อย", "success");
             if (rawAttendant.length > 0) updateDashboard();
+        });
+    }
+
+    // 🌟 1. ฟังก์ชันปุ่มลัดเทียบเดือนล่าสุด (Quick Preset)
+    let btnQuickMonth = document.getElementById('btnQuickMonth');
+    if (btnQuickMonth) {
+        btnQuickMonth.addEventListener('click', () => {
+            if(rawAttendant.length === 0) return showToast("กรุณาอัปโหลดข้อมูลก่อนใช้งานปุ่มลัด", "error");
+
+            // หาเดือนล่าสุดในข้อมูล
+            let latest = new Date(0);
+            rawAttendant.forEach(row => {
+                let dStr = row['Open Date'] || row['Date'];
+                if(dStr) {
+                    let d = new Date(dStr);
+                    if(isNaN(d)) {
+                        let p = dStr.split(/[-/]/);
+                        if(p.length === 3) d = p[0].length === 4 ? new Date(p[0], p[1]-1, p[2]) : new Date(p[2], p[1]-1, p[0]);
+                    }
+                    if(!isNaN(d) && d > latest) latest = d;
+                }
+            });
+
+            if(latest.getTime() === new Date(0).getTime()) return showToast("ไม่พบข้อมูลวันที่ในระบบ", "error");
+
+            let currentYear = latest.getFullYear();
+            let currentMonth = latest.getMonth(); 
+
+            let prevMonth = currentMonth - 1;
+            let prevYear = currentYear;
+            if(prevMonth < 0) { prevMonth = 11; prevYear--; }
+
+            const formatDate = (y, m, d) => `${y}-${String(m+1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+
+            let p2Start = formatDate(currentYear, currentMonth, 1);
+            let p2End = formatDate(currentYear, currentMonth, new Date(currentYear, currentMonth + 1, 0).getDate());
+
+            let p1Start = formatDate(prevYear, prevMonth, 1);
+            let p1End = formatDate(prevYear, prevMonth, new Date(prevYear, prevMonth + 1, 0).getDate());
+
+            document.getElementById('comp1Start').value = p1Start;
+            document.getElementById('comp1End').value = p1End;
+            document.getElementById('comp2Start').value = p2Start;
+            document.getElementById('comp2End').value = p2End;
+
+            document.getElementById('btnCompare').click();
+            showToast("ดึงข้อมูลเดือนล่าสุดและเดือนก่อนหน้าสำเร็จ", "success");
         });
     }
 
@@ -195,15 +239,25 @@ document.addEventListener('DOMContentLoaded', () => {
     renderEmpUI(); 
 });
 
+// 🌟 2. แก้บั๊ก Export ตัดขอบตารางและกราฟ
 let exportBtn = document.getElementById('exportBtn');
 if(exportBtn) {
     exportBtn.addEventListener('click', () => {
         showToast("กำลังเตรียมรูปภาพ กรุณารอสักครู่...", "info");
-        // ถ้าอยู่ในโหมดกลางคืน ก่อนถ่ายรูปจะปรับให้พื้นเป็นสีเข้ม
         let isDark = document.documentElement.classList.contains('dark');
+        
         html2canvas(document.getElementById('dashboardSection'), { 
             scale: 2, 
-            backgroundColor: isDark ? "#111827" : "#f3f4f6" 
+            backgroundColor: isDark ? "#111827" : "#f3f4f6",
+            onclone: function(clonedDoc) {
+                // บังคับให้คอนเทนเนอร์หลักกว้างเท่าจอคอม (Desktop Width) เสมอตอนถ่ายรูป
+                // เพื่อไม่ให้ตารางหรือกราฟถูกบีบจนตัวหนังสือตกหล่น
+                let dashSec = clonedDoc.getElementById('dashboardSection');
+                if (dashSec) {
+                    dashSec.style.width = '1200px'; 
+                    dashSec.style.maxWidth = '1200px';
+                }
+            }
         }).then(canvas => {
             let link = document.createElement('a');
             let dateVal = document.getElementById('dateFilter') ? document.getElementById('dateFilter').value : 'Export';
@@ -549,11 +603,11 @@ function buildKpiTable(sortedEmp, totalActiveDays) {
         let cleanName = name.replace(/\(แคช\)|\(ช่าง\)/g, '').trim();
 
         tbody.innerHTML += `
-            <tr class="hover:bg-gray-50 transition border-b border-gray-100">
-                <td class="py-3 px-4 text-xs md:text-sm font-medium text-gray-800">${cleanName}</td>
+            <tr class="hover:bg-gray-50 transition border-b border-gray-100 dark:border-gray-700">
+                <td class="py-3 px-4 text-xs md:text-sm font-medium text-gray-800 dark:text-gray-200">${cleanName}</td>
                 <td class="py-3 px-4">${roleBadge}</td>
                 <td class="py-3 px-4 text-right text-xs md:text-sm text-gray-500">${dTarget.toLocaleString()}</td>
-                <td class="py-3 px-4 text-right text-xs md:text-sm font-bold text-gray-700">${avgDailySVP.toLocaleString(undefined,{maximumFractionDigits:1})}</td>
+                <td class="py-3 px-4 text-right text-xs md:text-sm font-bold text-gray-700 dark:text-gray-300">${avgDailySVP.toLocaleString(undefined,{maximumFractionDigits:1})}</td>
                 <td class="py-3 px-4 text-right text-xs md:text-sm text-gray-500">${periodTarget.toLocaleString()}</td>
                 <td class="py-3 px-4 text-right text-sm md:text-base font-bold ${actualSVP >= periodTarget ? 'text-green-600' : 'text-red-600'}">${actualSVP.toLocaleString(undefined,{maximumFractionDigits:0})}</td>
                 <td class="py-3 px-4 text-center">${statusHtml}</td>
@@ -613,7 +667,7 @@ function renderEmployeeChart(labels, vpowerData, normalData, averageVol, origina
             annotations: {
                 line1: {
                     type: 'line', yMin: averageVol, yMax: averageVol, borderColor: 'rgba(34, 197, 94, 0.9)', borderWidth: 2, borderDash: [5, 5],
-                    label: { display: true, content: 'ค่าเฉลี่ยสถานี (เฉพาะหน้าลาน)', position: 'end', backgroundColor: 'rgba(34, 197, 94, 0.9)' }
+                    label: { display: true, content: 'ค่าเฉลี่ยสถานี (หน้าลาน)', position: 'end', backgroundColor: 'rgba(34, 197, 94, 0.9)' }
                 }
             }
         };
