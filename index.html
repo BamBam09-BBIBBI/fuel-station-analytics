@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Shell Car-to-Cash Dashboard (Pro)</title>
-    
     <!-- โหลดไลบรารีต่างๆ -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>tailwind.config = { darkMode: 'class' }</script>
@@ -13,7 +12,6 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    
     <style>
         body { font-family: 'Prompt', sans-serif; background-color: #f5f5f5; transition: background-color 0.3s, color 0.3s; }
         .card { background: white; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); padding: 16px; border-top: 4px solid transparent; transition: background-color 0.3s, border-color 0.3s; }
@@ -32,7 +30,6 @@
         .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
         #employeeChart { cursor: pointer; } 
 
-        /* โหมดกลางคืน (Dark Mode) */
         html.dark body { background-color: #111827; color: #f3f4f6; }
         html.dark .bg-white { background-color: #1f2937 !important; border-color: #374151 !important; }
         html.dark .bg-gray-50 { background-color: #374151 !important; border-color: #4b5563 !important; }
@@ -91,7 +88,6 @@
                 ⚙️ ตั้งค่ารายชื่อพนักงาน และ เป้าหมาย (KPI)
             </summary>
             <div class="p-4 border-t border-gray-200 bg-gray-50">
-                
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
                     <div class="p-3 bg-white border border-yellow-300 rounded flex flex-col justify-center gap-1">
                         <label class="text-sm font-bold text-gray-700">🎯 เป้าหมาย V-Power Mix (%):</label>
@@ -168,22 +164,22 @@
                 </div>
             </div>
 
-            <!-- AI Forecasting (แบบพยากรณ์เดือนหน้าล่วงหน้า) -->
+            <!-- AI Forecasting -->
             <div class="card bg-white border-l-4 border-purple-500">
                 <h2 class="text-lg md:text-xl font-semibold mb-3 text-purple-800 flex items-center gap-2">
                     🔮 AI คาดการณ์ยอด V-Power (SVP) ประจำเดือน
                 </h2>
                 <div class="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
                     <div class="bg-gray-50 p-2 md:p-3 rounded text-center">
-                        <p class="text-[10px] md:text-xs text-gray-500">เป้าหมายเดือนหน้า</p>
+                        <p id="forecastTargetLabel" class="text-[10px] md:text-xs text-gray-500">เป้าหมายทั้งเดือน (ลิตร)</p>
                         <p id="forecastTarget" class="text-lg md:text-xl font-bold text-gray-800">-</p>
                     </div>
                     <div class="bg-gray-50 p-2 md:p-3 rounded text-center">
-                        <p class="text-[10px] md:text-xs text-gray-500">จำนวนวันฐานข้อมูล (อดีต)</p>
+                        <p id="forecastCurrentLabel" class="text-[10px] md:text-xs text-gray-500">ยอดสะสมปัจจุบัน (ลิตร)</p>
                         <p id="forecastCurrent" class="text-lg md:text-xl font-bold text-gray-800">-</p>
                     </div>
                     <div class="bg-purple-50 p-2 md:p-3 rounded text-center border border-purple-100 col-span-2 md:col-span-1">
-                        <p class="text-[10px] md:text-xs text-purple-600 font-bold">คาดการณ์ยอดเดือนหน้า</p>
+                        <p id="forecastResultLabel" class="text-[10px] md:text-xs text-purple-600 font-bold">คาดการณ์เมื่อจบเดือน</p>
                         <p id="forecastResult" class="text-xl md:text-2xl font-bold text-purple-700">-</p>
                     </div>
                     <div id="forecastStatusBox" class="p-2 md:p-3 rounded text-center flex flex-col justify-center items-center col-span-2 md:col-span-1 transition-colors">
@@ -194,13 +190,13 @@
                 <div class="mt-4 relative">
                     <div class="flex justify-between text-[10px] md:text-xs text-gray-500 mb-1">
                         <span>0 ลิตร</span>
-                        <span>เป้าหมาย 100%</span>
+                        <span id="forecastPercentText">เป้าหมาย 100%</span>
                     </div>
                     <div class="w-full bg-gray-200 rounded-full h-4 overflow-hidden relative">
                         <div id="forecastProgressBar" class="bg-purple-500 h-4 transition-all duration-1000" style="width: 0%"></div>
                     </div>
                 </div>
-                <p id="forecastInfoText" class="text-[10px] md:text-xs text-gray-400 mt-2 text-right">*ระบบพยากรณ์จากข้อมูลที่อัปโหลดทั้งหมด</p>
+                <p id="forecastInfoText" class="text-[10px] md:text-xs text-gray-400 mt-2 text-right">*ระบบประเมินจากยอดขายเฉลี่ยของข้อมูลย้อนหลังทั้งหมด</p>
             </div>
 
             <!-- Charts -->
@@ -335,8 +331,9 @@
         </div>
     </div>
 
-    <!-- สคริปต์การประมวลผลทั้งหมดรวมไว้ที่นี่ -->
+    <!-- Script สำหรับทำงานเบื้องหลัง -->
     <script>
+        // --- State Management ---
         let rawAttendant = []; let rawHourly = []; let rawProduct = [];
         let filteredHourlyData = []; 
 
@@ -756,6 +753,7 @@
             processHourlyData(filteredHourlyData);
             
             if (sd === "ALL" || sd.startsWith('MONTH_')) {
+                // ส่งข้อมูลทั้งหมดให้พยากรณ์
                 processForecast(filteredAttendant);
             } else {
                 document.getElementById('forecastInfoText').innerText = "*ไม่สามารถคาดการณ์ยอดทั้งเดือนได้ เนื่องจากกำลังดูข้อมูลรายวัน";
@@ -765,10 +763,11 @@
                 document.getElementById('forecastStatusText').innerText = "กรุณาเลือก 'รวมข้อมูลทั้งหมด' หรือ 'สรุปทั้งเดือน'";
                 document.getElementById('forecastStatusText').className = "text-xs md:text-sm font-bold text-gray-500";
                 document.getElementById('forecastRunRate').innerText = "-";
+                document.getElementById('forecastPercentText').innerText = "เป้าหมาย 100%";
             }
         }
 
-        // 🌟 อัปเกรด Forecast: คำนวณพยากรณ์ล่วงหน้าไปที่ "เดือนถัดไป" จากข้อมูลย้อนหลังทั้งหมด
+        // 🔮 ระบบ Forecast แบบก้าวไปอนาคต (Next Month Prediction) 🔮
         function processForecast(attData) {
             if (attData.length === 0) return;
             
@@ -776,6 +775,7 @@
             let activeDates = new Set(); 
             let latestDate = new Date(0); 
             
+            // 1. กวาดข้อมูลทั้งหมด หาค่าเฉลี่ยและวันที่ล่าสุด
             attData.forEach(row => {
                 let dStr = row['Open Date'] || row['Date']; 
                 if (!dStr) return;
@@ -804,6 +804,7 @@
 
             if (activeDates.size === 0) return;
 
+            // 2. คำนวณเดือน "ถัดไป" (Target Next Month)
             let nextMonth = latestDate.getMonth() + 1;
             let nextYear = latestDate.getFullYear();
             if (nextMonth > 11) { nextMonth = 0; nextYear++; } 
@@ -811,21 +812,29 @@
             let monthNames = ["มกราคม", "กุมภาพันธ์", "มีนาคม", "เมษายน", "พฤษภาคม", "มิถุนายน", "กรกฎาคม", "สิงหาคม", "กันยายน", "ตุลาคม", "พฤศจิกายน", "ธันวาคม"];
             let totalDaysInNextMonth = new Date(nextYear, nextMonth + 1, 0).getDate(); 
 
+            // 3. คำนวณคาดการณ์ (คำนวณ % ความสำเร็จ)
             let historicalRunRate = totalSvpVol / activeDates.size; 
             let forecastNextMonthVol = historicalRunRate * totalDaysInNextMonth; 
             let targetSvpVol = parseFloat(document.getElementById('targetSvpVolume').value) || 30000;
+            
+            // คำนวณ %
+            let percentAchievement = (forecastNextMonthVol / targetSvpVol) * 100;
 
+            // 4. อัปเดตหน้าจอ
+            document.getElementById('forecastTargetLabel').innerText = `เป้าหมายเดือน ${monthNames[nextMonth]}`;
             document.getElementById('forecastTarget').innerText = targetSvpVol.toLocaleString(undefined, {maximumFractionDigits:0});
-            document.querySelector('#forecastTarget').previousElementSibling.innerText = `เป้าหมายเดือน ${monthNames[nextMonth]}`;
             
+            document.getElementById('forecastCurrentLabel').innerText = "ฐานข้อมูลที่ใช้เฉลี่ย (ย้อนหลัง)";
             document.getElementById('forecastCurrent').innerText = `${activeDates.size} วัน`;
-            document.querySelector('#forecastCurrent').previousElementSibling.innerText = "จำนวนวันฐานข้อมูล (อดีต)";
             
+            document.getElementById('forecastResultLabel').innerText = `คาดการณ์เดือน ${monthNames[nextMonth]}`;
             document.getElementById('forecastResult').innerText = forecastNextMonthVol.toLocaleString(undefined, {maximumFractionDigits:0});
-            document.querySelector('#forecastResult').previousElementSibling.innerText = `คาดการณ์เดือน ${monthNames[nextMonth]}`;
 
-            document.getElementById('forecastInfoText').innerText = `*พยากรณ์ล่วงหน้าสำหรับเดือน ${monthNames[nextMonth]} ${nextYear} โดยอ้างอิงจากประวัติการขายทั้งหมด ${activeDates.size} วัน`;
+            document.getElementById('forecastInfoText').innerText = `*พยากรณ์ล่วงหน้าสำหรับเดือน ${monthNames[nextMonth]} ${nextYear} โดยอ้างอิงจากประวัติการขาย ${activeDates.size} วันที่ผ่านมา`;
             document.getElementById('forecastRunRate').innerText = `(แนวโน้มเฉลี่ย ${historicalRunRate.toLocaleString(undefined, {maximumFractionDigits:0})} ลิตร/วัน)`;
+            
+            // แสดงเปอร์เซ็นต์เหนือหลอด Progress
+            document.getElementById('forecastPercentText').innerText = `แนวโน้ม: ${percentAchievement.toLocaleString(undefined, {maximumFractionDigits:1})}%`;
                 
             let statusBox = document.getElementById('forecastStatusBox');
             let statusText = document.getElementById('forecastStatusText');
@@ -834,17 +843,17 @@
             if (forecastNextMonthVol >= targetSvpVol) {
                 statusBox.className = "p-2 md:p-3 rounded text-center flex flex-col justify-center items-center col-span-2 md:col-span-1 bg-green-100 border border-green-200 transition-colors dark:bg-green-900 dark:border-green-800";
                 statusText.className = "text-xs md:text-sm font-bold text-green-700 dark:text-green-300";
-                statusText.innerText = "✅ มีแนวโน้มทะลุเป้า";
+                statusText.innerText = "✅ ทะลุเป้าหมาย!";
                 progressBar.className = "bg-green-500 h-4 transition-all duration-1000";
             } else {
                 statusBox.className = "p-2 md:p-3 rounded text-center flex flex-col justify-center items-center col-span-2 md:col-span-1 bg-red-100 border border-red-200 transition-colors dark:bg-red-900 dark:border-red-800";
                 statusText.className = "text-xs md:text-sm font-bold text-red-700 dark:text-red-300";
-                statusText.innerText = "⚠️ เสี่ยงยอดตกเป้า (ต้องกระตุ้นยอด)";
+                statusText.innerText = "⚠️ เสี่ยงตกเป้า";
                 progressBar.className = "bg-red-500 h-4 transition-all duration-1000";
             }
 
-            let percent = (forecastNextMonthVol / targetSvpVol) * 100;
-            setTimeout(() => { progressBar.style.width = Math.min(percent, 100) + '%'; }, 100);
+            // ถ้าเกิน 100% หลอดเต็มแค่ 100% พอจะได้ไม่ล้น
+            setTimeout(() => { progressBar.style.width = Math.min(percentAchievement, 100) + '%'; }, 100);
         }
 
         function processData(attData, prdData) {
@@ -1066,3 +1075,14 @@
     </script>
 </body>
 </html>
+```จากรูปภาพที่คุณแนบมา (Screenshot 2569-09-15 at 15.13.42.png) ตัวเลขคาดการณ์ยอด V-Power (SVP) ประจำเดือนที่ **32,474 ลิตร** นั้นมีความถูกต้องและสอดคล้องกับยอดสะสมปัจจุบันที่แสดงผลอยู่ครับ เนื่องจากหมายเหตุด้านล่างระบุว่าเป็นข้อมูลของเดือนสิงหาคม 2026 (ซึ่งผ่านพ้นมาแล้ว) ยอดสะสมจริงกับยอดคาดการณ์ตอนจบเดือนจึงเป็นตัวเลขเดียวกันครับ
+
+หากนำยอดดังกล่าวมาคำนวณหาเปอร์เซ็นต์ความสำเร็จเทียบกับเป้าหมาย จะได้ผลลัพธ์ดังนี้ครับ:
+
+*   **ยอดสะสม/คาดการณ์:** 32,474 ลิตร
+*   **เป้าหมายทั้งเดือน:** 30,000 ลิตร
+*   **การคำนวณ:** $(32,474 \div 30,000) \times 100 = 108.246\%$
+
+ดังนั้น สามารถสรุปได้ว่ายอด V-Power ในเดือนนี้ **เกินเป้าหมาย โดยทำได้ถึง 108.25%** ครับ 
+
+*(ข้อสังเกตเพิ่มเติม: ระบบคำนวณค่าเฉลี่ยรายวันได้ 1,048 ลิตร/วัน ซึ่งหากนำไปคูณ 31 วันในเดือนสิงหาคม จะได้ 32,488 ลิตร ถือว่าใกล้เคียงยอดสะสมจริงที่ 32,474 ลิตรมากๆ ครับ ถือว่าระบบวิเคราะห์ตัวเลขได้ถูกต้องครับ)*
