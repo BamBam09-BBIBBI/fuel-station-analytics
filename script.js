@@ -241,13 +241,13 @@ if(exportBtn) {
     });
 }
 
-// --- File Handlers (การอ่านและโยนไฟล์) ---
+// 🚀 --- อัปเกรด File Handlers ใหม่ แก้บั๊กนิ่งสนิท 100% --- 🚀
 const fileInput = document.getElementById('fileUpload');
 const dropZone = document.getElementById('dropZone');
 const dateFilter = document.getElementById('dateFilter');
 const hourlyDayFilter = document.getElementById('hourlyDayFilter');
 
-if(fileInput) fileInput.addEventListener('change', handleFiles);
+if(fileInput) fileInput.addEventListener('change', (e) => processSelectedFiles(e.target.files));
 
 if(dropZone) {
     dropZone.addEventListener('dragover', (e) => { e.preventDefault(); dropZone.classList.add('drag-over'); });
@@ -257,7 +257,7 @@ if(dropZone) {
         dropZone.classList.remove('drag-over'); 
         if(e.dataTransfer.files && e.dataTransfer.files.length > 0) {
             fileInput.files = e.dataTransfer.files; 
-            handleFiles({ target: fileInput }); 
+            processSelectedFiles(e.dataTransfer.files); 
         }
     });
 }
@@ -274,57 +274,65 @@ if(dateFilter) {
 }
 if(hourlyDayFilter) hourlyDayFilter.addEventListener('change', () => processHourlyData(filteredHourlyData));
 
-function handleFiles(e) {
-    try {
-        const files = e.target.files;
-        if (!files || files.length === 0) return;
-        
-        document.getElementById('fileStatus').innerHTML = '';
-        let filesProcessed = 0; 
-        rawAttendant = []; rawHourly = []; rawProduct = [];
+function processSelectedFiles(files) {
+    if (!files || files.length === 0) return;
+    
+    document.getElementById('fileStatus').innerHTML = '';
+    let filesProcessed = 0; 
+    rawAttendant = []; rawHourly = []; rawProduct = [];
 
-        Array.from(files).forEach(file => {
-            updateFileBadge(file.name, 'loading');
-            Papa.parse(file, {
-                header: true, skipEmptyLines: true, encoding: "UTF-16", delimiter: "\t",
-                complete: function(results) {
-                    try {
-                        const data = results.data;
-                        if (data.length > 0 && !('Category Name' in data[0])) {
-                            showToast(`ไฟล์ ${file.name} โครงสร้างไม่ถูกต้อง`, "error"); 
-                            updateFileBadge(file.name, 'error');
-                        } else {
-                            updateFileBadge(file.name, 'success');
-                            if (data.length > 0 && data[0]['Site Name'] && siteName === "ไม่ระบุสาขา") {
-                                siteName = data[0]['Site Name'];
-                                document.getElementById('dynamicSiteName').innerText = `สาขา: ${siteName}`;
-                            }
-                            if (file.name.includes("Attendant")) rawAttendant = rawAttendant.concat(data);
-                            else if (file.name.includes("Hourly")) rawHourly = rawHourly.concat(data);
-                            else if (file.name.includes("Product")) rawProduct = rawProduct.concat(data);
-                        }
+    Array.from(files).forEach(file => {
+        updateFileBadge(file.name, 'loading');
+        
+        Papa.parse(file, {
+            header: true, 
+            skipEmptyLines: true, 
+            encoding: "UTF-16", 
+            delimiter: "\t",
+            complete: function(results) {
+                const data = results.data;
+                
+                // ตรวจสอบความถูกต้องพื้นฐาน
+                if (data.length > 0 && !('Category Name' in data[0]) && !('Site Name' in data[0])) {
+                    updateFileBadge(file.name, 'error');
+                } else {
+                    updateFileBadge(file.name, 'success');
+                    if (data.length > 0 && data[0]['Site Name'] && siteName === "ไม่ระบุสาขา") {
+                        siteName = data[0]['Site Name'];
+                        document.getElementById('dynamicSiteName').innerText = `สาขา: ${siteName}`;
+                    }
+                    
+                    // จัดประเภทไฟล์ตามชื่อ (รองรับทั้งชื่อเต็มและชื่อย่อ)
+                    let fileNameLower = file.name.toLowerCase();
+                    if (fileNameLower.includes("attendant")) rawAttendant = rawAttendant.concat(data);
+                    else if (fileNameLower.includes("hourly")) rawHourly = rawHourly.concat(data);
+                    else if (fileNameLower.includes("product")) rawProduct = rawProduct.concat(data);
+                }
+                
+                filesProcessed++;
+                
+                // เมื่ออ่านครบทุกไฟล์แล้ว
+                if (filesProcessed === files.length) {
+                    if (rawAttendant.length > 0 || rawHourly.length > 0 || rawProduct.length > 0) {
+                        document.getElementById('dashboardSection').classList.remove('hidden');
+                        let exBtn = document.getElementById('exportBtn'); 
+                        if(exBtn) exBtn.classList.remove('hidden');
                         
-                        filesProcessed++;
-                        if (filesProcessed === files.length) {
-                            if (rawAttendant.length > 0 || rawHourly.length > 0 || rawProduct.length > 0) {
-                                document.getElementById('dashboardSection').classList.remove('hidden');
-                                let exBtn = document.getElementById('exportBtn'); if(exBtn) exBtn.classList.remove('hidden');
-                                populateDateFilter(); 
-                                updateDashboard(); 
-                                showToast("ประมวลผลข้อมูลสำเร็จ", "success");
-                            } else {
-                                showToast("ไม่พบข้อมูลที่ใช้ได้", "error");
-                            }
-                        }
-                    } catch(err) {
-                        showToast(`Error: ${err.message}`, "error");
+                        populateDateFilter(); 
+                        updateDashboard(); 
+                        showToast(`ประมวลผลสำเร็จ ${filesProcessed} ไฟล์`, "success");
+                    } else {
+                        showToast("ไม่พบข้อมูลที่ตรงกับรูปแบบระบบ", "error");
                     }
                 }
-            });
+            },
+            error: function(error) {
+                updateFileBadge(file.name, 'error');
+                filesProcessed++;
+                if (filesProcessed === files.length) showToast("เกิดข้อผิดพลาดในการอ่านไฟล์บางส่วน", "error");
+            }
         });
-    } catch(err) {
-        showToast("ระบบขัดข้อง: ไม่สามารถอ่านไฟล์ได้", "error");
-    }
+    });
 }
 
 function updateFileBadge(filename, status) {
@@ -339,8 +347,8 @@ function updateFileBadge(filename, status) {
         badge.id = badgeId; 
         document.getElementById('fileStatus').appendChild(badge); 
     }
-    badge.className = `px-3 py-1 rounded-full border border-gray-200 dark:border-gray-600 ${color}`;
-    badge.innerText = icon + filename.substring(0, 20) + '...';
+    badge.className = `px-3 py-1 rounded-full border border-gray-200 dark:border-gray-600 ${color} shadow-sm`;
+    badge.innerText = icon + filename.substring(0, 25) + '...';
 }
 
 function populateDateFilter() {
