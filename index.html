@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Shell Car-to-Cash Dashboard (Ultimate)</title>
+    <title>Shell Car-to-Cash Dashboard (Ultimate V2)</title>
     
     <!-- โหลดไลบรารี -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -128,7 +128,7 @@
         <!-- Upload Zone -->
         <div id="dropZone" class="card mb-6 border-2 border-dashed border-gray-300 bg-white text-center transition-all duration-200">
             <h2 class="text-base md:text-lg font-semibold mb-1">📥 โยนไฟล์วิเคราะห์ทั้งหมดลงที่นี่</h2>
-            <p class="text-xs md:text-sm text-gray-500 mb-4">*ลากไฟล์หลายเดือนมาวางพร้อมกันได้เลย (Attendant, HourlyTrends, ProductSales)</p>
+            <p class="text-xs md:text-sm text-gray-500 mb-4">*ลากไฟล์หลายเดือนมาวางพร้อมกันได้เลย (Attendant, HourlyTrends)</p>
             <input type="file" id="fileUpload" multiple accept=".csv, .txt" class="block w-full text-xs md:text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-red-50 file:text-red-700 hover:file:bg-red-100 cursor-pointer mx-auto max-w-md"/>
             <div id="fileStatus" class="mt-4 flex flex-wrap justify-center gap-2 text-xs font-medium"></div>
         </div>
@@ -136,25 +136,31 @@
         <!-- Dashboard Section -->
         <div id="dashboardSection" class="hidden space-y-4 md:space-y-6 bg-gray-100 p-2 md:p-4 rounded-lg transition-colors">
             
-            <!-- Global KPIs -->
-            <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-6">
-                <div class="card border-shell-yellow bg-white p-3 md:p-6 relative">
-                    <p class="text-gray-500 text-xs md:text-sm font-medium leading-tight">ปริมาณลิตรรวม (รวมรถใหญ่)</p>
-                    <h3 id="kpiTotalVol" class="text-lg md:text-2xl font-bold text-gray-900 mt-1 transition-colors">-</h3>
-                    <p id="kpiTotalTargetLabel" class="text-[10px] md:text-xs text-gray-400 mt-1 border-t pt-1">เป้าหมาย: -</p>
+            <!-- Global KPIs (5 Columns) -->
+            <div class="grid grid-cols-2 lg:grid-cols-5 gap-3 md:gap-4">
+                <div class="card border-shell-yellow bg-white p-3 relative">
+                    <p class="text-gray-500 text-[10px] md:text-xs font-medium leading-tight">ปริมาณลิตรรวม (รวมรถใหญ่)</p>
+                    <h3 id="kpiTotalVol" class="text-lg md:text-xl font-bold text-gray-900 mt-1 transition-colors">-</h3>
+                    <p id="kpiTotalTargetLabel" class="text-[10px] text-gray-400 mt-1 border-t pt-1">เป้าหมาย: -</p>
                 </div>
-                <div class="card border-shell-red bg-white p-3 md:p-6">
-                    <p class="text-gray-500 text-xs md:text-sm font-medium leading-tight">รวมรถเข้าลาน (คัน)</p>
-                    <h3 id="kpiTotalCars" class="text-lg md:text-2xl font-bold text-gray-900 mt-1">-</h3>
+                <div class="card border-shell-red bg-white p-3">
+                    <p class="text-gray-500 text-[10px] md:text-xs font-medium leading-tight">รวมรถเข้าลาน (คัน)</p>
+                    <h3 id="kpiTotalCars" class="text-lg md:text-xl font-bold text-gray-900 mt-1">-</h3>
                 </div>
-                <div class="card border-shell-yellow bg-white p-3 md:p-6 relative">
-                    <p class="text-gray-500 text-xs md:text-sm font-medium leading-tight text-red-600">V-Power Mix (% ลิตร) *เฉพาะรถเล็ก</p>
-                    <h3 id="kpiVpowerMix" class="text-lg md:text-2xl font-bold text-gray-400 mt-1 transition-colors">-</h3>
-                    <p id="kpiTargetLabel" class="text-[10px] md:text-xs text-gray-400 mt-1 border-t pt-1">เป้าหมาย: -</p>
+                <!-- 🆕 NEW: KPI กล่อง SVP -->
+                <div class="card border-t-4 border-purple-500 bg-white p-3 relative shadow-sm">
+                    <p class="text-[10px] md:text-xs font-bold leading-tight text-purple-700">ปริมาณ SVP (ลิตร) *เฉพาะรถเล็ก</p>
+                    <h3 id="kpiSvpVol" class="text-lg md:text-xl font-bold text-gray-900 mt-1 transition-colors">-</h3>
+                    <p id="kpiSvpTargetLabel" class="text-[10px] text-gray-400 mt-1 border-t pt-1">เป้าหมาย: -</p>
                 </div>
-                <div class="card border-shell-red bg-white p-3 md:p-6">
-                    <p class="text-gray-500 text-xs md:text-sm font-medium leading-tight text-red-600">บิล Shell GO+ (%) *เฉพาะรถเล็ก</p>
-                    <h3 id="kpiGoPlusMix" class="text-lg md:text-2xl font-bold text-gray-900 mt-1">-</h3>
+                <div class="card border-shell-yellow bg-white p-3 relative">
+                    <p class="text-[10px] md:text-xs font-bold leading-tight text-red-600">V-Power Mix (% ลิตร) *เฉพาะรถเล็ก</p>
+                    <h3 id="kpiVpowerMix" class="text-lg md:text-xl font-bold text-gray-400 mt-1 transition-colors">-</h3>
+                    <p id="kpiTargetLabel" class="text-[10px] text-gray-400 mt-1 border-t pt-1">เป้าหมาย: -</p>
+                </div>
+                <div class="card border-shell-red bg-white p-3">
+                    <p class="text-[10px] md:text-xs font-bold leading-tight text-red-600">บิล Shell GO+ (%) *เฉพาะรถเล็ก</p>
+                    <h3 id="kpiGoPlusMix" class="text-lg md:text-xl font-bold text-gray-900 mt-1">-</h3>
                 </div>
             </div>
 
@@ -196,7 +202,7 @@
             <!-- Charts Section -->
             <div class="grid grid-cols-1 xl:grid-cols-2 gap-4 md:gap-6">
                 
-                <!-- 🏆 NEW ORDER: Daily Ranking Chart (Moved Up) -->
+                <!-- 🏆 NEW ORDER: Daily Ranking Chart -->
                 <div class="card bg-white xl:col-span-2">
                     <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center mb-3 gap-2">
                         <h2 class="text-lg md:text-xl font-semibold">🏆 จัดอันดับยอดขายรายวัน (จันทร์-อาทิตย์)</h2>
@@ -230,7 +236,7 @@
                     </div>
                 </div>
 
-                <!-- 👨‍💼 Employee Chart (Moved Down & No Heavy) -->
+                <!-- 👨‍💼 Employee Chart -->
                 <div class="card xl:col-span-2 bg-white">
                     <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-1 gap-2">
                         <div class="flex items-center gap-2 flex-wrap">
@@ -246,7 +252,7 @@
                     </div>
                 </div>
                 
-                <!-- 📈 Hourly Trends Chart (Fixed Axis + Multi-select) -->
+                <!-- 📈 Hourly Trends Chart -->
                 <div class="card bg-white">
                     <div class="flex flex-col justify-between items-start mb-3 gap-2">
                         <div class="flex justify-between w-full items-center">
@@ -388,7 +394,6 @@
         // --- State Variables ---
         let rawAttendant = []; 
         let rawHourly = []; 
-        let rawProduct = []; 
         let currentAttData = []; 
         let employeeMapping = {
             "1": "เฟิร์น", "2": "ตุ้ย (แคช)", "3": "กี้ (ช่าง)", "4": "เหรียญ (แคช)", 
@@ -787,7 +792,6 @@
             let filesProcessed = 0; 
             rawAttendant = []; 
             rawHourly = []; 
-            rawProduct = [];
 
             Array.from(files).forEach(file => {
                 updateFileBadge(file.name, 'loading');
@@ -814,15 +818,13 @@
                                     rawAttendant = rawAttendant.concat(data);
                                 } else if (fileNameLower.includes("hourly")) {
                                     rawHourly = rawHourly.concat(data);
-                                } else if (fileNameLower.includes("product")) {
-                                    rawProduct = rawProduct.concat(data);
                                 }
                             }
                             
                             filesProcessed++;
                             
                             if (filesProcessed === files.length) {
-                                if (rawAttendant.length > 0 || rawHourly.length > 0 || rawProduct.length > 0) {
+                                if (rawAttendant.length > 0 || rawHourly.length > 0) {
                                     document.getElementById('dashboardSection').classList.remove('hidden');
                                     let exBtn = document.getElementById('exportBtn');
                                     if (exBtn) exBtn.classList.remove('hidden');
@@ -929,15 +931,6 @@
                 if (sd === "ALL") return true;
                 let dStr = r['Open Date'] || r['Date'];
                 
-                // 🛠️ FIX: รองรับไฟล์ ProductSales ที่ส่งมาเป็นรายเดือน (ไม่มี Date)
-                if (!dStr && r['Year'] && r['Month']) {
-                    let ymStr = `${r['Year']}-${String(r['Month']).padStart(2, '0')}`;
-                    if (sd.startsWith('MONTH_')) {
-                        return ymStr === sd.replace('MONTH_', ''); 
-                    }
-                    return false; 
-                }
-                
                 if (!dStr) return false;
                 
                 if (sd.startsWith('MONTH_')) {
@@ -950,13 +943,12 @@
             
             let filteredHourlyData = rawHourly.filter(filterFn); 
             let filteredAttendant = rawAttendant.filter(filterFn);
-            let filteredProduct = rawProduct.filter(filterFn);
 
             // Update main globals
             currentAttData = filteredAttendant;
 
             // Trigger updates
-            processData(filteredAttendant, filteredProduct);
+            processData(filteredAttendant);
             processDailyRanking(filteredAttendant);
             processHourlyData(filteredHourlyData); // 🚨 เปลี่ยนมาส่งข้อมูลไฟล์ Hourly ขนานแท้
             
@@ -1291,14 +1283,14 @@
         }
 
         // --- 📊 Main Data Processing (NO HEAVY LOGIC for KPIs) ---
-        function processData(attData, prdData) {
+        function processData(attData) {
             let globalStats = { 
                 totalVol: 0,        // รวมทุกคัน (รวมรถใหญ่ด้วย)
                 totalCars: 0,       // รวมทุกคัน
                 targetVehicleVol: 0, // ยอดลิตรเฉพาะ 2ล้อ/4ล้อ
                 vpowerVol: 0,       // V-Power เฉพาะ 2ล้อ/4ล้อ
-                totalBills: 0,      // ยอดบิลเฉพาะ 2ล้อ/4ล้อ
-                goPlusBills: 0      // บิล Go+ เฉพาะ 2ล้อ/4ล้อ
+                totalSmallCarsDeliveryCount: 0, // บิลทั้งหมด (เฉพาะ 2ล้อ/4ล้อ)
+                goPlusSmallCarsDeliveryCount: 0 // บิล GO+ (เฉพาะ 2ล้อ/4ล้อ)
             };
             
             let employeeStats = {};
@@ -1320,6 +1312,7 @@
                     let deliveryCount = parseInt(row['Delivery Count']) || 0;
                     let pName = (row['Product Name'] || "").toUpperCase();
                     let vCode = (row['Vehicle Code'] || "").trim().toUpperCase();
+                    let loyalty = (row['Loyalty'] || "").trim().toUpperCase();
                     
                     if (!empId || volume <= 0) return;
                     
@@ -1336,6 +1329,12 @@
                     // เก็บยอดเฉพาะ 2ล้อ และ 4ล้อ
                     globalStats.targetVehicleVol += volume;
                     if (isVpower) globalStats.vpowerVol += volume;
+                    
+                    // 🛠️ นับบิล Shell GO+ จากไฟล์ Attendant โดยตรง (ตัดรถใหญ่ทิ้ง)
+                    globalStats.totalSmallCarsDeliveryCount += deliveryCount;
+                    if (loyalty === 'GP') {
+                        globalStats.goPlusSmallCarsDeliveryCount += deliveryCount;
+                    }
 
                     if (!empActiveDates[empRawName]) empActiveDates[empRawName] = new Set();
                     if (dStr) empActiveDates[empRawName].add(dStr);
@@ -1366,38 +1365,35 @@
                 }
             });
 
-            // 🛠️ FIX: Shell GO+ นับเฉพาะ 2 ล้อ และ 4 ล้อ
-            prdData.forEach(row => {
-                if (row['Category Name'] === 'Fuels') {
-                    // กรองรถใหญ่ทิ้ง (นับแค่ 2W, 4W)
-                    let vCode = (row['Vehicle Code'] || "").trim().toUpperCase();
-                    if (vCode !== '2W' && vCode !== '4W') return;
-
-                    let loyalty = (row['Loyalty'] || "").toUpperCase();
-                    let count = parseInt(row['Delivery Count']) || parseInt(row['Purchase Count']) || 0;
-                    if(count > 0) {
-                        globalStats.totalBills += count;
-                        if (loyalty.includes("GO+") || (loyalty !== "NOLOYALTY" && loyalty !== "")) {
-                            globalStats.goPlusBills += count;
-                        }
-                    }
-                }
-            });
-
             // Update Top Level KPIs
-            let kpiVolTargetVal = parseFloat(document.getElementById('targetTotalVolume').value) || 150000;
             let numMonths = Array.from(document.getElementById('dateFilter').options).filter(o => o.value.startsWith('MONTH_')).length;
+            
+            // ลิตรรวม (ยังมีรถใหญ่อยู่)
+            let kpiVolTargetVal = parseFloat(document.getElementById('targetTotalVolume').value) || 150000;
             let finalVolTarget = (document.getElementById('dateFilter').value === "ALL" && numMonths > 0) ? kpiVolTargetVal * numMonths : kpiVolTargetVal;
 
             document.getElementById('kpiTotalTargetLabel').innerText = `เป้าหมาย: ${finalVolTarget.toLocaleString()} ลิตร`;
-            
-            // ลิตรรวม (ยังมีรถใหญ่อยู่)
             let kpiTotalVolEl = document.getElementById('kpiTotalVol');
             kpiTotalVolEl.innerText = globalStats.totalVol.toLocaleString(undefined, {maximumFractionDigits: 0});
             if (globalStats.totalVol >= finalVolTarget) {
-                kpiTotalVolEl.className = "text-lg md:text-2xl font-bold text-blue-600 mt-1 transition-colors";
+                kpiTotalVolEl.className = "text-lg md:text-xl font-bold text-blue-600 mt-1 transition-colors";
             } else {
-                kpiTotalVolEl.className = "text-lg md:text-2xl font-bold text-gray-900 dark:text-gray-100 mt-1 transition-colors";
+                kpiTotalVolEl.className = "text-lg md:text-xl font-bold text-gray-900 dark:text-gray-100 mt-1 transition-colors";
+            }
+            
+            document.getElementById('kpiTotalCars').innerText = globalStats.totalCars.toLocaleString();
+
+            // 🆕 NEW: SVP Volume KPI (เฉพาะ 2ล้อ/4ล้อ)
+            let targetSvpVal = parseFloat(document.getElementById('targetSvpVolume').value) || 30000;
+            let finalSvpTarget = (document.getElementById('dateFilter').value === "ALL" && numMonths > 0) ? targetSvpVal * numMonths : targetSvpVal;
+            
+            document.getElementById('kpiSvpTargetLabel').innerText = `เป้าหมาย: ${finalSvpTarget.toLocaleString()} ลิตร`;
+            let kpiSvpVolEl = document.getElementById('kpiSvpVol');
+            kpiSvpVolEl.innerText = globalStats.vpowerVol.toLocaleString(undefined, {maximumFractionDigits: 0});
+            if (globalStats.vpowerVol >= finalSvpTarget) {
+                kpiSvpVolEl.className = "text-lg md:text-xl font-bold text-green-600 mt-1 transition-colors";
+            } else {
+                kpiSvpVolEl.className = "text-lg md:text-xl font-bold text-gray-900 mt-1 transition-colors";
             }
 
             // V-Power Mix (เฉพาะ 2ล้อ/4ล้อ)
@@ -1408,14 +1404,16 @@
             let vpElement = document.getElementById('kpiVpowerMix');
             vpElement.innerText = vMix.toFixed(1) + '%';
             if (vMix >= targetVp) {
-                vpElement.className = "text-lg md:text-2xl font-bold text-green-600 mt-1 transition-colors";
+                vpElement.className = "text-lg md:text-xl font-bold text-green-600 mt-1 transition-colors";
             } else {
-                vpElement.className = "text-lg md:text-2xl font-bold text-red-600 mt-1 transition-colors";
+                vpElement.className = "text-lg md:text-xl font-bold text-red-600 mt-1 transition-colors";
             }
             
-            let goMix = globalStats.totalBills > 0 ? ((globalStats.goPlusBills / globalStats.totalBills) * 100).toFixed(1) : 0;
+            // 🛠️ Shell GO+ Mix (นับจากบิล 2ล้อ/4ล้อ ที่เป็น GP)
+            let goMix = globalStats.totalSmallCarsDeliveryCount > 0 
+                ? ((globalStats.goPlusSmallCarsDeliveryCount / globalStats.totalSmallCarsDeliveryCount) * 100).toFixed(1) 
+                : 0;
             document.getElementById('kpiGoPlusMix').innerText = goMix + '%';
-            document.getElementById('kpiTotalCars').innerText = globalStats.totalCars.toLocaleString();
 
             // Employee processing (เฉพาะ 2ล้อ/4ล้อ)
             let sortedEmp = Object.entries(employeeStats).sort((a, b) => b[1].totalVol - a[1].totalVol);
