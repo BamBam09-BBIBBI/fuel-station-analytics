@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Shell Car-to-Cash Dashboard (Ultimate V2)</title>
+    <title>Shell Car-to-Cash Dashboard (Ultimate Pro)</title>
     
     <!-- โหลดไลบรารี -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -138,36 +138,35 @@
             
             <!-- Global KPIs (5 Columns) -->
             <div class="grid grid-cols-2 lg:grid-cols-5 gap-3 md:gap-4">
-                <div class="card border-shell-yellow bg-white p-3 relative">
+                <div class="card border-shell-yellow bg-white p-3 relative shadow-sm">
                     <p class="text-gray-500 text-[10px] md:text-xs font-medium leading-tight">ปริมาณลิตรรวม (รวมรถใหญ่)</p>
                     <h3 id="kpiTotalVol" class="text-lg md:text-xl font-bold text-gray-900 mt-1 transition-colors">-</h3>
                     <p id="kpiTotalTargetLabel" class="text-[10px] text-gray-400 mt-1 border-t pt-1">เป้าหมาย: -</p>
                 </div>
-                <div class="card border-shell-red bg-white p-3">
+                <div class="card border-shell-red bg-white p-3 shadow-sm">
                     <p class="text-gray-500 text-[10px] md:text-xs font-medium leading-tight">รวมรถเข้าลาน (คัน)</p>
                     <h3 id="kpiTotalCars" class="text-lg md:text-xl font-bold text-gray-900 mt-1">-</h3>
                 </div>
-                <!-- 🆕 NEW: KPI กล่อง SVP -->
                 <div class="card border-t-4 border-purple-500 bg-white p-3 relative shadow-sm">
                     <p class="text-[10px] md:text-xs font-bold leading-tight text-purple-700">ปริมาณ SVP (ลิตร) *เฉพาะรถเล็ก</p>
                     <h3 id="kpiSvpVol" class="text-lg md:text-xl font-bold text-gray-900 mt-1 transition-colors">-</h3>
                     <p id="kpiSvpTargetLabel" class="text-[10px] text-gray-400 mt-1 border-t pt-1">เป้าหมาย: -</p>
                 </div>
-                <div class="card border-shell-yellow bg-white p-3 relative">
+                <div class="card border-shell-yellow bg-white p-3 relative shadow-sm">
                     <p class="text-[10px] md:text-xs font-bold leading-tight text-red-600">V-Power Mix (% ลิตร) *เฉพาะรถเล็ก</p>
                     <h3 id="kpiVpowerMix" class="text-lg md:text-xl font-bold text-gray-400 mt-1 transition-colors">-</h3>
                     <p id="kpiTargetLabel" class="text-[10px] text-gray-400 mt-1 border-t pt-1">เป้าหมาย: -</p>
                 </div>
-                <div class="card border-shell-red bg-white p-3">
+                <div class="card border-shell-red bg-white p-3 shadow-sm">
                     <p class="text-[10px] md:text-xs font-bold leading-tight text-red-600">บิล Shell GO+ (%) *เฉพาะรถเล็ก</p>
                     <h3 id="kpiGoPlusMix" class="text-lg md:text-xl font-bold text-gray-900 mt-1">-</h3>
                 </div>
             </div>
 
             <!-- AI Forecasting Section -->
-            <div class="card bg-white border-l-4 border-purple-500">
+            <div class="card bg-white border-l-4 border-purple-500 shadow-sm">
                 <h2 class="text-lg md:text-xl font-semibold mb-3 text-purple-800 flex items-center gap-2">
-                    🔮 AI คาดการณ์ยอด V-Power (SVP) ประจำเดือน <span class="text-xs font-normal text-gray-500 ml-2">*วิเคราะห์เฉพาะฐานข้อมูล 2 ล้อ และ 4 ล้อ</span>
+                    🔮 AI คาดการณ์ยอด V-Power (SVP) ประจำเดือน <span class="text-[10px] md:text-xs font-normal text-gray-500 ml-2">*วิเคราะห์เฉพาะ 2 ล้อ และ 4 ล้อ</span>
                 </h2>
                 <div class="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
                     <div class="bg-gray-50 p-2 md:p-3 rounded text-center">
@@ -202,8 +201,8 @@
             <!-- Charts Section -->
             <div class="grid grid-cols-1 xl:grid-cols-2 gap-4 md:gap-6">
                 
-                <!-- 🏆 NEW ORDER: Daily Ranking Chart -->
-                <div class="card bg-white xl:col-span-2">
+                <!-- 🏆 Daily Ranking Chart -->
+                <div class="card bg-white xl:col-span-2 shadow-sm">
                     <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center mb-3 gap-2">
                         <h2 class="text-lg md:text-xl font-semibold">🏆 จัดอันดับยอดขายรายวัน (จันทร์-อาทิตย์)</h2>
                         <div class="flex flex-wrap gap-2">
@@ -213,7 +212,6 @@
                             </select>
                         </div>
                     </div>
-                    <!-- 🎛️ Multi-select Filters for Daily Ranking -->
                     <div class="flex flex-col md:flex-row gap-4 bg-gray-50 p-2 rounded border border-gray-200 mb-2">
                         <div class="flex items-center gap-3">
                             <span class="text-xs font-bold text-gray-700">ประเภทรถ:</span>
@@ -227,7 +225,6 @@
                             <label class="inline-flex items-center gap-1 text-xs cursor-pointer"><input type="checkbox" class="dr-fuel w-4 h-4 accent-red-600" value="NM" checked> มาตรฐาน</label>
                         </div>
                     </div>
-                    
                     <p class="text-[10px] md:text-xs text-gray-500 mb-2">*เรียงลำดับวันทำงานที่ยุ่งที่สุดจากซ้ายไปขวา (ยอดเฉลี่ยต่อวัน)</p>
                     <div class="overflow-x-auto pb-2 custom-scrollbar">
                         <div style="min-width: 800px; height: 300px;">
@@ -237,10 +234,10 @@
                 </div>
 
                 <!-- 👨‍💼 Employee Chart -->
-                <div class="card xl:col-span-2 bg-white">
+                <div class="card xl:col-span-2 bg-white shadow-sm">
                     <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-1 gap-2">
                         <div class="flex items-center gap-2 flex-wrap">
-                            <h2 class="text-lg md:text-xl font-semibold">👨‍💼 ปริมาณการขาย (ลิตร) แยกตามพนักงาน <span class="text-sm font-normal text-red-500 ml-2">*เฉพาะ 2 ล้อ และ 4 ล้อ (ตัดฟลีตการ์ดรถใหญ่)</span></h2>
+                            <h2 class="text-lg md:text-xl font-semibold">👨‍💼 ปริมาณการขาย (ลิตร) แยกตามพนักงาน <span class="text-sm font-normal text-red-500 ml-2">*เฉพาะ 2 ล้อ และ 4 ล้อ</span></h2>
                             <button id="clearEmpFilterBtn" class="hidden bg-red-100 text-red-600 px-2 py-1 text-[10px] md:text-xs font-bold rounded hover:bg-red-200 transition">❌ ยกเลิกตัวกรองพนักงาน</button>
                         </div>
                         <span class="px-2 py-1 bg-green-100 text-green-700 text-[10px] md:text-xs font-bold rounded">👆 แตะที่กราฟเพื่อเจาะลึกพฤติกรรมลูกค้าของแต่ละคน</span>
@@ -252,42 +249,42 @@
                     </div>
                 </div>
                 
-                <!-- 📈 Hourly Trends Chart -->
-                <div class="card bg-white">
+                <!-- 📈 Hourly Trends Chart (4 Modes + Fixed Axis) -->
+                <div class="card bg-white shadow-sm">
                     <div class="flex flex-col justify-between items-start mb-3 gap-2">
                         <div class="flex justify-between w-full items-center">
                             <h2 class="text-lg md:text-xl font-semibold">⏱️ เจาะลึกรายชั่วโมง</h2>
                             <select id="hourlyDayFilter" class="border p-1 rounded text-xs bg-red-50 text-red-700 font-bold focus:outline-none"><option value="ALL">รวมทุกวัน</option><option value="1">จันทร์</option><option value="2">อังคาร</option><option value="3">พุธ</option><option value="4">พฤหัสบดี</option><option value="5">ศุกร์</option><option value="6">เสาร์</option><option value="0">อาทิตย์</option></select>
                         </div>
-                        <select id="hrMetric" class="border p-1.5 rounded text-xs bg-gray-50 focus:outline-none focus:border-red-500 font-medium w-full md:w-auto">
-                            <option value="count">จำนวนรถ (คัน)</option>
-                            <option value="volume">ปริมาณ (ลิตร)</option>
-                        </select>
+                        <div class="flex gap-2 w-full">
+                            <select id="hrMetric" class="border p-1.5 rounded text-[10px] md:text-xs bg-gray-50 focus:outline-none focus:border-red-500 font-medium w-full">
+                                <option value="count">จำนวนรถ (คัน)</option>
+                                <option value="volume">ปริมาณ (ลิตร)</option>
+                            </select>
+                            <select id="hrFuelMode" class="border p-1.5 rounded text-[10px] md:text-xs bg-gray-50 focus:outline-none focus:border-red-500 font-bold text-red-700 w-full">
+                                <option value="ALL">โหมด: รวมน้ำมัน (1 เส้น)</option>
+                                <option value="COMPARE">โหมด: เปรียบเทียบ (2 เส้น)</option>
+                                <option value="VP">โหมด: เฉพาะ V-Power</option>
+                                <option value="NM">โหมด: เฉพาะ มาตรฐาน</option>
+                            </select>
+                        </div>
                     </div>
                     
-                    <!-- 🎛️ Multi-select Filters for Hourly Trends -->
-                    <div class="flex flex-col gap-2 bg-gray-50 p-2 rounded border border-gray-200 mb-2">
-                        <div class="flex items-center gap-3">
-                            <span class="text-[10px] font-bold text-gray-700">ประเภทรถ:</span>
-                            <label class="inline-flex items-center gap-1 text-[10px] cursor-pointer"><input type="checkbox" class="hr-veh w-3 h-3 accent-red-600" value="2W" checked> 2 ล้อ</label>
-                            <label class="inline-flex items-center gap-1 text-[10px] cursor-pointer"><input type="checkbox" class="hr-veh w-3 h-3 accent-red-600" value="4W" checked> 4 ล้อ</label>
-                            <label class="inline-flex items-center gap-1 text-[10px] cursor-pointer"><input type="checkbox" class="hr-veh w-3 h-3 accent-red-600" value="HEAVY" checked> รถใหญ่</label>
-                        </div>
-                        <div class="flex items-center gap-3">
-                            <span class="text-[10px] font-bold text-gray-700">ประเภทน้ำมัน:</span>
-                            <label class="inline-flex items-center gap-1 text-[10px] cursor-pointer"><input type="checkbox" class="hr-fuel w-3 h-3 accent-red-600" value="VP" checked> V-Power</label>
-                            <label class="inline-flex items-center gap-1 text-[10px] cursor-pointer"><input type="checkbox" class="hr-fuel w-3 h-3 accent-red-600" value="NM" checked> มาตรฐาน</label>
-                        </div>
+                    <div class="flex items-center gap-3 bg-gray-50 p-2 rounded border border-gray-200 mb-2">
+                        <span class="text-[10px] md:text-xs font-bold text-gray-700">ประเภทรถ:</span>
+                        <label class="inline-flex items-center gap-1 text-[10px] md:text-xs cursor-pointer"><input type="checkbox" class="hr-veh w-3 h-3 accent-red-600" value="2W" checked> 2 ล้อ</label>
+                        <label class="inline-flex items-center gap-1 text-[10px] md:text-xs cursor-pointer"><input type="checkbox" class="hr-veh w-3 h-3 accent-red-600" value="4W" checked> 4 ล้อ</label>
+                        <label class="inline-flex items-center gap-1 text-[10px] md:text-xs cursor-pointer"><input type="checkbox" class="hr-veh w-3 h-3 accent-red-600" value="HEAVY" checked> รถใหญ่</label>
                     </div>
 
-                    <p class="text-[10px] text-gray-500 mb-2">*แกนเวลาล็อคคงที่ 05:00 - 22:00 และแกน Y ล็อกจุด Peak สุดไว้เสมอ</p>
+                    <p class="text-[10px] text-gray-500 mb-2">*แกนเวลาล็อกคงที่ 05:00 - 22:00 น. เสมอ</p>
                     <div style="position: relative; height: 260px; width: 100%;">
                         <canvas id="hourlyChart"></canvas>
                     </div>
                 </div>
 
                 <!-- 🚗 100% Stacked Vehicle Mix -->
-                <div class="card bg-white">
+                <div class="card bg-white shadow-sm">
                     <div class="flex justify-between items-center mb-1">
                         <h2 class="text-lg md:text-xl font-semibold">🚗 พฤติกรรมการเติม (V-Power Mix)</h2>
                         <span id="vehicleChartSubtitle" class="text-[10px] md:text-xs font-bold text-gray-400 bg-gray-100 px-2 py-1 rounded">รวมทุกคน</span>
@@ -300,7 +297,7 @@
             </div>
 
             <!-- Compare Module -->
-            <div class="card bg-white border-t-4 border-blue-500 mt-4 md:mt-6">
+            <div class="card bg-white border-t-4 border-blue-500 mt-4 md:mt-6 shadow-sm">
                 <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-1">
                     <h2 class="text-lg md:text-xl font-semibold text-blue-800">📈 วิเคราะห์การเติบโตรายบุคคล</h2>
                     <button id="btnQuickMonth" class="mt-2 md:mt-0 bg-blue-100 text-blue-700 px-3 py-1 rounded text-[10px] md:text-xs font-bold hover:bg-blue-200 transition border border-blue-200">
@@ -365,7 +362,7 @@
             </div>
 
             <!-- KPI Table -->
-            <div class="card bg-white border-t-4 border-green-500 mt-4 md:mt-6">
+            <div class="card bg-white border-t-4 border-green-500 mt-4 md:mt-6 shadow-sm">
                 <h2 class="text-lg md:text-xl font-semibold mb-1 text-green-800">🏆 สรุปผลประเมิน KPI รายบุคคล (ลิตรรวม & SVP)</h2>
                 <p class="text-xs md:text-sm text-gray-500 mb-4">*ข้อมูลด้านล่างนี้คำนวณจากยอดของ 2 ล้อ และ 4 ล้อ เท่านั้น (ไม่รวมรถใหญ่)</p>
                 <div class="overflow-x-auto pb-2 custom-scrollbar rounded border border-gray-200">
@@ -484,18 +481,28 @@
                 cb.addEventListener('change', () => processDailyRanking(currentAttData));
             });
 
-            // 🎛️ Checkbox Event Listeners for Hourly Trends
+            // 🎛️ Event Listeners for Hourly Trends
             document.getElementById('hrMetric').addEventListener('change', () => {
                 let sd = document.getElementById('dateFilter').value;
                 const filterFn = (r) => {
                     if (sd === "ALL") return true;
                     let dStr = r['Open Date'] || r['Date'];
                     if (!dStr) return false;
-                    if (sd.startsWith('MONTH_')) {
-                        return dStr.includes(sd.replace('MONTH_', '')); 
-                    } else {
-                        return dStr === sd;
-                    }
+                    if (sd.startsWith('MONTH_')) return dStr.includes(sd.replace('MONTH_', '')); 
+                    else return dStr === sd;
+                };
+                let filteredHourlyData = rawHourly.filter(filterFn);
+                processHourlyData(filteredHourlyData);
+            });
+            
+            document.getElementById('hrFuelMode').addEventListener('change', () => {
+                let sd = document.getElementById('dateFilter').value;
+                const filterFn = (r) => {
+                    if (sd === "ALL") return true;
+                    let dStr = r['Open Date'] || r['Date'];
+                    if (!dStr) return false;
+                    if (sd.startsWith('MONTH_')) return dStr.includes(sd.replace('MONTH_', '')); 
+                    else return dStr === sd;
                 };
                 let filteredHourlyData = rawHourly.filter(filterFn);
                 processHourlyData(filteredHourlyData);
@@ -507,28 +514,22 @@
                     if (sd === "ALL") return true;
                     let dStr = r['Open Date'] || r['Date'];
                     if (!dStr) return false;
-                    if (sd.startsWith('MONTH_')) {
-                        return dStr.includes(sd.replace('MONTH_', '')); 
-                    } else {
-                        return dStr === sd;
-                    }
+                    if (sd.startsWith('MONTH_')) return dStr.includes(sd.replace('MONTH_', '')); 
+                    else return dStr === sd;
                 };
                 let filteredHourlyData = rawHourly.filter(filterFn);
                 processHourlyData(filteredHourlyData);
             });
             
-            document.querySelectorAll('.hr-veh, .hr-fuel').forEach(cb => {
+            document.querySelectorAll('.hr-veh').forEach(cb => {
                 cb.addEventListener('change', () => {
                     let sd = document.getElementById('dateFilter').value;
                     const filterFn = (r) => {
                         if (sd === "ALL") return true;
                         let dStr = r['Open Date'] || r['Date'];
                         if (!dStr) return false;
-                        if (sd.startsWith('MONTH_')) {
-                            return dStr.includes(sd.replace('MONTH_', '')); 
-                        } else {
-                            return dStr === sd;
-                        }
+                        if (sd.startsWith('MONTH_')) return dStr.includes(sd.replace('MONTH_', '')); 
+                        else return dStr === sd;
                     };
                     let filteredHourlyData = rawHourly.filter(filterFn);
                     processHourlyData(filteredHourlyData);
@@ -950,7 +951,7 @@
             // Trigger updates
             processData(filteredAttendant);
             processDailyRanking(filteredAttendant);
-            processHourlyData(filteredHourlyData); // 🚨 เปลี่ยนมาส่งข้อมูลไฟล์ Hourly ขนานแท้
+            processHourlyData(filteredHourlyData); 
             
             // Forecast logic
             if (sd === "ALL" || sd.startsWith('MONTH_')) {
@@ -1158,36 +1159,37 @@
             });
         }
 
-        // --- 📈 Hourly Trends Chart (Fixed Time 05:00 - 22:00 & Fixed Y-Axis) ---
+        // --- 📈 Hourly Trends Chart (4 MODES + Fixed Time 05:00 - 22:00) ---
         function processHourlyData(hrData) {
             let metric = document.getElementById('hrMetric').value; 
             let selDay = document.getElementById('hourlyDayFilter').value;
+            let fuelMode = document.getElementById('hrFuelMode').value;
             
-            // อ่านค่าจาก Checkbox แบบ Multi-select
+            // อ่านค่าจาก Checkbox ของรถ
             let selectedVehicles = Array.from(document.querySelectorAll('.hr-veh:checked')).map(cb => cb.value);
-            let selectedFuels = Array.from(document.querySelectorAll('.hr-fuel:checked')).map(cb => cb.value);
             
             // ⏱️ ล็อกแกนเวลาตายตัว 05:00 - 22:00
             let fixedHours = ['05', '06', '07', '08', '09', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22'];
             
+            // โครงสร้างใหม่ แยกเก็บ VP, NM และ Total 
             let hrSums = Array.from({length: 8}, () => {
                 let obj = {};
-                fixedHours.forEach(h => obj[h] = 0); // เซ็ตค่าเริ่มต้นเป็น 0 ทุกชั่วโมง
+                fixedHours.forEach(h => {
+                    obj[h] = { vp: 0, nm: 0, total: 0 }; 
+                }); 
                 return obj;
             }); 
             let dSets = Array.from({length: 8}, () => new Set()); 
             let globalMax = 0;
 
-            // 🚨 ใช้ hrData (ข้อมูล HourlyTrends) และอ่านคอลัมน์ Hour ให้ถูกต้อง
+            // กวาดข้อมูลสะสม
             hrData.forEach(row => {
                 if (row['Category Name'] !== 'Fuels') return;
                 
                 let dStr = row['Open Date'] || row['Date']; 
-                // รองรับคอลัมน์ Hour, Open Time, Time
                 let timeStr = row['Hour'] || row['Open Time'] || row['Time'];
                 if (!timeStr || !dStr) return;
                 
-                // ดึงเฉพาะชั่วโมงแรก
                 let hStr = timeStr.toString().split(':')[0]; 
                 if (hStr.length === 1) hStr = "0" + hStr; 
 
@@ -1202,64 +1204,104 @@
                 let pName = (row['Product Name'] || "").toUpperCase();
                 let isVP = pName.includes("VP ") || pName.includes("VPOWER") || pName.includes("V-POWER");
                 
-                // ตรวจสอบกับ Multi-select Checkbox
-                let passVeh = selectedVehicles.includes(vCode);
-                let passFuel = (isVP && selectedFuels.includes('VP')) || (!isVP && selectedFuels.includes('NM'));
-
-                if (!passVeh || !passFuel) return;
+                // ตรวจสอบกับ Multi-select รถ
+                if (!selectedVehicles.includes(vCode)) return;
                 
                 let val = metric === 'volume' ? (parseFloat(row['Volume']) || 0) : (parseInt(row['Delivery Count']) || 0);
                 let dayW = d.getDay();
                 
-                // ใส่ข้อมูลลงในกรอบเวลา 05:00 - 22:00 เท่านั้น
+                // เก็บลงใน 05:00 - 22:00
                 if (fixedHours.includes(hStr)) {
-                    hrSums[dayW][hStr] += val; 
-                    hrSums[7][hStr] += val; // 7 = ALL Days
+                    hrSums[dayW][hStr].total += val;
+                    if (isVP) hrSums[dayW][hStr].vp += val;
+                    else hrSums[dayW][hStr].nm += val;
+                    
+                    hrSums[7][hStr].total += val;
+                    if (isVP) hrSums[7][hStr].vp += val;
+                    else hrSums[7][hStr].nm += val;
                 }
                 
                 dSets[dayW].add(dStr);
                 dSets[7].add(dStr); 
             });
 
-            // หาค่า Global Max (ยอดพีกสุด) เอาไว้ทำเพดานกราฟ
+            // หาค่า Global Max เพื่อล็อกเพดาน (อิงตามโหมดที่เลือก)
             for(let i=0; i<=7; i++) {
                 let nDays = dSets[i].size || 1;
-                Object.values(hrSums[i]).forEach(sum => { 
-                    let avg = sum / nDays; 
-                    if (avg > globalMax) globalMax = avg; 
+                fixedHours.forEach(h => {
+                    let s = hrSums[i][h];
+                    if (fuelMode === 'ALL' && (s.total / nDays) > globalMax) globalMax = s.total / nDays;
+                    if (fuelMode === 'COMPARE') {
+                        if ((s.vp / nDays) > globalMax) globalMax = s.vp / nDays;
+                        if ((s.nm / nDays) > globalMax) globalMax = s.nm / nDays;
+                    }
+                    if (fuelMode === 'VP' && (s.vp / nDays) > globalMax) globalMax = s.vp / nDays;
+                    if (fuelMode === 'NM' && (s.nm / nDays) > globalMax) globalMax = s.nm / nDays;
                 });
             }
 
             let targetIdx = selDay === "ALL" ? 7 : parseInt(selDay); 
             let numTargetDays = dSets[targetIdx].size || 1;
             
-            // ดึงข้อมูลเรียงตามแกนเวลา 05:00 - 22:00
-            let chartData = fixedHours.map(h => hrSums[targetIdx][h] / numTargetDays);
+            // เตรียมข้อมูลกราฟตามโหมด
+            let datasets = [];
+            
+            if (fuelMode === 'ALL') {
+                let chartDataTotal = fixedHours.map(h => hrSums[targetIdx][h].total / numTargetDays);
+                datasets.push({
+                    label: `ยอดรวมน้ำมันทั้งหมด (${metric === 'volume' ? 'ลิตร' : 'คัน'})`,
+                    data: chartDataTotal,
+                    borderColor: '#3b82f6', 
+                    backgroundColor: 'rgba(59, 130, 246, 0.1)', 
+                    borderWidth: 3, fill: true, tension: 0.3, pointBackgroundColor: '#3b82f6'
+                });
+            } else if (fuelMode === 'COMPARE') {
+                let chartDataVP = fixedHours.map(h => hrSums[targetIdx][h].vp / numTargetDays);
+                let chartDataNM = fixedHours.map(h => hrSums[targetIdx][h].nm / numTargetDays);
+                datasets.push({
+                    label: `V-Power (${metric === 'volume' ? 'ลิตร' : 'คัน'})`,
+                    data: chartDataVP,
+                    borderColor: '#dd1d21', 
+                    backgroundColor: 'rgba(221, 29, 33, 0.1)', 
+                    borderWidth: 3, fill: true, tension: 0.3, pointBackgroundColor: '#dd1d21'
+                });
+                datasets.push({
+                    label: `มาตรฐาน (${metric === 'volume' ? 'ลิตร' : 'คัน'})`,
+                    data: chartDataNM,
+                    borderColor: '#fbce07', 
+                    backgroundColor: 'rgba(251, 206, 7, 0.1)', 
+                    borderWidth: 3, fill: true, tension: 0.3, pointBackgroundColor: '#fbce07'
+                });
+            } else if (fuelMode === 'VP') {
+                let chartDataVP = fixedHours.map(h => hrSums[targetIdx][h].vp / numTargetDays);
+                datasets.push({
+                    label: `เฉพาะ V-Power (${metric === 'volume' ? 'ลิตร' : 'คัน'})`,
+                    data: chartDataVP,
+                    borderColor: '#dd1d21', 
+                    backgroundColor: 'rgba(221, 29, 33, 0.1)', 
+                    borderWidth: 3, fill: true, tension: 0.3, pointBackgroundColor: '#dd1d21'
+                });
+            } else if (fuelMode === 'NM') {
+                let chartDataNM = fixedHours.map(h => hrSums[targetIdx][h].nm / numTargetDays);
+                datasets.push({
+                    label: `เฉพาะ มาตรฐาน (${metric === 'volume' ? 'ลิตร' : 'คัน'})`,
+                    data: chartDataNM,
+                    borderColor: '#fbce07', 
+                    backgroundColor: 'rgba(251, 206, 7, 0.1)', 
+                    borderWidth: 3, fill: true, tension: 0.3, pointBackgroundColor: '#fbce07'
+                });
+            }
 
             // 🎯 การล็อกเพดาน (Fix Y-Axis)
-            let yBuffer = metric === 'volume' ? Math.max(10, Math.ceil(globalMax * 0.1)) : 10;
+            let yBuffer = metric === 'volume' ? Math.max(10, Math.ceil(globalMax * 0.1)) : 5;
             let fixedYMax = Math.ceil(globalMax + yBuffer);
 
             let ctx = document.getElementById('hourlyChart').getContext('2d'); 
             if (charts.hr) charts.hr.destroy();
             
-            let labelName = metric === 'volume' ? 'เฉลี่ยปริมาณ (ลิตร/ชม.)' : 'เฉลี่ยรถเข้าลาน (คัน/ชม.)';
-            
             charts.hr = new Chart(ctx, { 
                 type: 'line', 
-                data: { 
-                    labels: fixedHours, 
-                    datasets: [{ 
-                        label: labelName, 
-                        data: chartData, 
-                        borderColor: '#dd1d21', 
-                        backgroundColor: 'rgba(221, 29, 33, 0.1)', 
-                        borderWidth: 3, 
-                        fill: true, 
-                        tension: 0.3, 
-                        pointBackgroundColor: '#fbce07' 
-                    }] 
-                }, 
+                data: { labels: fixedHours, datasets: datasets }, 
                 options: { 
                     responsive: true, 
                     maintainAspectRatio: false, 
@@ -1273,7 +1315,7 @@
                         tooltip: { 
                             callbacks: { 
                                 label: function(c) { 
-                                    return c.raw.toLocaleString(undefined, {maximumFractionDigits:0}); 
+                                    return c.dataset.label + ": " + c.raw.toLocaleString(undefined, {maximumFractionDigits:0}); 
                                 } 
                             } 
                         } 
