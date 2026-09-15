@@ -1,687 +1,361 @@
-// --- State Management ---
-let rawAttendant = []; let rawHourly = []; let rawProduct = [];
-let filteredHourlyData = []; 
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shell Car-to-Cash Dashboard (Pro)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>tailwind.config = { darkMode: 'class' }</script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Prompt', sans-serif; background-color: #f5f5f5; transition: background-color 0.3s, color 0.3s; }
+        .card { background: white; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); padding: 16px; border-top: 4px solid transparent; transition: background-color 0.3s, border-color 0.3s; }
+        @media (min-width: 768px) { .card { padding: 24px; } }
+        .drag-over { border-color: #dd1d21 !important; background-color: #fff8f8 !important; }
+        .shell-yellow { background-color: #fbce07; }
+        .shell-red { background-color: #dd1d21; }
+        .text-shell-red { color: #dd1d21; }
+        .border-shell-yellow { border-color: #fbce07 !important; }
+        .border-shell-red { border-color: #dd1d21 !important; }
+        .toast { transition: all 0.3s ease-in-out; transform: translateX(120%); }
+        .toast.show { transform: translateX(0); }
+        .custom-scrollbar::-webkit-scrollbar { height: 6px; width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; border-radius: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        #employeeChart { cursor: pointer; } 
 
-let employeeMapping = {
-    "1": "เฟิร์น", "2": "ตุ้ย (แคช)", "3": "กี้ (ช่าง)", "4": "เหรียญ (แคช)", "5": "แต้ม", 
-    "6": "ติ๋ว", "7": "นุช", "8": "เจ (ช่าง)", "9": "แช่ง", "10": "หนึ่ง (แคช)",
-    "11": "ป่อง", "12": "ติ๋ม (แคช)", "13": "โอ (ช่าง)", "14": "น้อย", 
-    "15": "อาร์ท", "16": "สุรเศรษฐ์"
-};
-let charts = { emp: null, hr: null, veh: null };
-let siteName = "ไม่ระบุสาขา";
-let activeEmpFilter = null; 
+        /* 🌙 ---------------- CSS สำหรับโหมดกลางคืน ---------------- 🌙 */
+        html.dark body { background-color: #111827; color: #f3f4f6; }
+        html.dark .bg-white { background-color: #1f2937 !important; border-color: #374151 !important; }
+        html.dark .bg-gray-50 { background-color: #374151 !important; border-color: #4b5563 !important; }
+        html.dark .bg-gray-100 { background-color: #111827 !important; border-color: #374151 !important; }
+        html.dark .text-gray-900, html.dark .text-gray-800 { color: #f3f4f6 !important; }
+        html.dark .text-gray-700, html.dark .text-gray-600 { color: #d1d5db !important; }
+        html.dark .text-gray-500, html.dark .text-gray-400 { color: #9ca3af !important; }
+        html.dark .border-gray-200, html.dark .border-gray-100, html.dark .border-b { border-color: #374151 !important; }
+        html.dark input, html.dark select { background-color: #374151 !important; color: #f3f4f6 !important; border-color: #4b5563 !important; }
+        html.dark .card { background-color: #1f2937; box-shadow: 0 4px 6px rgba(0,0,0,0.5); }
+        html.dark .bg-blue-50 { background-color: rgba(59, 130, 246, 0.1) !important; border-color: rgba(59, 130, 246, 0.2) !important; }
+        html.dark .bg-purple-50 { background-color: rgba(168, 85, 247, 0.1) !important; border-color: rgba(168, 85, 247, 0.2) !important; }
+        html.dark .bg-green-50, html.dark .bg-green-100 { background-color: rgba(34, 197, 94, 0.1) !important; color: #4ade80 !important; }
+        html.dark .bg-red-50, html.dark .bg-red-100 { background-color: rgba(239, 68, 68, 0.1) !important; color: #f87171 !important; }
+        html.dark .bg-orange-100 { background-color: rgba(249, 115, 22, 0.1) !important; color: #fb923c !important; }
+        html.dark .bg-blue-100 { background-color: rgba(59, 130, 246, 0.1) !important; color: #60a5fa !important; }
+        html.dark .text-green-700, html.dark .text-green-600 { color: #4ade80 !important; }
+        html.dark .text-red-700, html.dark .text-red-600 { color: #f87171 !important; }
+        html.dark .text-blue-800, html.dark .text-blue-700 { color: #60a5fa !important; }
+        html.dark .text-purple-800, html.dark .text-purple-700 { color: #d8b4fe !important; }
+        html.dark .text-orange-700 { color: #fb923c !important; }
+        html.dark th { background-color: #374151 !important; color: #f3f4f6 !important; }
+        html.dark tr.hover\:bg-gray-50:hover td { background-color: #4b5563 !important; }
+        html.dark .custom-scrollbar::-webkit-scrollbar-thumb { background: #4b5563; }
+        html.dark .drag-over { background-color: #450a0a !important; border-color: #ef4444 !important; }
+    </style>
+</head>
+<body class="p-2 md:p-8 text-gray-800 relative overflow-x-hidden">
 
-function showToast(message, type = 'info') {
-    const container = document.getElementById('toastContainer');
-    if(!container) return;
-    const toast = document.createElement('div');
-    let bgColor = type === 'error' ? 'bg-red-500' : (type === 'success' ? 'bg-green-500' : 'bg-blue-500');
-    toast.className = `${bgColor} text-white px-6 py-3 rounded shadow-lg font-medium toast flex items-center gap-2 min-w-[250px]`;
-    toast.innerHTML = type === 'error' ? `⚠️ ${message}` : `✅ ${message}`;
-    container.appendChild(toast);
-    setTimeout(() => toast.classList.add('show'), 10);
-    setTimeout(() => { toast.classList.remove('show'); setTimeout(() => toast.remove(), 300); }, 3000);
-}
+    <div id="toastContainer" class="fixed top-5 right-5 z-50 flex flex-col gap-2"></div>
 
-// 🌟 ระบบโหมดกลางคืน
-function initTheme() {
-    const themeBtn = document.getElementById('themeToggleBtn');
-    const htmlEl = document.documentElement;
-    if (localStorage.getItem('dashboard_theme') === 'dark') {
-        htmlEl.classList.add('dark');
-        if(themeBtn) themeBtn.innerText = '☀️';
-        updateChartThemeColors(true);
-    } else { updateChartThemeColors(false); }
+    <div class="max-w-7xl mx-auto">
+        <!-- Header -->
+        <header class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4 bg-white p-4 md:p-6 rounded-lg shadow-sm border-l-8 border-shell-red transition-colors">
+            <div>
+                <h1 class="text-2xl md:text-3xl font-bold text-gray-900 flex items-center gap-2">
+                    <span class="text-shell-red">⛽ Car-to-Cash</span> Dashboard
+                </h1>
+                <p class="text-sm md:text-base text-gray-500 mt-1" id="dynamicSiteName">กำลังรอข้อมูล... (อัปโหลด 3 ไฟล์เพื่อเริ่มวิเคราะห์)</p>
+            </div>
+            <div class="flex items-end gap-2 md:gap-4 w-full md:w-auto">
+                <div class="flex flex-col gap-1 md:gap-2 flex-1 md:flex-none md:min-w-[200px]">
+                    <label class="text-xs font-bold text-gray-500 uppercase">📅 ตัวกรองวันที่</label>
+                    <select id="dateFilter" class="border p-2 rounded bg-gray-50 text-gray-800 text-sm md:text-base font-medium focus:outline-none focus:border-red-500 disabled:opacity-50 w-full" disabled>
+                        <option value="ALL">รวมทุกวัน (All Dates)</option>
+                    </select>
+                </div>
+                <button id="themeToggleBtn" class="h-9 md:h-10 bg-gray-200 text-gray-800 px-3 md:px-4 py-2 rounded font-medium hover:bg-gray-300 transition flex items-center justify-center text-sm md:text-base" title="สลับโหมดกลางคืน">🌙</button>
+                <button id="exportBtn" class="hidden h-9 md:h-10 bg-gray-800 text-white px-3 md:px-4 py-2 rounded font-medium hover:bg-gray-900 transition flex items-center gap-2 text-sm md:text-base">📸 <span class="hidden md:inline">บันทึกภาพ</span></button>
+            </div>
+        </header>
 
-    if (themeBtn) {
-        themeBtn.addEventListener('click', () => {
-            htmlEl.classList.toggle('dark');
-            let isDark = htmlEl.classList.contains('dark');
-            localStorage.setItem('dashboard_theme', isDark ? 'dark' : 'light');
-            themeBtn.innerText = isDark ? '☀️' : '🌙';
-            updateChartThemeColors(isDark);
-            if(charts.emp) charts.emp.update();
-            if(charts.veh) charts.veh.update();
-            if(charts.hr) charts.hr.update();
-        });
-    }
-}
-
-function updateChartThemeColors(isDark) {
-    Chart.defaults.color = isDark ? '#9ca3af' : '#6b7280'; 
-    Chart.defaults.scale.grid.color = isDark ? '#374151' : '#e5e7eb'; 
-    Chart.defaults.scale.grid.borderColor = isDark ? '#374151' : '#e5e7eb';
-}
-
-// --- UI Setup ---
-document.addEventListener('DOMContentLoaded', () => {
-    initTheme(); 
-    const empContainer = document.getElementById('empFormContainer');
-    const compEmpSelect = document.getElementById('compEmpSelect');
-    const clearEmpFilterBtn = document.getElementById('clearEmpFilterBtn');
-
-    if(clearEmpFilterBtn) {
-        clearEmpFilterBtn.addEventListener('click', () => {
-            activeEmpFilter = null; clearEmpFilterBtn.classList.add('hidden');
-            let subTitle = document.getElementById('vehicleChartSubtitle');
-            if(subTitle) { subTitle.innerText = "รวมทุกคน"; subTitle.className = "text-[10px] md:text-xs font-bold text-gray-400 bg-gray-100 px-2 py-1 rounded"; }
-            updateDashboard();
-        });
-    }
-
-    function renderEmpUI() {
-        if(!empContainer) return;
-        empContainer.innerHTML = '';
-        if(compEmpSelect) compEmpSelect.innerHTML = '<option value="ALL">รวมพนักงานทุกคน</option>';
-        Object.entries(employeeMapping).forEach(([id, name]) => {
-            addEmpRow(id, name);
-            if (!name.includes("(ช่าง)")) {
-                let opt = document.createElement('option');
-                opt.value = id; opt.innerText = `${name} (รหัส ${id})`;
-                if(compEmpSelect) compEmpSelect.appendChild(opt);
-            }
-        });
-    }
-
-    function addEmpRow(id = '', name = '') {
-        const row = document.createElement('div');
-        row.className = 'flex items-center gap-2 bg-gray-50 border border-gray-200 p-2 rounded hover:border-red-300 transition-colors';
-        row.innerHTML = `
-            <input type="text" placeholder="รหัส" value="${id}" class="emp-id w-14 p-1.5 text-center text-sm border rounded focus:outline-none focus:ring-1 focus:ring-red-500 font-medium text-gray-700">
-            <input type="text" placeholder="ชื่อ" value="${name}" class="emp-name flex-1 p-1.5 text-sm border rounded focus:outline-none focus:ring-1 focus:ring-red-500 text-gray-700">
-            <button class="remove-btn text-gray-400 hover:text-red-500 p-1 font-bold text-lg leading-none transition-colors" title="ลบ">&times;</button>
-        `;
-        row.querySelector('.remove-btn').addEventListener('click', () => row.remove());
-        empContainer.appendChild(row);
-    }
-
-    let addBtn = document.getElementById('addEmpBtn');
-    if(addBtn) addBtn.addEventListener('click', () => addEmpRow());
-
-    let saveBtn = document.getElementById('saveConfigBtn');
-    if(saveBtn) {
-        saveBtn.addEventListener('click', () => {
-            let newMap = {};
-            empContainer.querySelectorAll('div.flex').forEach(row => {
-                const id = row.querySelector('.emp-id').value.trim();
-                const name = row.querySelector('.emp-name').value.trim();
-                if (id && name) newMap[id] = name;
-            });
-            if (Object.keys(newMap).length === 0) return showToast("กรุณาใส่ข้อมูลพนักงานอย่างน้อย 1 คน", "error");
-            employeeMapping = newMap;
-            renderEmpUI(); showToast("บันทึกการตั้งค่าเรียบร้อย", "success");
-            if (rawAttendant.length > 0) updateDashboard();
-        });
-    }
-
-    let btnQuickMonth = document.getElementById('btnQuickMonth');
-    if (btnQuickMonth) {
-        btnQuickMonth.addEventListener('click', () => {
-            if(rawAttendant.length === 0) return showToast("กรุณาอัปโหลดข้อมูลก่อนใช้งานปุ่มลัด", "error");
-            let latest = new Date(0);
-            rawAttendant.forEach(row => {
-                let dStr = row['Open Date'] || row['Date'];
-                if(dStr) {
-                    let d = new Date(dStr);
-                    if(isNaN(d)) {
-                        let p = dStr.split(/[-/]/);
-                        if(p.length === 3) d = p[0].length === 4 ? new Date(p[0], p[1]-1, p[2]) : new Date(p[2], p[1]-1, p[0]);
-                    }
-                    if(!isNaN(d) && d > latest) latest = d;
-                }
-            });
-            if(latest.getTime() === new Date(0).getTime()) return showToast("ไม่พบข้อมูลวันที่ในระบบ", "error");
-
-            let currentYear = latest.getFullYear(); let currentMonth = latest.getMonth(); 
-            let prevMonth = currentMonth - 1; let prevYear = currentYear;
-            if(prevMonth < 0) { prevMonth = 11; prevYear--; }
-            const formatDate = (y, m, d) => `${y}-${String(m+1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
-
-            document.getElementById('comp1Start').value = formatDate(prevYear, prevMonth, 1);
-            document.getElementById('comp1End').value = formatDate(prevYear, prevMonth, new Date(prevYear, prevMonth + 1, 0).getDate());
-            document.getElementById('comp2Start').value = formatDate(currentYear, currentMonth, 1);
-            document.getElementById('comp2End').value = formatDate(currentYear, currentMonth, new Date(currentYear, currentMonth + 1, 0).getDate());
-            document.getElementById('btnCompare').click(); showToast("ดึงข้อมูลเดือนล่าสุดและเดือนก่อนหน้าสำเร็จ", "success");
-        });
-    }
-
-    let btnCompare = document.getElementById('btnCompare');
-    if (btnCompare) {
-        btnCompare.addEventListener('click', () => {
-            if(rawAttendant.length === 0) return showToast("กรุณาอัปโหลดข้อมูลก่อน", "error");
-            const empId = document.getElementById('compEmpSelect').value;
-            const start1 = document.getElementById('comp1Start').value; const end1 = document.getElementById('comp1End').value;
-            const start2 = document.getElementById('comp2Start').value; const end2 = document.getElementById('comp2End').value;
-            if(!start1 || !end1 || !start2 || !end2) return showToast("กรุณาเลือกช่วงวันที่ให้ครบถ้วน", "error");
-            
-            const getStatsForPeriod = (start, end) => {
-                let vol = 0, vpVol = 0, lifts = 0;
-                rawAttendant.forEach(row => {
-                    let d = row['Open Date'] || row['Date'];
-                    if(row['Category Name'] === 'Fuels' && d >= start && d <= end) {
-                        if(empId !== "ALL" && row['Attendant'] !== empId) return;
-                        if(empId === "ALL") {
-                            let name = employeeMapping[row['Attendant']] || "";
-                            if(name.includes("(ช่าง)")) return;
-                        }
-                        let v = parseFloat(row['Volume']) || 0; let l = parseInt(row['Delivery Count']) || 0;
-                        let pName = (row['Product Name'] || "").toUpperCase();
-                        let isVpower = pName.includes("VP ") || pName.includes("V-POWER") || pName.includes("VPOWER");
-                        if(v > 0) { vol += v; lifts += l; if(isVpower) vpVol += v; }
-                    }
-                });
-                return { vol, vpVol, mix: vol > 0 ? (vpVol/vol)*100 : 0, lifts };
-            };
-
-            const p1 = getStatsForPeriod(start1, end1); const p2 = getStatsForPeriod(start2, end2);
-            const updateDiffUI = (val1, val2, elementId) => {
-                let diff = val1 > 0 ? ((val2 - val1) / val1) * 100 : (val2 > 0 ? 100 : 0);
-                let el = document.getElementById(elementId);
-                if(diff > 0) { el.innerHTML = `▲ +${diff.toFixed(1)}%`; el.className = "text-lg md:text-xl font-bold py-1 rounded bg-green-100 text-green-700"; } 
-                else if(diff < 0) { el.innerHTML = `▼ ${diff.toFixed(1)}%`; el.className = "text-lg md:text-xl font-bold py-1 rounded bg-red-100 text-red-700"; } 
-                else { el.innerHTML = `- คงที่ (0%)`; el.className = "text-lg md:text-xl font-bold py-1 rounded bg-gray-100 text-gray-600"; }
-            };
-
-            document.getElementById('rVol1').innerText = p1.vol.toLocaleString(undefined, {maximumFractionDigits:0});
-            document.getElementById('rVol2').innerText = p2.vol.toLocaleString(undefined, {maximumFractionDigits:0});
-            updateDiffUI(p1.vol, p2.vol, 'rVolDiff');
-            
-            document.getElementById('rVp1').innerText = p1.mix.toFixed(1) + '%';
-            document.getElementById('rVp2').innerText = p2.mix.toFixed(1) + '%';
-            let mixDiff = p2.mix - p1.mix; let elMix = document.getElementById('rVpDiff');
-            if(mixDiff > 0) { elMix.innerHTML = `▲ +${mixDiff.toFixed(1)}%`; elMix.className = "text-lg md:text-xl font-bold py-1 rounded bg-green-100 text-green-700"; }
-            else if(mixDiff < 0) { elMix.innerHTML = `▼ ${mixDiff.toFixed(1)}%`; elMix.className = "text-lg md:text-xl font-bold py-1 rounded bg-red-100 text-red-700"; }
-            else { elMix.innerHTML = `- คงที่`; elMix.className = "text-lg md:text-xl font-bold py-1 rounded bg-gray-100 text-gray-600"; }
-            
-            document.getElementById('rLift1').innerText = p1.lifts.toLocaleString();
-            document.getElementById('rLift2').innerText = p2.lifts.toLocaleString();
-            updateDiffUI(p1.lifts, p2.lifts, 'rLiftDiff');
-            document.getElementById('compResultArea').classList.remove('hidden');
-        });
-    }
-    renderEmpUI(); 
-});
-
-let exportBtn = document.getElementById('exportBtn');
-if(exportBtn) {
-    exportBtn.addEventListener('click', () => {
-        showToast("กำลังประมวลผลรูปภาพ...", "info");
-        let isDark = document.documentElement.classList.contains('dark');
-        let targetEl = document.getElementById('dashboardSection');
-        let scrollers = targetEl.querySelectorAll('.overflow-x-auto');
-        scrollers.forEach(el => { el.classList.remove('overflow-x-auto'); el.style.overflow = 'visible'; });
-
-        html2canvas(targetEl, { 
-            scale: 2, 
-            backgroundColor: isDark ? "#111827" : "#f3f4f6",
-            windowWidth: 1440,
-            onclone: function(clonedDoc) {
-                let dashSec = clonedDoc.getElementById('dashboardSection');
-                if (dashSec) { dashSec.style.width = '1440px'; dashSec.style.maxWidth = '1440px'; }
-            }
-        }).then(canvas => {
-            scrollers.forEach(el => { el.classList.add('overflow-x-auto'); el.style.overflow = ''; });
-            let link = document.createElement('a');
-            let dateVal = document.getElementById('dateFilter') ? document.getElementById('dateFilter').value : 'Export';
-            link.download = `Report_${siteName}_${dateVal}.png`;
-            link.href = canvas.toDataURL("image/png"); link.click();
-            showToast("ดาวน์โหลดรายงานสำเร็จ", "success");
-        }).catch(err => {
-            scrollers.forEach(el => el.classList.add('overflow-x-auto'));
-            showToast("เกิดข้อผิดพลาดในการสร้างภาพ", "error");
-        });
-    });
-}
-
-// --- File Handlers ---
-const fileInput = document.getElementById('fileUpload');
-const dropZone = document.getElementById('dropZone');
-const dateFilter = document.getElementById('dateFilter');
-const hourlyDayFilter = document.getElementById('hourlyDayFilter');
-
-if(fileInput) fileInput.addEventListener('change', handleFiles);
-if(dropZone) {
-    dropZone.addEventListener('dragover', (e) => { e.preventDefault(); dropZone.classList.add('drag-over'); });
-    dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag-over'));
-    dropZone.addEventListener('drop', (e) => { e.preventDefault(); dropZone.classList.remove('drag-over'); fileInput.files = e.dataTransfer.files; handleFiles({ target: fileInput }); });
-}
-
-if(dateFilter) {
-    dateFilter.addEventListener('change', () => {
-        activeEmpFilter = null; 
-        let btn = document.getElementById('clearEmpFilterBtn');
-        if(btn) btn.classList.add('hidden');
-        let sub = document.getElementById('vehicleChartSubtitle');
-        if(sub) { sub.innerText = "รวมทุกคน"; sub.className = "text-[10px] md:text-xs font-bold text-gray-400 bg-gray-100 px-2 py-1 rounded"; }
-        updateDashboard();
-    });
-}
-if(hourlyDayFilter) hourlyDayFilter.addEventListener('change', () => processHourlyData(filteredHourlyData));
-
-function handleFiles(e) {
-    const files = e.target.files;
-    if (!files || files.length === 0) return;
-    document.getElementById('fileStatus').innerHTML = '';
-    let filesProcessed = 0; rawAttendant = []; rawHourly = []; rawProduct = [];
-
-    for (let i = 0; i < files.length; i++) {
-        const file = files[i];
-        updateFileBadge(file.name, 'loading');
-        Papa.parse(file, {
-            header: true, skipEmptyLines: true, encoding: "UTF-16", delimiter: "\t",
-            complete: function(results) {
-                const data = results.data;
-                if (data.length > 0 && data[0]['Category Name'] === undefined) {
-                    showToast(`ไฟล์ ${file.name} โครงสร้างไม่ถูกต้อง`, "error"); updateFileBadge(file.name, 'error');
-                } else {
-                    updateFileBadge(file.name, 'success');
-                    if (data.length > 0 && data[0]['Site Name'] && siteName === "ไม่ระบุสาขา") {
-                        siteName = data[0]['Site Name'];
-                        document.getElementById('dynamicSiteName').innerText = `สาขา: ${siteName}`;
-                    }
-                    if (file.name.includes("Attendant")) rawAttendant = rawAttendant.concat(data);
-                    else if (file.name.includes("Hourly")) rawHourly = rawHourly.concat(data);
-                    else if (file.name.includes("Product")) rawProduct = rawProduct.concat(data);
-                }
-                filesProcessed++;
-                if (filesProcessed === files.length) {
-                    if (rawAttendant.length > 0 || rawHourly.length > 0 || rawProduct.length > 0) {
-                        document.getElementById('dashboardSection').classList.remove('hidden');
-                        let exBtn = document.getElementById('exportBtn'); if(exBtn) exBtn.classList.remove('hidden');
-                        populateDateFilter(); updateDashboard(); showToast("ประมวลผลข้อมูลสำเร็จ", "success");
-                    }
-                }
-            }
-        });
-    }
-}
-
-function updateFileBadge(filename, status) {
-    let color = status === 'success' ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300' : 
-                (status === 'error' ? 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300' : 
-                'bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-300');
-    let icon = status === 'success' ? '✅ ' : (status === 'error' ? '❌ ' : '⏳ ');
-    const badgeId = 'badge-' + filename.replace(/[^a-zA-Z0-9]/g, '');
-    let badge = document.getElementById(badgeId);
-    if (!badge) { badge = document.createElement('span'); badge.id = badgeId; document.getElementById('fileStatus').appendChild(badge); }
-    badge.className = `px-3 py-1 rounded-full border border-gray-200 dark:border-gray-600 ${color}`;
-    badge.innerText = icon + filename.substring(0, 20) + '...';
-}
-
-function populateDateFilter() {
-    let dates = new Set();
-    const extractDate = (row) => { let d = row['Open Date'] || row['Date']; if (d) dates.add(d); };
-    rawAttendant.forEach(extractDate); rawHourly.forEach(extractDate);
-    if(!dateFilter) return;
-    dateFilter.innerHTML = '<option value="ALL">รวมทุกวัน (All Dates)</option>';
-    Array.from(dates).sort().forEach(d => {
-        let opt = document.createElement('option'); opt.value = d; opt.innerText = d; dateFilter.appendChild(opt);
-    });
-    dateFilter.disabled = false;
-}
-
-function updateDashboard() {
-    if(!dateFilter) return;
-    const sd = dateFilter.value;
-    const filterFn = (r) => sd === "ALL" || r['Open Date'] === sd || r['Date'] === sd;
-    
-    filteredHourlyData = rawHourly.filter(filterFn); 
-    processData(rawAttendant.filter(filterFn), rawProduct.filter(filterFn));
-    processHourlyData(filteredHourlyData);
-    
-    if (sd === "ALL") {
-        processForecast(rawAttendant);
-    } else {
-        document.getElementById('forecastInfoText').innerText = "*ไม่สามารถคาดการณ์รายเดือนได้ เนื่องจากกำลังกรองรายวัน";
-        document.getElementById('forecastResult').innerText = "N/A";
-        document.getElementById('forecastProgressBar').style.width = '0%';
-        document.getElementById('forecastStatusBox').className = "p-2 md:p-3 rounded text-center flex flex-col justify-center items-center col-span-2 md:col-span-1 bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700";
-        document.getElementById('forecastStatusText').innerText = "กรุณาเลือก 'รวมทุกวัน'";
-        document.getElementById('forecastStatusText').className = "text-xs md:text-sm font-bold text-gray-500";
-        document.getElementById('forecastRunRate').innerText = "-";
-    }
-}
-
-function processForecast(attData) {
-    if (attData.length === 0) return;
-    let latestDate = new Date(0);
-    let hasValidDate = false;
-    
-    // หาเดือนล่าสุดในข้อมูล
-    attData.forEach(row => {
-        let dStr = row['Open Date'] || row['Date'];
-        if (dStr) {
-            let d = new Date(dStr);
-            if (isNaN(d)) { 
-                let parts = dStr.split(/[-/]/);
-                if (parts.length === 3) d = parts[0].length === 4 ? new Date(parts[0], parts[1]-1, parts[2]) : new Date(parts[2], parts[1]-1, parts[0]);
-            }
-            if (!isNaN(d) && d > latestDate) { latestDate = d; hasValidDate = true; }
-        }
-    });
-
-    if (!hasValidDate) return;
-    let targetMonth = latestDate.getMonth();
-    let targetYear = latestDate.getFullYear();
-    let monthNames = ["มกราคม", "กุมภาพันธ์", "มีนาคม", "เมษายน", "พฤษภาคม", "มิถุนายน", "กรกฎาคม", "สิงหาคม", "กันยายน", "ตุลาคม", "พฤศจิกายน", "ธันวาคม"];
-    
-    let currentMonthSvpVol = 0;
-    let activeDates = new Set();
-    
-    // คำนวณยอดสะสมของเดือนล่าสุด
-    attData.forEach(row => {
-        let dStr = row['Open Date'] || row['Date'];
-        if (!dStr) return;
-        let d = new Date(dStr);
-        if (isNaN(d)) {
-            let parts = dStr.split(/[-/]/);
-            if (parts.length === 3) d = parts[0].length === 4 ? new Date(parts[0], parts[1]-1, parts[2]) : new Date(parts[2], parts[1]-1, parts[0]);
-        }
-        
-        if (!isNaN(d) && d.getMonth() === targetMonth && d.getFullYear() === targetYear) {
-            if (row['Category Name'] === 'Fuels') {
-                let pName = (row['Product Name'] || "").toUpperCase();
-                let isVpower = pName.includes("VP ") || pName.includes("V-POWER") || pName.includes("VPOWER");
-                let vol = parseFloat(row['Volume']) || 0;
-                if (isVpower && vol > 0) { currentMonthSvpVol += vol; activeDates.add(dStr); }
-            }
-        }
-    });
-
-    let targetSvpVol = parseFloat(document.getElementById('targetSvpVolume').value) || 30000;
-    let daysPassed = activeDates.size || 1;
-    let totalDaysInMonth = new Date(targetYear, targetMonth + 1, 0).getDate(); 
-    
-    // 🌟 ส่วนที่เพิ่มใหม่: ตรวจสอบว่าเป็นเดือนที่จบไปแล้ว หรือข้อมูลครบเดือนแล้วใช่ไหม?
-    let today = new Date();
-    // ถ้า (ปีและเดือนล่าสุด น้อยกว่า ปัจจุบัน) หรือ (จำนวนวันในข้อมูล เท่ากับ จำนวนวันเต็มในเดือน)
-    let isMonthEnded = (targetYear < today.getFullYear() || (targetYear === today.getFullYear() && targetMonth < today.getMonth())) || (daysPassed >= totalDaysInMonth);
-
-    let runRate = currentMonthSvpVol / daysPassed;
-    let forecastVol = isMonthEnded ? currentMonthSvpVol : (runRate * totalDaysInMonth);
-
-    document.getElementById('forecastTarget').innerText = targetSvpVol.toLocaleString(undefined, {maximumFractionDigits:0});
-    document.getElementById('forecastCurrent').innerText = currentMonthSvpVol.toLocaleString(undefined, {maximumFractionDigits:0});
-    document.getElementById('forecastResult').innerText = forecastVol.toLocaleString(undefined, {maximumFractionDigits:0});
-    
-    let statusBox = document.getElementById('forecastStatusBox');
-    let statusText = document.getElementById('forecastStatusText');
-    let progressBar = document.getElementById('forecastProgressBar');
-    let infoText = document.getElementById('forecastInfoText');
-
-    if (isMonthEnded) {
-        // กรณีเดือนจบแล้ว ปิดโหมดพยากรณ์ แสดงเป็นสถานะสรุปยอด
-        infoText.innerText = `*สรุปยอดข้อมูลเดือน ${monthNames[targetMonth]} ${targetYear} (จบเดือนแล้ว)`;
-        document.getElementById('forecastRunRate').innerText = `(เฉลี่ย ${runRate.toLocaleString(undefined, {maximumFractionDigits:0})} ลิตร/วัน)`;
-        
-        if (currentMonthSvpVol >= targetSvpVol) {
-            statusBox.className = "p-2 md:p-3 rounded text-center flex flex-col justify-center items-center col-span-2 md:col-span-1 bg-green-100 border border-green-200 transition-colors dark:bg-green-900 dark:border-green-800";
-            statusText.className = "text-xs md:text-sm font-bold text-green-700 dark:text-green-300";
-            statusText.innerText = "🏆 ปิดยอด: ทะลุเป้าหมาย";
-            progressBar.className = "bg-green-500 h-4 transition-all duration-1000";
-        } else {
-            statusBox.className = "p-2 md:p-3 rounded text-center flex flex-col justify-center items-center col-span-2 md:col-span-1 bg-red-100 border border-red-200 transition-colors dark:bg-red-900 dark:border-red-800";
-            statusText.className = "text-xs md:text-sm font-bold text-red-700 dark:text-red-300";
-            statusText.innerText = "❌ ปิดยอด: พลาดเป้าหมาย";
-            progressBar.className = "bg-red-500 h-4 transition-all duration-1000";
-        }
-    } else {
-        // กรณีระหว่างเดือน พยากรณ์ตามปกติ
-        infoText.innerText = `*ระบบดึงข้อมูลของเดือน ${monthNames[targetMonth]} ${targetYear} มาคำนวณคาดการณ์`;
-        document.getElementById('forecastRunRate').innerText = `(เฉลี่ย ${runRate.toLocaleString(undefined, {maximumFractionDigits:0})} ลิตร/วัน)`;
-        
-        if (forecastVol >= targetSvpVol) {
-            statusBox.className = "p-2 md:p-3 rounded text-center flex flex-col justify-center items-center col-span-2 md:col-span-1 bg-green-100 border border-green-200 transition-colors dark:bg-green-900 dark:border-green-800";
-            statusText.className = "text-xs md:text-sm font-bold text-green-700 dark:text-green-300";
-            statusText.innerText = "✅ มีแนวโน้มทะลุเป้า";
-            progressBar.className = "bg-green-500 h-4 transition-all duration-1000";
-        } else {
-            statusBox.className = "p-2 md:p-3 rounded text-center flex flex-col justify-center items-center col-span-2 md:col-span-1 bg-red-100 border border-red-200 transition-colors dark:bg-red-900 dark:border-red-800";
-            statusText.className = "text-xs md:text-sm font-bold text-red-700 dark:text-red-300";
-            statusText.innerText = "⚠️ เสี่ยงยอดตกเป้า (เร่งด่วน)";
-            progressBar.className = "bg-red-500 h-4 transition-all duration-1000";
-        }
-    }
-
-    let percent = (forecastVol / targetSvpVol) * 100;
-    setTimeout(() => { progressBar.style.width = Math.min(percent, 100) + '%'; }, 100);
-}
-function processData(attData, prdData) {
-    let globalStats = { totalVol: 0, vpowerVol: 0, totalCars: 0, totalBills: 0, goPlusBills: 0 };
-    let employeeStats = {};
-    let empActiveDates = {}; // 🌟 ตัวแปรใหม่: เก็บนับจำนวนวันทำงานจริงของพนักงานแต่ละคน
-    let vehicleStats = { "2W": { name: "มอเตอร์ไซค์ (2 ล้อ)", vpower: 0, normal: 0 }, "4W": { name: "รถยนต์ (4 ล้อ)", vpower: 0, normal: 0 }, "HEAVY": { name: "รถใหญ่ (บรรทุก)", vpower: 0, normal: 0 } };
-    let activeEmpCountForAvg = 0; 
-
-    attData.forEach(row => {
-        if (row['Category Name'] === 'Fuels') {
-            let dStr = row['Open Date'] || row['Date'];
-            let empId = row['Attendant'];
-            let volume = parseFloat(row['Volume']) || 0;
-            let deliveryCount = parseInt(row['Delivery Count']) || 0;
-            let pName = (row['Product Name'] || "").toUpperCase();
-            let vCode = (row['Vehicle Code'] || "").trim().toUpperCase();
-            
-            if (!empId || volume <= 0) return;
-            let isVpower = pName.includes("VP ") || pName.includes("V-POWER") || pName.includes("VPOWER");
-            let empRawName = employeeMapping[empId] || `รหัส ${empId}`;
-
-            // เก็บวันทำงานจริงของพนักงานคนนี้
-            if (!empActiveDates[empRawName]) empActiveDates[empRawName] = new Set();
-            if (dStr) empActiveDates[empRawName].add(dStr);
-
-            if (!employeeStats[empRawName]) {
-                employeeStats[empRawName] = { totalVol: 0, vpowerVol: 0, normalVol: 0, deliveryCount: 0 };
-                if (!empRawName.includes("(ช่าง)") && !empRawName.includes("(แคช)")) activeEmpCountForAvg++;
-            }
-            
-            employeeStats[empRawName].totalVol += volume;
-            employeeStats[empRawName].deliveryCount += deliveryCount;
-            globalStats.totalVol += volume;
-            
-            if (isVpower) { employeeStats[empRawName].vpowerVol += volume; globalStats.vpowerVol += volume; } 
-            else { employeeStats[empRawName].normalVol += volume; }
-
-            if (!activeEmpFilter || empRawName === activeEmpFilter) {
-                let vGroup = "OTHER";
-                if(vCode === "2W") vGroup = "2W"; else if(vCode === "4W") vGroup = "4W"; else if(vCode === "HEAVY") vGroup = "HEAVY";
-                if (vehicleStats[vGroup]) {
-                    if(isVpower) vehicleStats[vGroup].vpower += volume; else vehicleStats[vGroup].normal += volume;
-                }
-            }
-        }
-    });
-
-    prdData.forEach(row => {
-        if (row['Category Name'] === 'Fuels') {
-            let loyalty = (row['Loyalty'] || "").toUpperCase();
-            let count = parseInt(row['Delivery Count']) || parseInt(row['Purchase Count']) || 0;
-            if(count > 0) {
-                globalStats.totalBills += count;
-                if (loyalty.includes("GO+") || (loyalty !== "NOLOYALTY" && loyalty !== "")) globalStats.goPlusBills += count;
-            }
-        }
-    });
-
-    // แสดงผลเป้าหมายลิตรรวม
-    let targetTotalMonth = parseFloat(document.getElementById('targetTotalVolume').value) || 150000;
-    document.getElementById('kpiTotalTargetLabel').innerText = `เป้าหมายเดือน: ${targetTotalMonth.toLocaleString()} ลิตร`;
-    let kpiTotalVolEl = document.getElementById('kpiTotalVol');
-    kpiTotalVolEl.innerText = globalStats.totalVol.toLocaleString(undefined, {maximumFractionDigits: 0});
-    if(globalStats.totalVol >= targetTotalMonth) kpiTotalVolEl.className = "text-lg md:text-2xl font-bold text-blue-600 mt-1 transition-colors";
-    else kpiTotalVolEl.className = "text-lg md:text-2xl font-bold text-gray-900 dark:text-gray-100 mt-1 transition-colors";
-
-    // แสดงผล V-Power Mix
-    let targetVp = parseFloat(document.getElementById('targetVpMix').value) || 20;
-    let vMix = globalStats.totalVol > 0 ? (globalStats.vpowerVol / globalStats.totalVol) * 100 : 0;
-    document.getElementById('kpiTargetLabel').innerText = `เป้าหมาย: ${targetVp}%`;
-    let vpElement = document.getElementById('kpiVpowerMix');
-    vpElement.innerText = vMix.toFixed(1) + '%';
-    if (vMix >= targetVp) vpElement.className = "text-lg md:text-2xl font-bold text-green-600 mt-1 transition-colors";
-    else vpElement.className = "text-lg md:text-2xl font-bold text-red-600 mt-1 transition-colors";
-    
-    let goMix = globalStats.totalBills > 0 ? ((globalStats.goPlusBills / globalStats.totalBills) * 100).toFixed(1) : 0;
-    document.getElementById('kpiGoPlusMix').innerText = goMix + '%';
-
-    let sortedEmp = Object.entries(employeeStats).sort((a, b) => b[1].totalVol - a[1].totalVol);
-    let originalNames = sortedEmp.map(i => i[0]);
-    let empLabels = sortedEmp.map(item => {
-        let mix = ((item[1].vpowerVol / item[1].totalVol) * 100).toFixed(1);
-        let lifts = item[1].deliveryCount.toLocaleString();
-        return `${item[0].replace(/\(แคช\)|\(ช่าง\)/g, '').trim()} (VP: ${mix}% | ยก: ${lifts})`;
-    });
-
-    let avgVolPerEmp = activeEmpCountForAvg > 0 ? (globalStats.totalVol / activeEmpCountForAvg) : 0;
-    renderEmployeeChart(empLabels, sortedEmp.map(i => i[1].vpowerVol), sortedEmp.map(i => i[1].normalVol), avgVolPerEmp, originalNames);
-
-    let vehLabels = []; let vehVP = []; let vehNM = [];
-    ["2W", "4W", "HEAVY"].forEach(vType => {
-        let stat = vehicleStats[vType];
-        let mix = (stat.vpower + stat.normal) > 0 ? ((stat.vpower / (stat.vpower + stat.normal)) * 100).toFixed(1) : 0;
-        vehLabels.push(`${stat.name} (VP: ${mix}%)`); vehVP.push(stat.vpower); vehNM.push(stat.normal);
-    });
-    renderVehicleChart(vehLabels, vehVP, vehNM);
-
-    buildKpiTable(sortedEmp, empActiveDates); // ส่ง Active Days ไปคำนวณ
-}
-
-function buildKpiTable(sortedEmp, empActiveDates) {
-    let tbody = document.getElementById('kpiTableBody');
-    if(!tbody) return;
-    tbody.innerHTML = '';
-    
-    // ดึงเป้า SVP
-    let tForecourtVP = parseFloat(document.getElementById('targetDailyForecourt').value) || 190;
-    let tCashierVP = parseFloat(document.getElementById('targetDailyCashier').value) || 85;
-    let tTechVP = parseFloat(document.getElementById('targetDailyTech').value) || 85;
-    
-    // ดึงเป้า ลิตรรวม
-    let tForecourtTot = parseFloat(document.getElementById('targetDailyTotalForecourt').value) || 1000;
-    let tCashierTot = parseFloat(document.getElementById('targetDailyTotalCashier').value) || 500;
-    let tTechTot = parseFloat(document.getElementById('targetDailyTotalTech').value) || 500;
-
-    sortedEmp.forEach(([name, stats]) => {
-        // 🌟 การแก้ปัญหาความไม่แฟร์: หาจำนวนวันทำงานจริงของแต่ละคน
-        let activeDays = empActiveDates[name] ? empActiveDates[name].size : 1; 
-
-        let dTargetVP = tForecourtVP; let dTargetTot = tForecourtTot;
-        
-        if (name.includes("(แคช)")) {
-            dTargetVP = tCashierVP; dTargetTot = tCashierTot;
-        } else if (name.includes("(ช่าง)")) {
-            dTargetVP = tTechVP; dTargetTot = tTechTot;
-        }
-
-        let periodTargetVP = dTargetVP * activeDays;
-        let periodTargetTot = dTargetTot * activeDays;
-
-        let actualVP = stats.vpowerVol;
-        let actualTot = stats.totalVol;
-
-        let diffVP = actualVP - periodTargetVP;
-        let diffTot = actualTot - periodTargetTot;
-        
-        let statusVP = actualVP >= periodTargetVP 
-            ? `<span class="text-green-600 font-bold">✅ ผ่าน (+${diffVP.toLocaleString(undefined,{maximumFractionDigits:0})})</span>` 
-            : `<span class="text-red-600 font-bold">❌ ตก (${diffVP.toLocaleString(undefined,{maximumFractionDigits:0})})</span>`;
-            
-        let statusTot = actualTot >= periodTargetTot 
-            ? `<span class="text-blue-600 font-bold">✅ ผ่าน (+${diffTot.toLocaleString(undefined,{maximumFractionDigits:0})})</span>` 
-            : `<span class="text-red-600 font-bold">❌ ตก (${diffTot.toLocaleString(undefined,{maximumFractionDigits:0})})</span>`;
-
-        let cleanName = name.replace(/\(แคช\)|\(ช่าง\)/g, '').trim();
-
-        tbody.innerHTML += `
-            <tr class="hover:bg-gray-50 transition border-b border-gray-100 dark:border-gray-700">
-                <td class="py-3 px-3 text-xs md:text-sm font-medium text-gray-800 dark:text-gray-200">${cleanName}</td>
-                <td class="py-3 px-2 text-center text-xs md:text-sm text-gray-500 border-r dark:border-gray-700">${activeDays} วัน</td>
+        <!-- Settings Accordion -->
+        <details class="mb-6 bg-white rounded-lg shadow-sm border border-gray-200">
+            <summary class="p-4 font-semibold cursor-pointer text-gray-700 hover:bg-gray-50 text-sm md:text-base">
+                ⚙️ ตั้งค่ารายชื่อพนักงาน และ เป้าหมาย (KPI)
+            </summary>
+            <div class="p-4 border-t border-gray-200 bg-gray-50">
                 
-                <!-- น้ำมันรวม -->
-                <td class="py-3 px-3 text-right text-xs md:text-sm text-blue-600 bg-blue-50/50">${periodTargetTot.toLocaleString()}</td>
-                <td class="py-3 px-3 text-right text-sm md:text-base font-bold text-blue-700 bg-blue-50/50">${actualTot.toLocaleString(undefined,{maximumFractionDigits:0})}</td>
-                <td class="py-3 px-3 text-center text-xs md:text-sm bg-blue-50/50 border-r dark:border-gray-700">${statusTot}</td>
+                <!-- ตั้งค่าเป้ารายเดือน -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                    <div class="p-3 bg-white border border-yellow-300 rounded flex flex-col justify-center gap-1">
+                        <label class="text-sm font-bold text-gray-700">🎯 เป้าหมาย V-Power Mix (%):</label>
+                        <input type="number" id="targetVpMix" value="20" class="w-full p-1.5 border rounded focus:outline-none focus:ring-1 focus:ring-red-500 font-medium text-red-600">
+                    </div>
+                    <div class="p-3 bg-white border border-purple-300 rounded flex flex-col justify-center gap-1">
+                        <label class="text-sm font-bold text-gray-700">🔮 เป้า SVP สถานี/เดือน (ลิตร):</label>
+                        <input type="number" id="targetSvpVolume" value="30000" step="1000" class="w-full p-1.5 border rounded focus:outline-none focus:ring-1 focus:ring-purple-500 font-medium text-purple-700">
+                    </div>
+                    <div class="p-3 bg-white border border-blue-300 rounded flex flex-col justify-center gap-1">
+                        <label class="text-sm font-bold text-gray-700">⛽ เป้าน้ำมันรวม สถานี/เดือน (ลิตร):</label>
+                        <input type="number" id="targetTotalVolume" value="150000" step="1000" class="w-full p-1.5 border rounded focus:outline-none focus:ring-1 focus:ring-blue-500 font-medium text-blue-700">
+                    </div>
+                </div>
+
+                <!-- ตั้งค่าเป้ารายบุคคล -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                    <div class="bg-white p-3 rounded border border-gray-200">
+                        <h3 class="text-sm font-bold text-purple-800 mb-2">🏆 เป้า SVP รายบุคคล (ลิตร/วัน)</h3>
+                        <div class="grid grid-cols-3 gap-2">
+                            <div>
+                                <label class="text-xs font-bold text-gray-600 block mb-1">หน้าลาน</label>
+                                <input type="number" id="targetDailyForecourt" value="190" class="w-full p-1 border rounded focus:outline-none text-sm font-medium text-gray-700">
+                            </div>
+                            <div>
+                                <label class="text-xs font-bold text-gray-600 block mb-1">แคชเชียร์</label>
+                                <input type="number" id="targetDailyCashier" value="85" class="w-full p-1 border rounded focus:outline-none text-sm font-medium text-gray-700">
+                            </div>
+                            <div>
+                                <label class="text-xs font-bold text-gray-600 block mb-1">ช่าง</label>
+                                <input type="number" id="targetDailyTech" value="85" class="w-full p-1 border rounded focus:outline-none text-sm font-medium text-gray-700">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-white p-3 rounded border border-gray-200">
+                        <h3 class="text-sm font-bold text-blue-800 mb-2">⛽ เป้าน้ำมันรวม รายบุคคล (ลิตร/วัน)</h3>
+                        <div class="grid grid-cols-3 gap-2">
+                            <div>
+                                <label class="text-xs font-bold text-gray-600 block mb-1">หน้าลาน</label>
+                                <input type="number" id="targetDailyTotalForecourt" value="1000" class="w-full p-1 border rounded focus:outline-none text-sm font-medium text-gray-700">
+                            </div>
+                            <div>
+                                <label class="text-xs font-bold text-gray-600 block mb-1">แคชเชียร์</label>
+                                <input type="number" id="targetDailyTotalCashier" value="500" class="w-full p-1 border rounded focus:outline-none text-sm font-medium text-gray-700">
+                            </div>
+                            <div>
+                                <label class="text-xs font-bold text-gray-600 block mb-1">ช่าง</label>
+                                <input type="number" id="targetDailyTotalTech" value="500" class="w-full p-1 border rounded focus:outline-none text-sm font-medium text-gray-700">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <p class="text-xs md:text-sm text-gray-600 mb-3">💡 <b>พนักงาน:</b> ใส่รหัสให้ตรงกับระบบ POS (แคชเชียร์ใส่ <b>"(แคช)"</b>, ช่างใส่ <b>"(ช่าง)"</b> ต่อท้ายชื่อ)</p>
+                <div id="empFormContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3 mb-4 max-h-60 overflow-y-auto custom-scrollbar p-2 bg-white border border-gray-200 rounded-lg"></div>
+                <div class="flex flex-wrap gap-2">
+                    <button id="addEmpBtn" class="bg-gray-200 text-gray-700 px-3 py-2 rounded font-medium hover:bg-gray-300 transition text-sm flex-1 md:flex-none">+ เพิ่มช่องรายชื่อ</button>
+                    <button id="saveConfigBtn" class="shell-red text-white px-3 py-2 rounded font-medium hover:bg-red-700 transition text-sm flex-1 md:flex-none">💾 บันทึกและคำนวณใหม่</button>
+                </div>
+            </div>
+        </details>
+
+        <!-- Upload Zone -->
+        <div id="dropZone" class="card mb-6 border-2 border-dashed border-gray-300 bg-white text-center transition-all duration-200">
+            <h2 class="text-base md:text-lg font-semibold mb-1">📥 โยนไฟล์วิเคราะห์ 3 ไฟล์ลงที่นี่</h2>
+            <p class="text-xs md:text-sm text-gray-500 mb-4">*ใช้เฉพาะไฟล์ Attendant, HourlyTrends, ProductSales</p>
+            <input type="file" id="fileUpload" multiple accept=".csv, .txt" class="block w-full text-xs md:text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-red-50 file:text-red-700 hover:file:bg-red-100 cursor-pointer mx-auto max-w-md"/>
+            <div id="fileStatus" class="mt-4 flex flex-wrap justify-center gap-2 text-xs font-medium"></div>
+        </div>
+
+        <!-- Dashboard Widgets -->
+        <div id="dashboardSection" class="hidden space-y-4 md:space-y-6 bg-gray-100 p-2 md:p-4 rounded-lg transition-colors">
+            
+            <!-- KPIs -->
+            <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-6">
+                <div class="card border-shell-yellow bg-white p-3 md:p-6 relative">
+                    <p class="text-gray-500 text-xs md:text-sm font-medium leading-tight">ปริมาณลิตรรวม</p>
+                    <h3 id="kpiTotalVol" class="text-lg md:text-2xl font-bold text-gray-900 mt-1 transition-colors">-</h3>
+                    <p id="kpiTotalTargetLabel" class="text-[10px] md:text-xs text-gray-400 mt-1 border-t pt-1">เป้าหมายเดือน: -</p>
+                </div>
+                <div class="card border-shell-red bg-white p-3 md:p-6">
+                    <p class="text-gray-500 text-xs md:text-sm font-medium leading-tight">รวมรถเข้าลาน (คัน)</p>
+                    <h3 id="kpiTotalCars" class="text-lg md:text-2xl font-bold text-gray-900 mt-1">-</h3>
+                </div>
+                <div class="card border-shell-yellow bg-white p-3 md:p-6 relative">
+                    <p class="text-gray-500 text-xs md:text-sm font-medium leading-tight">V-Power Mix (% ลิตร)</p>
+                    <h3 id="kpiVpowerMix" class="text-lg md:text-2xl font-bold text-gray-400 mt-1 transition-colors">-</h3>
+                    <p id="kpiTargetLabel" class="text-[10px] md:text-xs text-gray-400 mt-1 border-t pt-1">เป้าหมาย: -</p>
+                </div>
+                <div class="card border-shell-red bg-white p-3 md:p-6">
+                    <p class="text-gray-500 text-xs md:text-sm font-medium leading-tight">บิล Shell GO+ (%)</p>
+                    <h3 id="kpiGoPlusMix" class="text-lg md:text-2xl font-bold text-gray-900 mt-1">-</h3>
+                </div>
+            </div>
+
+            <!-- AI Forecasting -->
+            <div class="card bg-white border-l-4 border-purple-500">
+                <h2 class="text-lg md:text-xl font-semibold mb-3 text-purple-800 flex items-center gap-2">
+                    🔮 AI คาดการณ์ยอด V-Power (SVP) ประจำเดือน
+                </h2>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
+                    <div class="bg-gray-50 p-2 md:p-3 rounded text-center">
+                        <p class="text-[10px] md:text-xs text-gray-500">เป้าหมายทั้งเดือน (ลิตร)</p>
+                        <p id="forecastTarget" class="text-lg md:text-xl font-bold text-gray-800">-</p>
+                    </div>
+                    <div class="bg-gray-50 p-2 md:p-3 rounded text-center">
+                        <p class="text-[10px] md:text-xs text-gray-500">ยอดสะสมปัจจุบัน (ลิตร)</p>
+                        <p id="forecastCurrent" class="text-lg md:text-xl font-bold text-gray-800">-</p>
+                    </div>
+                    <div class="bg-purple-50 p-2 md:p-3 rounded text-center border border-purple-100 col-span-2 md:col-span-1">
+                        <p class="text-[10px] md:text-xs text-purple-600 font-bold">คาดการณ์เมื่อจบเดือน</p>
+                        <p id="forecastResult" class="text-xl md:text-2xl font-bold text-purple-700">-</p>
+                    </div>
+                    <div id="forecastStatusBox" class="p-2 md:p-3 rounded text-center flex flex-col justify-center items-center col-span-2 md:col-span-1 transition-colors">
+                        <p id="forecastStatusText" class="text-xs md:text-sm font-bold">-</p>
+                        <p id="forecastRunRate" class="text-[10px] md:text-xs mt-1">-</p>
+                    </div>
+                </div>
+                <div class="mt-4 relative">
+                    <div class="flex justify-between text-[10px] md:text-xs text-gray-500 mb-1">
+                        <span>0 ลิตร</span>
+                        <span>เป้าหมาย 100%</span>
+                    </div>
+                    <div class="w-full bg-gray-200 rounded-full h-4 overflow-hidden relative">
+                        <div id="forecastProgressBar" class="bg-purple-500 h-4 transition-all duration-1000" style="width: 0%"></div>
+                    </div>
+                </div>
+                <p id="forecastInfoText" class="text-[10px] md:text-xs text-gray-400 mt-2 text-right">*คำนวณจากค่าเฉลี่ยยอดขายรายวันของเดือนล่าสุด</p>
+            </div>
+
+            <!-- Charts -->
+            <div class="grid grid-cols-1 xl:grid-cols-2 gap-4 md:gap-6">
+                <div class="card xl:col-span-2 bg-white">
+                    <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-1 gap-2">
+                        <div class="flex items-center gap-2 flex-wrap">
+                            <h2 class="text-lg md:text-xl font-semibold">👨‍💼 ปริมาณการขาย (ลิตร) แยกตามพนักงาน</h2>
+                            <button id="clearEmpFilterBtn" class="hidden bg-red-100 text-red-600 px-2 py-1 text-[10px] md:text-xs font-bold rounded hover:bg-red-200 transition">❌ ยกเลิก</button>
+                        </div>
+                        <span class="px-2 py-1 bg-green-100 text-green-700 text-[10px] md:text-xs font-bold rounded">👆 แตะที่กราฟเพื่อเจาะลึก</span>
+                    </div>
+                    <div class="overflow-x-auto pb-2 custom-scrollbar">
+                        <div style="min-width: 800px; height: 350px;">
+                            <canvas id="employeeChart"></canvas>
+                        </div>
+                    </div>
+                </div>
                 
-                <!-- SVP -->
-                <td class="py-3 px-3 text-right text-xs md:text-sm text-purple-600 bg-purple-50/50">${periodTargetVP.toLocaleString()}</td>
-                <td class="py-3 px-3 text-right text-sm md:text-base font-bold text-purple-700 bg-purple-50/50">${actualVP.toLocaleString(undefined,{maximumFractionDigits:0})}</td>
-                <td class="py-3 px-3 text-center text-xs md:text-sm bg-purple-50/50">${statusVP}</td>
-            </tr>
-        `;
-    });
-}
+                <div class="card bg-white">
+                    <div class="flex justify-between items-center mb-1">
+                        <h2 class="text-lg md:text-xl font-semibold">🚗 พฤติกรรมการเติมรถ</h2>
+                        <span id="vehicleChartSubtitle" class="text-[10px] md:text-xs font-bold text-gray-400 bg-gray-100 px-2 py-1 rounded">รวมทุกคน</span>
+                    </div>
+                    <div style="position: relative; height: 300px; width: 100%;">
+                        <canvas id="vehicleChart"></canvas>
+                    </div>
+                </div>
+                
+                <div class="card bg-white">
+                    <div class="flex justify-between items-start mb-1">
+                        <h2 class="text-lg md:text-xl font-semibold">⏱️ ปริมาณรถเข้าลานเฉลี่ย</h2>
+                        <select id="hourlyDayFilter" class="border p-1 md:p-1.5 rounded text-xs md:text-sm bg-gray-50 font-medium focus:outline-none focus:border-red-500 w-full md:w-auto">
+                            <option value="ALL">รวมทุกวัน</option>
+                            <option value="1">จันทร์</option><option value="2">อังคาร</option><option value="3">พุธ</option>
+                            <option value="4">พฤหัสบดี</option><option value="5">ศุกร์</option><option value="6">เสาร์</option><option value="0">อาทิตย์</option>
+                        </select>
+                    </div>
+                    <div style="position: relative; height: 300px; width: 100%;">
+                        <canvas id="hourlyChart"></canvas>
+                    </div>
+                </div>
+            </div>
 
-function processHourlyData(hrData) {
-    let hourlyCars = {}; let uniqueDates = new Set(); let totalCarsCalculated = 0; let selectedDay = document.getElementById('hourlyDayFilter').value;
+            <!-- วิเคราะห์การเติบโตรายบุคคล -->
+            <div class="card bg-white border-t-4 border-blue-500 mt-4 md:mt-6">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-1">
+                    <h2 class="text-lg md:text-xl font-semibold text-blue-800">📈 วิเคราะห์การเติบโตรายบุคคล</h2>
+                    <button id="btnQuickMonth" class="mt-2 md:mt-0 bg-blue-100 text-blue-700 px-3 py-1 rounded text-[10px] md:text-xs font-bold hover:bg-blue-200 transition border border-blue-200">
+                        📅 ดึงข้อมูลเดือนล่าสุด vs เดือนก่อนอัตโนมัติ
+                    </button>
+                </div>
+                <p class="text-xs md:text-sm text-gray-500 mb-4">เปรียบเทียบประสิทธิภาพการทำงาน 2 ช่วงเวลา</p>
+                
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-3 md:gap-4 bg-blue-50 p-3 md:p-4 rounded-lg mb-4 md:mb-6 border border-blue-100">
+                    <div>
+                        <label class="block text-xs font-bold text-gray-600 mb-1">เลือกพนักงาน</label>
+                        <select id="compEmpSelect" class="w-full p-2 border rounded text-sm focus:outline-none focus:ring-1 focus:ring-blue-500"></select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-gray-600 mb-1">ช่วงที่ 1 (ฐาน)</label>
+                        <div class="flex gap-2">
+                            <input type="date" id="comp1Start" class="w-full p-2 border rounded text-sm focus:outline-none focus:ring-1 focus:ring-blue-500">
+                            <input type="date" id="comp1End" class="w-full p-2 border rounded text-sm focus:outline-none focus:ring-1 focus:ring-blue-500">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-gray-600 mb-1">ช่วงที่ 2 (เปรียบเทียบ)</label>
+                        <div class="flex gap-2">
+                            <input type="date" id="comp2Start" class="w-full p-2 border rounded text-sm focus:outline-none focus:ring-1 focus:ring-blue-500">
+                            <input type="date" id="comp2End" class="w-full p-2 border rounded text-sm focus:outline-none focus:ring-1 focus:ring-blue-500">
+                        </div>
+                    </div>
+                    <div class="flex items-end mt-2 md:mt-0">
+                        <button id="btnCompare" class="w-full bg-blue-600 text-white p-2 rounded font-medium hover:bg-blue-700 transition shadow text-sm md:text-base">
+                            📊 คำนวณ
+                        </button>
+                    </div>
+                </div>
+                <div id="compResultArea" class="hidden overflow-x-auto pb-2 custom-scrollbar">
+                    <div class="flex md:grid md:grid-cols-3 gap-4 min-w-[700px] md:min-w-0">
+                        <div class="border rounded-lg p-3 text-center flex-1 bg-white">
+                            <h4 class="text-gray-500 text-xs md:text-sm font-semibold mb-2">ปริมาณลิตรรวม (ลิตร)</h4>
+                            <div class="flex justify-between items-center px-2 mb-2">
+                                <div><p class="text-[10px] text-gray-400">ช่วงที่ 1</p><p id="rVol1" class="font-bold text-base md:text-lg text-gray-700">-</p></div>
+                                <div><p class="text-[10px] text-gray-400">ช่วงที่ 2</p><p id="rVol2" class="font-bold text-base md:text-lg text-gray-700">-</p></div>
+                            </div>
+                            <div id="rVolDiff" class="text-lg md:text-xl font-bold py-1 rounded bg-gray-100">-</div>
+                        </div>
+                        <div class="border rounded-lg p-3 text-center flex-1 bg-white">
+                            <h4 class="text-gray-500 text-xs md:text-sm font-semibold mb-2">สัดส่วน V-Power Mix (%)</h4>
+                            <div class="flex justify-between items-center px-2 mb-2">
+                                <div><p class="text-[10px] text-gray-400">ช่วงที่ 1</p><p id="rVp1" class="font-bold text-base md:text-lg text-gray-700">-</p></div>
+                                <div><p class="text-[10px] text-gray-400">ช่วงที่ 2</p><p id="rVp2" class="font-bold text-base md:text-lg text-gray-700">-</p></div>
+                            </div>
+                            <div id="rVpDiff" class="text-lg md:text-xl font-bold py-1 rounded bg-gray-100">-</div>
+                        </div>
+                        <div class="border rounded-lg p-3 text-center flex-1 bg-white">
+                            <h4 class="text-gray-500 text-xs md:text-sm font-semibold mb-2">ความขยัน (ครั้งที่ยกหัวจ่าย)</h4>
+                            <div class="flex justify-between items-center px-2 mb-2">
+                                <div><p class="text-[10px] text-gray-400">ช่วงที่ 1</p><p id="rLift1" class="font-bold text-base md:text-lg text-gray-700">-</p></div>
+                                <div><p class="text-[10px] text-gray-400">ช่วงที่ 2</p><p id="rLift2" class="font-bold text-base md:text-lg text-gray-700">-</p></div>
+                            </div>
+                            <div id="rLiftDiff" class="text-lg md:text-xl font-bold py-1 rounded bg-gray-100">-</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-    hrData.forEach(row => {
-        if (row['Category Name'] === 'Fuels') {
-            let dateStr = row['Date']; let hourStr = row['Hour']; let cars = parseInt(row['Delivery Count']) || 0;
-            if (!hourStr || !dateStr) return;
-            let dateObj = new Date(dateStr);
-            if (isNaN(dateObj)) { let parts = dateStr.split(/[-/]/); if (parts.length === 3) dateObj = parts[0].length === 4 ? new Date(parts[0], parts[1]-1, parts[2]) : new Date(parts[2], parts[1]-1, parts[0]); }
-            if (!isNaN(dateObj)) {
-                let dayOfWeek = dateObj.getDay(); 
-                if (selectedDay !== "ALL" && dayOfWeek !== parseInt(selectedDay)) return;
-                uniqueDates.add(dateStr); totalCarsCalculated += cars;
-                let cleanHour = hourStr.length === 4 ? "0" + hourStr : hourStr;
-                if (!hourlyCars[cleanHour]) hourlyCars[cleanHour] = 0;
-                hourlyCars[cleanHour] += cars;
-            }
-        }
-    });
-    if (selectedDay === "ALL") { let el = document.getElementById('kpiTotalCars'); if(el) el.innerText = totalCarsCalculated.toLocaleString(); }
-    let numDays = uniqueDates.size || 1; let sortedHours = Object.keys(hourlyCars).sort();
-    let chartData = sortedHours.map(h => Math.round(hourlyCars[h] / numDays)); 
-    renderHourlyChart(sortedHours, chartData);
-}
+            <!-- ตารางประเมินผล KPI รายบุคคล แบบใหม่ (มีช่องวันทำงานจริง + เป้าน้ำมันรวม) -->
+            <div class="card bg-white border-t-4 border-green-500 mt-4 md:mt-6">
+                <h2 class="text-lg md:text-xl font-semibold mb-1 text-green-800">🏆 สรุปผลประเมิน KPI รายบุคคล (ลิตรรวม & SVP)</h2>
+                <p class="text-xs md:text-sm text-gray-500 mb-4">*เป้าหมายรวมถูกคำนวณจากเป้าหมายรายวัน คูณด้วย <span class="font-bold text-red-500">"วันทำงานจริง"</span> ของพนักงานแต่ละคน (แฟร์ 100%)</p>
+                <div class="overflow-x-auto pb-2 custom-scrollbar rounded border border-gray-200">
+                    <table class="min-w-full bg-white text-left text-xs md:text-sm">
+                        <thead class="bg-gray-100 border-b border-gray-200">
+                            <tr>
+                                <th class="py-3 px-3 font-bold text-gray-700 whitespace-nowrap">พนักงาน</th>
+                                <th class="py-3 px-2 font-bold text-gray-700 whitespace-nowrap text-center border-r">วันทำงาน</th>
+                                
+                                <!-- โซนน้ำมันรวม -->
+                                <th class="py-3 px-3 font-bold text-blue-700 text-right whitespace-nowrap bg-blue-50">เป้าลิตรรวม</th>
+                                <th class="py-3 px-3 font-bold text-blue-700 text-right whitespace-nowrap bg-blue-50">ยอดรวมทำได้</th>
+                                <th class="py-3 px-3 font-bold text-blue-700 text-center whitespace-nowrap bg-blue-50 border-r">สถานะลิตรรวม</th>
+                                
+                                <!-- โซน SVP -->
+                                <th class="py-3 px-3 font-bold text-purple-700 text-right whitespace-nowrap bg-purple-50">เป้า SVP</th>
+                                <th class="py-3 px-3 font-bold text-purple-700 text-right whitespace-nowrap bg-purple-50">ยอด SVP ทำได้</th>
+                                <th class="py-3 px-3 font-bold text-purple-700 text-center whitespace-nowrap bg-purple-50">สถานะ SVP</th>
+                            </tr>
+                        </thead>
+                        <tbody id="kpiTableBody" class="divide-y divide-gray-100"></tbody>
+                    </table>
+                </div>
+            </div>
 
-// --- Charts ---
-Chart.defaults.font.family = "'Prompt', sans-serif";
-
-function renderEmployeeChart(labels, vpowerData, normalData, averageVol, originalNames) {
-    const ctx = document.getElementById('employeeChart').getContext('2d');
-    if(charts.emp) charts.emp.destroy();
-    
-    let annotationConfig = {};
-    if (averageVol > 0) {
-        annotationConfig = {
-            annotations: {
-                line1: {
-                    type: 'line', yMin: averageVol, yMax: averageVol, borderColor: 'rgba(34, 197, 94, 0.9)', borderWidth: 2, borderDash: [5, 5],
-                    label: { display: true, content: 'ค่าเฉลี่ยสถานี (หน้าลาน)', position: 'end', backgroundColor: 'rgba(34, 197, 94, 0.9)' }
-                }
-            }
-        };
-    }
-
-    let bgVp = originalNames.map(name => (activeEmpFilter && name !== activeEmpFilter) ? 'rgba(221, 29, 33, 0.2)' : '#dd1d21');
-    let bgNm = originalNames.map(name => (activeEmpFilter && name !== activeEmpFilter) ? 'rgba(251, 206, 7, 0.2)' : '#fbce07');
-
-    charts.emp = new Chart(ctx, { 
-        type: 'bar', 
-        data: { labels: labels, datasets: [ { label: 'V-Power', data: vpowerData, backgroundColor: bgVp, stack: 'Stack 0' }, { label: 'มาตรฐาน', data: normalData, backgroundColor: bgNm, stack: 'Stack 0' } ] }, 
-        options: { 
-            responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'top' }, annotation: annotationConfig }, scales: { x: { stacked: true }, y: { stacked: true, beginAtZero: true } },
-            onClick: (e, elements) => {
-                if (elements.length > 0) {
-                    const dataIndex = elements[0].index; activeEmpFilter = originalNames[dataIndex];
-                    let btn = document.getElementById('clearEmpFilterBtn'); if(btn) btn.classList.remove('hidden');
-                    let subTitle = document.getElementById('vehicleChartSubtitle');
-                    let cleanName = activeEmpFilter.replace(/\(แคช\)|\(ช่าง\)/g, '').trim();
-                    if(subTitle) { subTitle.innerText = `เฉพาะ: ${cleanName}`; subTitle.className = "text-[10px] md:text-xs font-bold text-red-600 bg-red-100 px-2 py-1 rounded"; }
-                    updateDashboard(); 
-                }
-            }
-        } 
-    });
-}
-
-function renderVehicleChart(labels, vpowerData, normalData) {
-    const ctx = document.getElementById('vehicleChart').getContext('2d'); if(charts.veh) charts.veh.destroy();
-    charts.veh = new Chart(ctx, { type: 'bar', data: { labels: labels, datasets: [ { label: 'V-Power', data: vpowerData, backgroundColor: '#dd1d21', stack: 'Stack 1' }, { label: 'มาตรฐาน', data: normalData, backgroundColor: '#fbce07', stack: 'Stack 1' } ] }, options: { responsive: true, maintainAspectRatio: false, indexAxis: 'y', plugins: { legend: { position: 'top' } }, scales: { x: { stacked: true }, y: { stacked: true } } } });
-}
-function renderHourlyChart(labels, data) {
-    const ctx = document.getElementById('hourlyChart').getContext('2d'); if(charts.hr) charts.hr.destroy();
-    charts.hr = new Chart(ctx, { type: 'line', data: { labels: labels, datasets: [{ label: 'เฉลี่ยรถเข้าลาน/วัน (คัน)', data: data, borderColor: '#dd1d21', backgroundColor: 'rgba(221, 29, 33, 0.1)', borderWidth: 3, fill: true, tension: 0.3, pointBackgroundColor: '#fbce07' }] }, options: { responsive: true, maintainAspectRatio: false } });
-}
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
