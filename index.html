@@ -99,7 +99,6 @@
                         <label class="text-sm font-bold text-gray-700">🔮 เป้า SVP สถานี/เดือน (ลิตร):</label>
                         <input type="number" id="targetSvpVolume" value="30000" step="1000" class="w-full p-1.5 border rounded focus:outline-none focus:ring-1 focus:ring-purple-500 font-medium text-purple-700">
                     </div>
-                    <!-- (ใหม่) เป้ารายเดือน ลิตรรวม -->
                     <div class="p-3 bg-white border border-blue-300 rounded flex flex-col justify-center gap-1">
                         <label class="text-sm font-bold text-gray-700">⛽ เป้าน้ำมันรวม สถานี/เดือน (ลิตร):</label>
                         <input type="number" id="targetTotalVolume" value="150000" step="1000" class="w-full p-1.5 border rounded focus:outline-none focus:ring-1 focus:ring-blue-500 font-medium text-blue-700">
@@ -108,7 +107,6 @@
 
                 <!-- ตั้งค่าเป้ารายบุคคล -->
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                    <!-- โซน V-Power -->
                     <div class="bg-white p-3 rounded border border-gray-200">
                         <h3 class="text-sm font-bold text-purple-800 mb-2">🏆 เป้า SVP รายบุคคล (ลิตร/วัน)</h3>
                         <div class="grid grid-cols-3 gap-2">
@@ -126,7 +124,6 @@
                             </div>
                         </div>
                     </div>
-                    <!-- โซน ลิตรรวม -->
                     <div class="bg-white p-3 rounded border border-gray-200">
                         <h3 class="text-sm font-bold text-blue-800 mb-2">⛽ เป้าน้ำมันรวม รายบุคคล (ลิตร/วัน)</h3>
                         <div class="grid grid-cols-3 gap-2">
@@ -166,7 +163,7 @@
         <!-- Dashboard Widgets -->
         <div id="dashboardSection" class="hidden space-y-4 md:space-y-6 bg-gray-100 p-2 md:p-4 rounded-lg transition-colors">
             
-            <!-- KPIs (เพิ่มเป้าเดือนใต้ลิตรรวม) -->
+            <!-- KPIs -->
             <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-6">
                 <div class="card border-shell-yellow bg-white p-3 md:p-6 relative">
                     <p class="text-gray-500 text-xs md:text-sm font-medium leading-tight">ปริมาณลิตรรวม</p>
