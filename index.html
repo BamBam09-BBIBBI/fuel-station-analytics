@@ -481,15 +481,13 @@
 
             // 🎛️ Checkbox Event Listeners for Hourly Trends
             document.getElementById('hrMetric').addEventListener('change', () => {
-                // ต้องไปดึงข้อมูลจาก Hourly เหมือนเดิม (ไม่ใช่ Attendant)
                 let sd = document.getElementById('dateFilter').value;
                 const filterFn = (r) => {
                     if (sd === "ALL") return true;
                     let dStr = r['Open Date'] || r['Date'];
                     if (!dStr) return false;
                     if (sd.startsWith('MONTH_')) {
-                        let targetMonthStr = sd.replace('MONTH_', ''); 
-                        return dStr.includes(targetMonthStr); 
+                        return dStr.includes(sd.replace('MONTH_', '')); 
                     } else {
                         return dStr === sd;
                     }
@@ -497,6 +495,7 @@
                 let filteredHourlyData = rawHourly.filter(filterFn);
                 processHourlyData(filteredHourlyData);
             });
+            
             document.getElementById('hourlyDayFilter').addEventListener('change', () => {
                 let sd = document.getElementById('dateFilter').value;
                 const filterFn = (r) => {
@@ -504,8 +503,7 @@
                     let dStr = r['Open Date'] || r['Date'];
                     if (!dStr) return false;
                     if (sd.startsWith('MONTH_')) {
-                        let targetMonthStr = sd.replace('MONTH_', ''); 
-                        return dStr.includes(targetMonthStr); 
+                        return dStr.includes(sd.replace('MONTH_', '')); 
                     } else {
                         return dStr === sd;
                     }
@@ -513,6 +511,7 @@
                 let filteredHourlyData = rawHourly.filter(filterFn);
                 processHourlyData(filteredHourlyData);
             });
+            
             document.querySelectorAll('.hr-veh, .hr-fuel').forEach(cb => {
                 cb.addEventListener('change', () => {
                     let sd = document.getElementById('dateFilter').value;
@@ -521,8 +520,7 @@
                         let dStr = r['Open Date'] || r['Date'];
                         if (!dStr) return false;
                         if (sd.startsWith('MONTH_')) {
-                            let targetMonthStr = sd.replace('MONTH_', ''); 
-                            return dStr.includes(targetMonthStr); 
+                            return dStr.includes(sd.replace('MONTH_', '')); 
                         } else {
                             return dStr === sd;
                         }
@@ -689,6 +687,7 @@
                 let isDark = document.documentElement.classList.contains('dark');
                 let targetEl = document.getElementById('dashboardSection');
                 
+                // Temporarily disable overflow hidden for exporting full width
                 let scrollers = targetEl.querySelectorAll('.overflow-x-auto');
                 scrollers.forEach(el => {
                     el.classList.remove('overflow-x-auto');
@@ -707,6 +706,7 @@
                         }
                     }
                 }).then(canvas => {
+                    // Restore overflow hidden
                     scrollers.forEach(el => {
                         el.classList.add('overflow-x-auto');
                         el.style.overflow = '';
@@ -928,6 +928,16 @@
             const filterFn = (r) => {
                 if (sd === "ALL") return true;
                 let dStr = r['Open Date'] || r['Date'];
+                
+                // 🛠️ FIX: รองรับไฟล์ ProductSales ที่ส่งมาเป็นรายเดือน (ไม่มี Date)
+                if (!dStr && r['Year'] && r['Month']) {
+                    let ymStr = `${r['Year']}-${String(r['Month']).padStart(2, '0')}`;
+                    if (sd.startsWith('MONTH_')) {
+                        return ymStr === sd.replace('MONTH_', ''); 
+                    }
+                    return false; 
+                }
+                
                 if (!dStr) return false;
                 
                 if (sd.startsWith('MONTH_')) {
@@ -948,9 +958,7 @@
             // Trigger updates
             processData(filteredAttendant, filteredProduct);
             processDailyRanking(filteredAttendant);
-            
-            // 🚨 แก้ไขให้ส่งข้อมูล Hourly กลับไปใช้ไฟล์ HourlyTrends ตามเดิม 🚨
-            processHourlyData(filteredHourlyData);
+            processHourlyData(filteredHourlyData); // 🚨 เปลี่ยนมาส่งข้อมูลไฟล์ Hourly ขนานแท้
             
             // Forecast logic
             if (sd === "ALL" || sd.startsWith('MONTH_')) {
@@ -1183,12 +1191,13 @@
                 if (row['Category Name'] !== 'Fuels') return;
                 
                 let dStr = row['Open Date'] || row['Date']; 
-                // คอลัมน์เวลาในไฟล์ HourlyTrends คือ 'Hour'
+                // รองรับคอลัมน์ Hour, Open Time, Time
                 let timeStr = row['Hour'] || row['Open Time'] || row['Time'];
                 if (!timeStr || !dStr) return;
                 
+                // ดึงเฉพาะชั่วโมงแรก
                 let hStr = timeStr.toString().split(':')[0]; 
-                if (hStr.length === 1) hStr = "0" + hStr; // เติมเลข 0 ข้างหน้าถ้าเป็นเลขหลักเดียว
+                if (hStr.length === 1) hStr = "0" + hStr; 
 
                 let d = new Date(dStr); 
                 if (isNaN(d)) { 
@@ -1357,9 +1366,13 @@
                 }
             });
 
-            // Shell GO+ นับจาก ProductSales (ไม่มี VCode ให้กรองง่ายๆ แต่จะคำนวณตามที่มี)
+            // 🛠️ FIX: Shell GO+ นับเฉพาะ 2 ล้อ และ 4 ล้อ
             prdData.forEach(row => {
                 if (row['Category Name'] === 'Fuels') {
+                    // กรองรถใหญ่ทิ้ง (นับแค่ 2W, 4W)
+                    let vCode = (row['Vehicle Code'] || "").trim().toUpperCase();
+                    if (vCode !== '2W' && vCode !== '4W') return;
+
                     let loyalty = (row['Loyalty'] || "").toUpperCase();
                     let count = parseInt(row['Delivery Count']) || parseInt(row['Purchase Count']) || 0;
                     if(count > 0) {
