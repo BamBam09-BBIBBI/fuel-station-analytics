@@ -345,26 +345,40 @@ function updateDashboard() {
 
 function processForecast(attData) {
     if (attData.length === 0) return;
-    let latestDate = new Date(0); let hasValidDate = false;
+    let latestDate = new Date(0);
+    let hasValidDate = false;
+    
+    // หาเดือนล่าสุดในข้อมูล
     attData.forEach(row => {
         let dStr = row['Open Date'] || row['Date'];
         if (dStr) {
             let d = new Date(dStr);
-            if (isNaN(d)) { let parts = dStr.split(/[-/]/); if (parts.length === 3) d = parts[0].length === 4 ? new Date(parts[0], parts[1]-1, parts[2]) : new Date(parts[2], parts[1]-1, parts[0]); }
+            if (isNaN(d)) { 
+                let parts = dStr.split(/[-/]/);
+                if (parts.length === 3) d = parts[0].length === 4 ? new Date(parts[0], parts[1]-1, parts[2]) : new Date(parts[2], parts[1]-1, parts[0]);
+            }
             if (!isNaN(d) && d > latestDate) { latestDate = d; hasValidDate = true; }
         }
     });
-    if (!hasValidDate) return;
-    
-    let targetMonth = latestDate.getMonth(); let targetYear = latestDate.getFullYear();
-    let monthNames = ["มกราคม", "กุมภาพันธ์", "มีนาคม", "เมษายน", "พฤษภาคม", "มิถุนายน", "กรกฎาคม", "สิงหาคม", "กันยายน", "ตุลาคม", "พฤศจิกายน", "ธันวาคม"];
-    document.getElementById('forecastInfoText').innerText = `*ระบบดึงข้อมูลของเดือน ${monthNames[targetMonth]} ${targetYear} มาคำนวณคาดการณ์`;
 
-    let currentMonthSvpVol = 0; let activeDates = new Set();
+    if (!hasValidDate) return;
+    let targetMonth = latestDate.getMonth();
+    let targetYear = latestDate.getFullYear();
+    let monthNames = ["มกราคม", "กุมภาพันธ์", "มีนาคม", "เมษายน", "พฤษภาคม", "มิถุนายน", "กรกฎาคม", "สิงหาคม", "กันยายน", "ตุลาคม", "พฤศจิกายน", "ธันวาคม"];
+    
+    let currentMonthSvpVol = 0;
+    let activeDates = new Set();
+    
+    // คำนวณยอดสะสมของเดือนล่าสุด
     attData.forEach(row => {
-        let dStr = row['Open Date'] || row['Date']; if (!dStr) return;
+        let dStr = row['Open Date'] || row['Date'];
+        if (!dStr) return;
         let d = new Date(dStr);
-        if (isNaN(d)) { let parts = dStr.split(/[-/]/); if (parts.length === 3) d = parts[0].length === 4 ? new Date(parts[0], parts[1]-1, parts[2]) : new Date(parts[2], parts[1]-1, parts[0]); }
+        if (isNaN(d)) {
+            let parts = dStr.split(/[-/]/);
+            if (parts.length === 3) d = parts[0].length === 4 ? new Date(parts[0], parts[1]-1, parts[2]) : new Date(parts[2], parts[1]-1, parts[0]);
+        }
+        
         if (!isNaN(d) && d.getMonth() === targetMonth && d.getFullYear() === targetYear) {
             if (row['Category Name'] === 'Fuels') {
                 let pName = (row['Product Name'] || "").toUpperCase();
@@ -378,33 +392,61 @@ function processForecast(attData) {
     let targetSvpVol = parseFloat(document.getElementById('targetSvpVolume').value) || 30000;
     let daysPassed = activeDates.size || 1;
     let totalDaysInMonth = new Date(targetYear, targetMonth + 1, 0).getDate(); 
+    
+    // 🌟 ส่วนที่เพิ่มใหม่: ตรวจสอบว่าเป็นเดือนที่จบไปแล้ว หรือข้อมูลครบเดือนแล้วใช่ไหม?
+    let today = new Date();
+    // ถ้า (ปีและเดือนล่าสุด น้อยกว่า ปัจจุบัน) หรือ (จำนวนวันในข้อมูล เท่ากับ จำนวนวันเต็มในเดือน)
+    let isMonthEnded = (targetYear < today.getFullYear() || (targetYear === today.getFullYear() && targetMonth < today.getMonth())) || (daysPassed >= totalDaysInMonth);
+
     let runRate = currentMonthSvpVol / daysPassed;
-    let forecastVol = runRate * totalDaysInMonth;
+    let forecastVol = isMonthEnded ? currentMonthSvpVol : (runRate * totalDaysInMonth);
 
     document.getElementById('forecastTarget').innerText = targetSvpVol.toLocaleString(undefined, {maximumFractionDigits:0});
     document.getElementById('forecastCurrent').innerText = currentMonthSvpVol.toLocaleString(undefined, {maximumFractionDigits:0});
     document.getElementById('forecastResult').innerText = forecastVol.toLocaleString(undefined, {maximumFractionDigits:0});
-    document.getElementById('forecastRunRate').innerText = `(เฉลี่ย ${runRate.toLocaleString(undefined, {maximumFractionDigits:0})} ลิตร/วัน)`;
-
+    
     let statusBox = document.getElementById('forecastStatusBox');
     let statusText = document.getElementById('forecastStatusText');
     let progressBar = document.getElementById('forecastProgressBar');
+    let infoText = document.getElementById('forecastInfoText');
 
-    if (forecastVol >= targetSvpVol) {
-        statusBox.className = "p-2 md:p-3 rounded text-center flex flex-col justify-center items-center col-span-2 md:col-span-1 bg-green-100 border border-green-200 transition-colors dark:bg-green-900 dark:border-green-800";
-        statusText.className = "text-xs md:text-sm font-bold text-green-700 dark:text-green-300";
-        statusText.innerText = "✅ มีแนวโน้มทะลุเป้า";
-        progressBar.className = "bg-green-500 h-4 transition-all duration-1000";
+    if (isMonthEnded) {
+        // กรณีเดือนจบแล้ว ปิดโหมดพยากรณ์ แสดงเป็นสถานะสรุปยอด
+        infoText.innerText = `*สรุปยอดข้อมูลเดือน ${monthNames[targetMonth]} ${targetYear} (จบเดือนแล้ว)`;
+        document.getElementById('forecastRunRate').innerText = `(เฉลี่ย ${runRate.toLocaleString(undefined, {maximumFractionDigits:0})} ลิตร/วัน)`;
+        
+        if (currentMonthSvpVol >= targetSvpVol) {
+            statusBox.className = "p-2 md:p-3 rounded text-center flex flex-col justify-center items-center col-span-2 md:col-span-1 bg-green-100 border border-green-200 transition-colors dark:bg-green-900 dark:border-green-800";
+            statusText.className = "text-xs md:text-sm font-bold text-green-700 dark:text-green-300";
+            statusText.innerText = "🏆 ปิดยอด: ทะลุเป้าหมาย";
+            progressBar.className = "bg-green-500 h-4 transition-all duration-1000";
+        } else {
+            statusBox.className = "p-2 md:p-3 rounded text-center flex flex-col justify-center items-center col-span-2 md:col-span-1 bg-red-100 border border-red-200 transition-colors dark:bg-red-900 dark:border-red-800";
+            statusText.className = "text-xs md:text-sm font-bold text-red-700 dark:text-red-300";
+            statusText.innerText = "❌ ปิดยอด: พลาดเป้าหมาย";
+            progressBar.className = "bg-red-500 h-4 transition-all duration-1000";
+        }
     } else {
-        statusBox.className = "p-2 md:p-3 rounded text-center flex flex-col justify-center items-center col-span-2 md:col-span-1 bg-red-100 border border-red-200 transition-colors dark:bg-red-900 dark:border-red-800";
-        statusText.className = "text-xs md:text-sm font-bold text-red-700 dark:text-red-300";
-        statusText.innerText = "⚠️ เสี่ยงยอดตกเป้า (เร่งด่วน)";
-        progressBar.className = "bg-red-500 h-4 transition-all duration-1000";
+        // กรณีระหว่างเดือน พยากรณ์ตามปกติ
+        infoText.innerText = `*ระบบดึงข้อมูลของเดือน ${monthNames[targetMonth]} ${targetYear} มาคำนวณคาดการณ์`;
+        document.getElementById('forecastRunRate').innerText = `(เฉลี่ย ${runRate.toLocaleString(undefined, {maximumFractionDigits:0})} ลิตร/วัน)`;
+        
+        if (forecastVol >= targetSvpVol) {
+            statusBox.className = "p-2 md:p-3 rounded text-center flex flex-col justify-center items-center col-span-2 md:col-span-1 bg-green-100 border border-green-200 transition-colors dark:bg-green-900 dark:border-green-800";
+            statusText.className = "text-xs md:text-sm font-bold text-green-700 dark:text-green-300";
+            statusText.innerText = "✅ มีแนวโน้มทะลุเป้า";
+            progressBar.className = "bg-green-500 h-4 transition-all duration-1000";
+        } else {
+            statusBox.className = "p-2 md:p-3 rounded text-center flex flex-col justify-center items-center col-span-2 md:col-span-1 bg-red-100 border border-red-200 transition-colors dark:bg-red-900 dark:border-red-800";
+            statusText.className = "text-xs md:text-sm font-bold text-red-700 dark:text-red-300";
+            statusText.innerText = "⚠️ เสี่ยงยอดตกเป้า (เร่งด่วน)";
+            progressBar.className = "bg-red-500 h-4 transition-all duration-1000";
+        }
     }
+
     let percent = (forecastVol / targetSvpVol) * 100;
     setTimeout(() => { progressBar.style.width = Math.min(percent, 100) + '%'; }, 100);
 }
-
 function processData(attData, prdData) {
     let globalStats = { totalVol: 0, vpowerVol: 0, totalCars: 0, totalBills: 0, goPlusBills: 0 };
     let employeeStats = {};
