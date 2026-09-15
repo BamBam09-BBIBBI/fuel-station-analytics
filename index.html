@@ -29,7 +29,6 @@
         .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
         #employeeChart { cursor: pointer; } 
 
-        /* 🌙 ---------------- CSS สำหรับโหมดกลางคืน ---------------- 🌙 */
         html.dark body { background-color: #111827; color: #f3f4f6; }
         html.dark .bg-white { background-color: #1f2937 !important; border-color: #374151 !important; }
         html.dark .bg-gray-50 { background-color: #374151 !important; border-color: #4b5563 !important; }
@@ -71,10 +70,11 @@
                 <p class="text-sm md:text-base text-gray-500 mt-1" id="dynamicSiteName">กำลังรอข้อมูล... (อัปโหลด 3 ไฟล์เพื่อเริ่มวิเคราะห์)</p>
             </div>
             <div class="flex items-end gap-2 md:gap-4 w-full md:w-auto">
-                <div class="flex flex-col gap-1 md:gap-2 flex-1 md:flex-none md:min-w-[200px]">
-                    <label class="text-xs font-bold text-gray-500 uppercase">📅 ตัวกรองวันที่</label>
+                <!-- ขยายความกว้าง Dropdown รองรับตัวเลือกเดือน -->
+                <div class="flex flex-col gap-1 md:gap-2 flex-1 md:flex-none md:min-w-[250px]">
+                    <label class="text-xs font-bold text-gray-500 uppercase">📅 ตัวกรองวันที่ / เดือน</label>
                     <select id="dateFilter" class="border p-2 rounded bg-gray-50 text-gray-800 text-sm md:text-base font-medium focus:outline-none focus:border-red-500 disabled:opacity-50 w-full" disabled>
-                        <option value="ALL">รวมทุกวัน (All Dates)</option>
+                        <option value="ALL">รวมข้อมูลทั้งหมด (All Data)</option>
                     </select>
                 </div>
                 <button id="themeToggleBtn" class="h-9 md:h-10 bg-gray-200 text-gray-800 px-3 md:px-4 py-2 rounded font-medium hover:bg-gray-300 transition flex items-center justify-center text-sm md:text-base" title="สลับโหมดกลางคืน">🌙</button>
@@ -88,8 +88,6 @@
                 ⚙️ ตั้งค่ารายชื่อพนักงาน และ เป้าหมาย (KPI)
             </summary>
             <div class="p-4 border-t border-gray-200 bg-gray-50">
-                
-                <!-- ตั้งค่าเป้ารายเดือน -->
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
                     <div class="p-3 bg-white border border-yellow-300 rounded flex flex-col justify-center gap-1">
                         <label class="text-sm font-bold text-gray-700">🎯 เป้าหมาย V-Power Mix (%):</label>
@@ -105,40 +103,21 @@
                     </div>
                 </div>
 
-                <!-- ตั้งค่าเป้ารายบุคคล -->
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                     <div class="bg-white p-3 rounded border border-gray-200">
                         <h3 class="text-sm font-bold text-purple-800 mb-2">🏆 เป้า SVP รายบุคคล (ลิตร/วัน)</h3>
                         <div class="grid grid-cols-3 gap-2">
-                            <div>
-                                <label class="text-xs font-bold text-gray-600 block mb-1">หน้าลาน</label>
-                                <input type="number" id="targetDailyForecourt" value="190" class="w-full p-1 border rounded focus:outline-none text-sm font-medium text-gray-700">
-                            </div>
-                            <div>
-                                <label class="text-xs font-bold text-gray-600 block mb-1">แคชเชียร์</label>
-                                <input type="number" id="targetDailyCashier" value="85" class="w-full p-1 border rounded focus:outline-none text-sm font-medium text-gray-700">
-                            </div>
-                            <div>
-                                <label class="text-xs font-bold text-gray-600 block mb-1">ช่าง</label>
-                                <input type="number" id="targetDailyTech" value="85" class="w-full p-1 border rounded focus:outline-none text-sm font-medium text-gray-700">
-                            </div>
+                            <div><label class="text-xs font-bold text-gray-600 block mb-1">หน้าลาน</label><input type="number" id="targetDailyForecourt" value="190" class="w-full p-1 border rounded focus:outline-none text-sm font-medium text-gray-700"></div>
+                            <div><label class="text-xs font-bold text-gray-600 block mb-1">แคชเชียร์</label><input type="number" id="targetDailyCashier" value="85" class="w-full p-1 border rounded focus:outline-none text-sm font-medium text-gray-700"></div>
+                            <div><label class="text-xs font-bold text-gray-600 block mb-1">ช่าง</label><input type="number" id="targetDailyTech" value="85" class="w-full p-1 border rounded focus:outline-none text-sm font-medium text-gray-700"></div>
                         </div>
                     </div>
                     <div class="bg-white p-3 rounded border border-gray-200">
                         <h3 class="text-sm font-bold text-blue-800 mb-2">⛽ เป้าน้ำมันรวม รายบุคคล (ลิตร/วัน)</h3>
                         <div class="grid grid-cols-3 gap-2">
-                            <div>
-                                <label class="text-xs font-bold text-gray-600 block mb-1">หน้าลาน</label>
-                                <input type="number" id="targetDailyTotalForecourt" value="1000" class="w-full p-1 border rounded focus:outline-none text-sm font-medium text-gray-700">
-                            </div>
-                            <div>
-                                <label class="text-xs font-bold text-gray-600 block mb-1">แคชเชียร์</label>
-                                <input type="number" id="targetDailyTotalCashier" value="500" class="w-full p-1 border rounded focus:outline-none text-sm font-medium text-gray-700">
-                            </div>
-                            <div>
-                                <label class="text-xs font-bold text-gray-600 block mb-1">ช่าง</label>
-                                <input type="number" id="targetDailyTotalTech" value="500" class="w-full p-1 border rounded focus:outline-none text-sm font-medium text-gray-700">
-                            </div>
+                            <div><label class="text-xs font-bold text-gray-600 block mb-1">หน้าลาน</label><input type="number" id="targetDailyTotalForecourt" value="1000" class="w-full p-1 border rounded focus:outline-none text-sm font-medium text-gray-700"></div>
+                            <div><label class="text-xs font-bold text-gray-600 block mb-1">แคชเชียร์</label><input type="number" id="targetDailyTotalCashier" value="500" class="w-full p-1 border rounded focus:outline-none text-sm font-medium text-gray-700"></div>
+                            <div><label class="text-xs font-bold text-gray-600 block mb-1">ช่าง</label><input type="number" id="targetDailyTotalTech" value="500" class="w-full p-1 border rounded focus:outline-none text-sm font-medium text-gray-700"></div>
                         </div>
                     </div>
                 </div>
@@ -217,7 +196,7 @@
                         <div id="forecastProgressBar" class="bg-purple-500 h-4 transition-all duration-1000" style="width: 0%"></div>
                     </div>
                 </div>
-                <p id="forecastInfoText" class="text-[10px] md:text-xs text-gray-400 mt-2 text-right">*คำนวณจากค่าเฉลี่ยยอดขายรายวันของเดือนล่าสุด</p>
+                <p id="forecastInfoText" class="text-[10px] md:text-xs text-gray-400 mt-2 text-right">*คำนวณจากค่าเฉลี่ยยอดขายรายวันของรอบข้อมูลที่กรอง</p>
             </div>
 
             <!-- Charts -->
@@ -327,23 +306,19 @@
                 </div>
             </div>
 
-            <!-- ตารางประเมินผล KPI รายบุคคล แบบใหม่ (มีช่องวันทำงานจริง + เป้าน้ำมันรวม) -->
+            <!-- ตารางประเมินผล KPI รายบุคคล -->
             <div class="card bg-white border-t-4 border-green-500 mt-4 md:mt-6">
                 <h2 class="text-lg md:text-xl font-semibold mb-1 text-green-800">🏆 สรุปผลประเมิน KPI รายบุคคล (ลิตรรวม & SVP)</h2>
-                <p class="text-xs md:text-sm text-gray-500 mb-4">*เป้าหมายรวมถูกคำนวณจากเป้าหมายรายวัน คูณด้วย <span class="font-bold text-red-500">"วันทำงานจริง"</span> ของพนักงานแต่ละคน (แฟร์ 100%)</p>
+                <p class="text-xs md:text-sm text-gray-500 mb-4">*เป้าหมายรวมถูกคำนวณจากเป้าหมายรายวัน คูณด้วย <span class="font-bold text-red-500">"วันทำงานจริง"</span> ของพนักงานแต่ละคน</p>
                 <div class="overflow-x-auto pb-2 custom-scrollbar rounded border border-gray-200">
                     <table class="min-w-full bg-white text-left text-xs md:text-sm">
                         <thead class="bg-gray-100 border-b border-gray-200">
                             <tr>
                                 <th class="py-3 px-3 font-bold text-gray-700 whitespace-nowrap">พนักงาน</th>
                                 <th class="py-3 px-2 font-bold text-gray-700 whitespace-nowrap text-center border-r">วันทำงาน</th>
-                                
-                                <!-- โซนน้ำมันรวม -->
                                 <th class="py-3 px-3 font-bold text-blue-700 text-right whitespace-nowrap bg-blue-50">เป้าลิตรรวม</th>
                                 <th class="py-3 px-3 font-bold text-blue-700 text-right whitespace-nowrap bg-blue-50">ยอดรวมทำได้</th>
                                 <th class="py-3 px-3 font-bold text-blue-700 text-center whitespace-nowrap bg-blue-50 border-r">สถานะลิตรรวม</th>
-                                
-                                <!-- โซน SVP -->
                                 <th class="py-3 px-3 font-bold text-purple-700 text-right whitespace-nowrap bg-purple-50">เป้า SVP</th>
                                 <th class="py-3 px-3 font-bold text-purple-700 text-right whitespace-nowrap bg-purple-50">ยอด SVP ทำได้</th>
                                 <th class="py-3 px-3 font-bold text-purple-700 text-center whitespace-nowrap bg-purple-50">สถานะ SVP</th>
