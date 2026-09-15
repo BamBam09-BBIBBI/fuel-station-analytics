@@ -30,6 +30,7 @@
         .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
         #employeeChart { cursor: pointer; } 
 
+        /* 🌙 Dark Mode */
         html.dark body { background-color: #111827; color: #f3f4f6; }
         html.dark .bg-white { background-color: #1f2937 !important; border-color: #374151 !important; }
         html.dark .bg-gray-50 { background-color: #374151 !important; border-color: #4b5563 !important; }
@@ -51,6 +52,9 @@
         html.dark .text-blue-800, html.dark .text-blue-700 { color: #60a5fa !important; }
         html.dark .text-purple-800, html.dark .text-purple-700 { color: #d8b4fe !important; }
         html.dark .text-orange-700 { color: #fb923c !important; }
+        html.dark th { background-color: #374151 !important; color: #f3f4f6 !important; }
+        html.dark tr.hover\:bg-gray-50:hover td { background-color: #4b5563 !important; }
+        html.dark .custom-scrollbar::-webkit-scrollbar-thumb { background: #4b5563; }
     </style>
 </head>
 <body class="p-2 md:p-8 text-gray-800 relative overflow-x-hidden">
@@ -98,6 +102,7 @@
                         <input type="number" id="targetTotalVolume" value="150000" step="1000" class="w-full p-1.5 border rounded focus:outline-none focus:ring-1 focus:ring-blue-500 font-medium text-blue-700">
                     </div>
                 </div>
+
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                     <div class="bg-white p-3 rounded border border-gray-200">
                         <h3 class="text-sm font-bold text-purple-800 mb-2">🏆 เป้า SVP รายบุคคล (ลิตร/วัน)</h3>
@@ -116,6 +121,8 @@
                         </div>
                     </div>
                 </div>
+
+                <p class="text-xs md:text-sm text-gray-600 mb-3">💡 <b>พนักงาน:</b> ใส่รหัสให้ตรงกับระบบ POS (แคชเชียร์ใส่ <b>"(แคช)"</b>, ช่างใส่ <b>"(ช่าง)"</b> ต่อท้ายชื่อ)</p>
                 <div id="empFormContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3 mb-4 max-h-60 overflow-y-auto custom-scrollbar p-2 bg-white border border-gray-200 rounded-lg"></div>
                 <div class="flex flex-wrap gap-2">
                     <button id="addEmpBtn" class="bg-gray-200 text-gray-700 px-3 py-2 rounded font-medium hover:bg-gray-300 transition text-sm flex-1 md:flex-none">+ เพิ่มช่องรายชื่อ</button>
@@ -157,7 +164,7 @@
                 </div>
             </div>
 
-            <!-- AI Forecasting (อัปเกรดโชว์เปอร์เซ็นต์) -->
+            <!-- AI Forecasting (แสดง %) -->
             <div class="card bg-white border-l-4 border-purple-500">
                 <h2 class="text-lg md:text-xl font-semibold mb-3 text-purple-800 flex items-center gap-2">
                     🔮 AI คาดการณ์ยอด V-Power (SVP) ประจำเดือน
@@ -168,7 +175,7 @@
                         <p id="forecastTarget" class="text-lg md:text-xl font-bold text-gray-800">-</p>
                     </div>
                     <div class="bg-gray-50 p-2 md:p-3 rounded text-center">
-                        <p id="forecastCurrentLabel" class="text-[10px] md:text-xs text-gray-500">ฐานข้อมูลที่ใช้เฉลี่ย (ย้อนหลัง)</p>
+                        <p id="forecastCurrentLabel" class="text-[10px] md:text-xs text-gray-500">ฐานข้อมูลที่ใช้เฉลี่ย (อดีต)</p>
                         <p id="forecastCurrent" class="text-lg md:text-xl font-bold text-gray-800">-</p>
                     </div>
                     <div class="bg-purple-50 p-2 md:p-3 rounded text-center border border-purple-100 col-span-2 md:col-span-1">
@@ -189,9 +196,10 @@
                         <div id="forecastProgressBar" class="bg-purple-500 h-4 transition-all duration-1000" style="width: 0%"></div>
                     </div>
                 </div>
-                <p id="forecastInfoText" class="text-[10px] md:text-xs text-gray-400 mt-2 text-right">*ระบบประเมินจากยอดขายเฉลี่ยของข้อมูลย้อนหลังทั้งหมด เพื่อพยากรณ์ล่วงหน้าไปที่เดือนถัดไป</p>
+                <p id="forecastInfoText" class="text-[10px] md:text-xs text-gray-400 mt-2 text-right">*ระบบประเมินจากยอดขายเฉลี่ยของข้อมูลย้อนหลังทั้งหมด เพื่อพยากรณ์ไปข้างหน้า</p>
             </div>
 
+            <!-- Charts -->
             <div class="grid grid-cols-1 xl:grid-cols-2 gap-4 md:gap-6">
                 <!-- กราฟพนักงาน -->
                 <div class="card xl:col-span-2 bg-white">
@@ -209,7 +217,7 @@
                     </div>
                 </div>
                 
-                <!-- 🏆 NEW: กราฟจัดอันดับวันในสัปดาห์ -->
+                <!-- 🏆 กราฟจัดอันดับวันในสัปดาห์ -->
                 <div class="card bg-white xl:col-span-2">
                     <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center mb-3 gap-2">
                         <h2 class="text-lg md:text-xl font-semibold">🏆 จัดอันดับยอดขายรายวัน (จันทร์-อาทิตย์)</h2>
@@ -226,7 +234,7 @@
                             </select>
                         </div>
                     </div>
-                    <p class="text-[10px] md:text-xs text-gray-500 mb-2">*เรียงลำดับวันทำงานที่ยุ่งที่สุดจากซ้ายไปขวา (เฉลี่ยต่อวัน)</p>
+                    <p class="text-[10px] md:text-xs text-gray-500 mb-2">*เรียงลำดับวันทำงานที่ยุ่งที่สุดจากซ้ายไปขวา (ยอดเฉลี่ยต่อวัน)</p>
                     <div class="overflow-x-auto pb-2 custom-scrollbar">
                         <div style="min-width: 800px; height: 300px;">
                             <canvas id="dailyRankingChart"></canvas>
@@ -234,30 +242,30 @@
                     </div>
                 </div>
 
-                <!-- 📊 อัปเกรด: กราฟรถเข้าลาน (ล็อคเพดาน + กรองครบ) -->
+                <!-- 📈 กราฟรถเข้าลาน (ล็อคเพดาน + กรองรถใหญ่) -->
                 <div class="card bg-white">
                     <div class="flex flex-col justify-between items-start mb-3 gap-2">
                         <h2 class="text-lg md:text-xl font-semibold">⏱️ เจาะลึกรายชั่วโมง (Hourly Trends)</h2>
                         <div class="grid grid-cols-2 md:grid-cols-4 gap-2 w-full">
-                            <select id="hrMetric" class="border p-1.5 rounded text-xs bg-gray-50 focus:outline-none focus:border-red-500 font-medium w-full"><option value="count">จำนวนรถ (คัน)</option><option value="volume">ปริมาณ (ลิตร)</option></select>
-                            <select id="hrVeh" class="border p-1.5 rounded text-xs bg-gray-50 focus:outline-none focus:border-red-500 font-medium w-full"><option value="ALL">รถทุกประเภท</option><option value="2W">2 ล้อ</option><option value="4W">4 ล้อ</option><option value="HEAVY">รถใหญ่</option></select>
-                            <select id="hrFuel" class="border p-1.5 rounded text-xs bg-gray-50 focus:outline-none focus:border-red-500 font-medium w-full"><option value="ALL">น้ำมันทั้งหมด</option><option value="VP">เฉพาะ V-Power</option><option value="NM">เฉพาะ มาตรฐาน</option></select>
-                            <select id="hourlyDayFilter" class="border p-1.5 rounded text-xs bg-red-50 text-red-700 focus:outline-none focus:border-red-500 font-bold w-full"><option value="ALL">รวมทุกวัน</option><option value="1">จันทร์</option><option value="2">อังคาร</option><option value="3">พุธ</option><option value="4">พฤหัสบดี</option><option value="5">ศุกร์</option><option value="6">เสาร์</option><option value="0">อาทิตย์</option></select>
+                            <select id="hrMetric" class="border p-1.5 rounded text-[10px] md:text-xs bg-gray-50 focus:outline-none focus:border-red-500 font-medium w-full"><option value="count">จำนวนรถ (คัน)</option><option value="volume">ปริมาณ (ลิตร)</option></select>
+                            <select id="hrVeh" class="border p-1.5 rounded text-[10px] md:text-xs bg-gray-50 focus:outline-none focus:border-red-500 font-medium w-full"><option value="ALL">รถทุกประเภท</option><option value="2W">2 ล้อ</option><option value="4W">4 ล้อ</option><option value="HEAVY">รถใหญ่</option></select>
+                            <select id="hrFuel" class="border p-1.5 rounded text-[10px] md:text-xs bg-gray-50 focus:outline-none focus:border-red-500 font-medium w-full"><option value="ALL">น้ำมันทั้งหมด</option><option value="VP">เฉพาะ V-Power</option><option value="NM">เฉพาะ มาตรฐาน</option></select>
+                            <select id="hourlyDayFilter" class="border p-1.5 rounded text-[10px] md:text-xs bg-red-50 text-red-700 focus:outline-none focus:border-red-500 font-bold w-full"><option value="ALL">รวมทุกวัน</option><option value="1">จันทร์</option><option value="2">อังคาร</option><option value="3">พุธ</option><option value="4">พฤหัสบดี</option><option value="5">ศุกร์</option><option value="6">เสาร์</option><option value="0">อาทิตย์</option></select>
                         </div>
                     </div>
-                    <p class="text-[10px] md:text-xs text-gray-500 mb-2">*กราฟตรึงเพดานสูงสุดไว้ที่ค่า Peak เสมอ เพื่อให้เปรียบเทียบง่าย</p>
+                    <p class="text-[10px] md:text-xs text-gray-500 mb-2">*กราฟตรึงเพดานสูงสุดไว้ที่ค่า Peak ของข้อมูลเสมอ เพื่อให้เปรียบเทียบง่าย</p>
                     <div style="position: relative; height: 280px; width: 100%;">
                         <canvas id="hourlyChart"></canvas>
                     </div>
                 </div>
 
-                <!-- 🚗 อัปเกรด: พฤติกรรมการเติม 100% Stacked -->
+                <!-- 🚗 กราฟ 2 ล้อ 4 ล้อ (100% Stacked) -->
                 <div class="card bg-white">
                     <div class="flex justify-between items-center mb-1">
                         <h2 class="text-lg md:text-xl font-semibold">🚗 พฤติกรรมการเติม (V-Power Mix)</h2>
                         <span id="vehicleChartSubtitle" class="text-[10px] md:text-xs font-bold text-gray-400 bg-gray-100 px-2 py-1 rounded">รวมทุกคน</span>
                     </div>
-                    <p class="text-[10px] md:text-xs text-gray-500 mb-4">*เปรียบเทียบสัดส่วนเปอร์เซ็นต์ระหว่าง 2 ล้อ และ 4 ล้อ</p>
+                    <p class="text-[10px] md:text-xs text-gray-500 mb-4">*เปรียบเทียบสัดส่วนเปอร์เซ็นต์ระหว่าง 2 ล้อ และ 4 ล้อ (ตัดรถใหญ่ออก)</p>
                     <div style="position: relative; height: 260px; width: 100%;">
                         <canvas id="vehicleChart"></canvas>
                     </div>
@@ -272,6 +280,8 @@
                         📅 ดึงข้อมูล 2 เดือนล่าสุดมาเทียบอัตโนมัติ
                     </button>
                 </div>
+                <p class="text-xs md:text-sm text-gray-500 mb-4">เปรียบเทียบประสิทธิภาพการทำงาน 2 ช่วงเวลา</p>
+                
                 <div class="grid grid-cols-1 md:grid-cols-4 gap-3 md:gap-4 bg-blue-50 p-3 md:p-4 rounded-lg mb-4 md:mb-6 border border-blue-100 mt-4">
                     <div><label class="block text-xs font-bold text-gray-600 mb-1">เลือกพนักงาน</label><select id="compEmpSelect" class="w-full p-2 border rounded text-sm focus:outline-none focus:ring-1 focus:ring-blue-500"></select></div>
                     <div><label class="block text-xs font-bold text-gray-600 mb-1">ช่วงที่ 1 (เดือนฐาน)</label><div class="flex gap-2"><input type="date" id="comp1Start" class="w-full p-2 border rounded text-sm focus:outline-none focus:ring-1 focus:ring-blue-500"><input type="date" id="comp1End" class="w-full p-2 border rounded text-sm focus:outline-none focus:ring-1 focus:ring-blue-500"></div></div>
@@ -290,7 +300,7 @@
             <!-- ตาราง KPI -->
             <div class="card bg-white border-t-4 border-green-500 mt-4 md:mt-6">
                 <h2 class="text-lg md:text-xl font-semibold mb-1 text-green-800">🏆 สรุปผลประเมิน KPI รายบุคคล (ลิตรรวม & SVP)</h2>
-                <p class="text-xs md:text-sm text-gray-500 mb-4">*เป้าหมายรวมคำนวณจากเป้าหมายรายวัน คูณด้วย <span class="font-bold text-red-500">"วันทำงานจริง"</span> ของพนักงาน</p>
+                <p class="text-xs md:text-sm text-gray-500 mb-4">*เป้าหมายรวมถูกคำนวณจากเป้าหมายรายวัน คูณด้วย <span class="font-bold text-red-500">"วันทำงานจริง"</span> ของพนักงานแต่ละคน</p>
                 <div class="overflow-x-auto pb-2 custom-scrollbar rounded border border-gray-200">
                     <table class="min-w-full bg-white text-left text-xs md:text-sm">
                         <thead class="bg-gray-100 border-b border-gray-200">
@@ -312,468 +322,246 @@
         </div>
     </div>
 
+    <!-- โค้ด JavaScript ผสานรวม -->
     <script>
-        let rawAttendant = []; let rawHourly = []; let rawProduct = [];
-        let currentAttData = []; 
+        let rawAttendant = []; let rawHourly = []; let rawProduct = []; let currentAttData = []; 
         let employeeMapping = { "1":"เฟิร์น","2":"ตุ้ย (แคช)","3":"กี้ (ช่าง)","4":"เหรียญ (แคช)","5":"แต้ม","6":"ติ๋ว","7":"นุช","8":"เจ (ช่าง)","9":"แช่ง","10":"หนึ่ง (แคช)","11":"ป่อง","12":"ติ๋ม (แคช)","13":"โอ (ช่าง)","14":"น้อย","15":"อาร์ท","16":"สุรเศรษฐ์" };
         let charts = { emp: null, hr: null, veh: null, dr: null };
         let siteName = "ไม่ระบุสาขา"; let activeEmpFilter = null; 
 
         function showToast(msg, type='info') {
-            const container = document.getElementById('toastContainer');
-            const toast = document.createElement('div');
-            let bg = type === 'error' ? 'bg-red-500' : 'bg-green-500';
-            toast.className = `${bg} text-white px-6 py-3 rounded shadow-lg font-medium toast flex items-center gap-2 z-50`;
-            toast.innerHTML = type === 'error' ? `⚠️ ${msg}` : `✅ ${msg}`;
-            container.appendChild(toast);
-            setTimeout(() => toast.classList.add('show'), 10);
-            setTimeout(() => { toast.classList.remove('show'); setTimeout(() => toast.remove(), 300); }, 3000);
+            const container = document.getElementById('toastContainer'); const toast = document.createElement('div');
+            toast.className = `${type==='error'?'bg-red-500':'bg-green-500'} text-white px-6 py-3 rounded shadow-lg font-medium toast flex items-center gap-2 z-50`;
+            toast.innerHTML = type==='error' ? `⚠️ ${msg}` : `✅ ${msg}`; container.appendChild(toast);
+            setTimeout(() => toast.classList.add('show'), 10); setTimeout(() => { toast.classList.remove('show'); setTimeout(() => toast.remove(), 300); }, 3000);
         }
 
         function initTheme() {
-            const themeBtn = document.getElementById('themeToggleBtn');
-            const htmlEl = document.documentElement;
-            if (localStorage.getItem('dashboard_theme') === 'dark') { htmlEl.classList.add('dark'); if(themeBtn) themeBtn.innerText = '☀️'; updateChartThemeColors(true); } 
-            else { updateChartThemeColors(false); }
-
-            if (themeBtn) {
-                themeBtn.addEventListener('click', () => {
-                    htmlEl.classList.toggle('dark'); let isDark = htmlEl.classList.contains('dark');
-                    localStorage.setItem('dashboard_theme', isDark ? 'dark' : 'light');
-                    themeBtn.innerText = isDark ? '☀️' : '🌙'; updateChartThemeColors(isDark);
-                    Object.values(charts).forEach(c => { if(c) c.update(); });
-                });
-            }
+            const btn = document.getElementById('themeToggleBtn'); const html = document.documentElement;
+            if(localStorage.getItem('dashboard_theme')==='dark') { html.classList.add('dark'); if(btn) btn.innerText='☀️'; updateChartThemeColors(true); } else updateChartThemeColors(false);
+            if(btn) btn.addEventListener('click', () => { html.classList.toggle('dark'); let isD = html.classList.contains('dark'); localStorage.setItem('dashboard_theme', isD?'dark':'light'); btn.innerText = isD?'☀️':'🌙'; updateChartThemeColors(isD); Object.values(charts).forEach(c => {if(c) c.update()}); });
         }
-        function updateChartThemeColors(isDark) { Chart.defaults.color = isDark ? '#9ca3af' : '#6b7280'; Chart.defaults.scale.grid.color = isDark ? '#374151' : '#e5e7eb'; Chart.defaults.scale.grid.borderColor = isDark ? '#374151' : '#e5e7eb'; }
+        function updateChartThemeColors(isDark) { Chart.defaults.color = isDark?'#9ca3af':'#6b7280'; Chart.defaults.scale.grid.color = isDark?'#374151':'#e5e7eb'; Chart.defaults.scale.grid.borderColor = isDark?'#374151':'#e5e7eb'; }
 
         document.addEventListener('DOMContentLoaded', () => {
             initTheme(); renderEmpUI();
-            ['clearEmpFilterBtn','addEmpBtn','saveConfigBtn','btnQuickMonth','btnCompare'].forEach(id => {
-                let el = document.getElementById(id); if(el) el.addEventListener('click', window[id+'Click']);
-            });
+            document.getElementById('clearEmpFilterBtn').addEventListener('click', () => { activeEmpFilter=null; document.getElementById('clearEmpFilterBtn').classList.add('hidden'); document.getElementById('vehicleChartSubtitle').innerText="รวมทุกคน"; updateDashboard(); });
             ['drMetric','drVeh','drFuel'].forEach(id => document.getElementById(id).addEventListener('change', () => processDailyRanking(currentAttData)));
             ['hrMetric','hrVeh','hrFuel','hourlyDayFilter'].forEach(id => document.getElementById(id).addEventListener('change', () => processHourlyData(currentAttData)));
-            document.getElementById('dateFilter').addEventListener('change', () => {
-                activeEmpFilter = null; document.getElementById('clearEmpFilterBtn').classList.add('hidden');
-                document.getElementById('vehicleChartSubtitle').innerText = "รวมทุกคน";
-                updateDashboard();
+            document.getElementById('dateFilter').addEventListener('change', () => { activeEmpFilter=null; document.getElementById('clearEmpFilterBtn').classList.add('hidden'); document.getElementById('vehicleChartSubtitle').innerText="รวมทุกคน"; updateDashboard(); });
+            document.getElementById('addEmpBtn').addEventListener('click', () => { let r=document.createElement('div'); r.className='flex gap-2 p-2 bg-gray-50 border rounded'; r.innerHTML=`<input type="text" placeholder="รหัส" class="emp-id w-14 p-1 border rounded text-center"><input type="text" placeholder="ชื่อ" class="emp-name flex-1 p-1 border rounded"><button class="remove-btn text-red-500">&times;</button>`; r.querySelector('.remove-btn').addEventListener('click', ()=>r.remove()); document.getElementById('empFormContainer').appendChild(r); });
+            document.getElementById('saveConfigBtn').addEventListener('click', () => { let m={}; document.getElementById('empFormContainer').querySelectorAll('div.flex').forEach(r=>{ let i=r.querySelector('.emp-id').value.trim(); let n=r.querySelector('.emp-name').value.trim(); if(i&&n) m[i]=n; }); employeeMapping=m; renderEmpUI(); showToast("บันทึกแล้ว","success"); if(rawAttendant.length>0) updateDashboard(); });
+            
+            // เปรียบเทียบเดือน
+            document.getElementById('btnQuickMonth').addEventListener('click', () => {
+                if(rawAttendant.length===0) return showToast("กรุณาอัปโหลดข้อมูลก่อน","error");
+                let aM=new Set(); rawAttendant.forEach(r => { let d=r['Open Date']||r['Date']; if(d){ let p=d.split(/[-/]/); if(p.length===3) aM.add(`${p[0].length===4?p[0]:p[2]}-${p[1].padStart(2,'0')}`); } });
+                let sM=Array.from(aM).sort(); if(sM.length<2) return showToast("ต้องการข้อมูลอย่างน้อย 2 เดือน","error");
+                let [lY, lM]=sM[sM.length-1].split('-'); let [pY, pM]=sM[sM.length-2].split('-'); const fD=(y,m,d)=>`${y}-${String(m).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+                document.getElementById('comp1Start').value=fD(pY,pM,1); document.getElementById('comp1End').value=fD(pY,pM,new Date(pY,pM,0).getDate()); document.getElementById('comp2Start').value=fD(lY,lM,1); document.getElementById('comp2End').value=fD(lY,lM,new Date(lY,lM,0).getDate());
+                document.getElementById('btnCompare').click(); showToast("ดึงข้อมูล 2 เดือนล่าสุดสำเร็จ","success");
+            });
+
+            document.getElementById('btnCompare').addEventListener('click', () => {
+                let eId=document.getElementById('compEmpSelect').value; let s1=document.getElementById('comp1Start').value; let e1=document.getElementById('comp1End').value; let s2=document.getElementById('comp2Start').value; let e2=document.getElementById('comp2End').value;
+                if(!s1||!e1||!s2||!e2) return showToast("กรุณาเลือกวันที่ให้ครบ","error");
+                const getS=(s,e) => {
+                    let v=0, vp=0, l=0;
+                    rawAttendant.forEach(r => { let d=r['Open Date']||r['Date']; if(r['Category Name']==='Fuels'&&d>=s&&d<=e){ if(eId!=="ALL"&&r['Attendant']!==eId) return; if(eId==="ALL"){ let n=employeeMapping[r['Attendant']]||""; if(n.includes("(ช่าง)")) return; } let vV=parseFloat(r['Volume'])||0; let c=parseInt(r['Delivery Count'])||0; let pN=(r['Product Name']||"").toUpperCase(); if(vV>0){ v+=vV; l+=c; if(pN.includes("VP ")||pN.includes("VPOWER")||pN.includes("V-POWER")) vp+=vV; } } }); return {v, m:v>0?(vp/v)*100:0, l};
+                };
+                let p1=getS(s1,e1); let p2=getS(s2,e2);
+                const uUI=(v1,v2,id)=>{ let el=document.getElementById(id); let df=v1>0?((v2-v1)/v1)*100:(v2>0?100:0); if(df>0){el.innerHTML=`▲ +${df.toFixed(1)}%`; el.className="text-lg md:text-xl font-bold py-1 rounded bg-green-100 text-green-700";} else if(df<0){el.innerHTML=`▼ ${df.toFixed(1)}%`; el.className="text-lg md:text-xl font-bold py-1 rounded bg-red-100 text-red-700";} else{el.innerHTML=`- คงที่ (0%)`; el.className="text-lg md:text-xl font-bold py-1 rounded bg-gray-100 text-gray-600";} };
+                document.getElementById('rVol1').innerText=p1.v.toLocaleString(undefined,{maximumFractionDigits:0}); document.getElementById('rVol2').innerText=p2.v.toLocaleString(undefined,{maximumFractionDigits:0}); uUI(p1.v,p2.v,'rVolDiff');
+                document.getElementById('rVp1').innerText=p1.m.toFixed(1)+'%'; document.getElementById('rVp2').innerText=p2.m.toFixed(1)+'%'; let mD=p2.m-p1.m; let em=document.getElementById('rVpDiff'); if(mD>0){em.innerHTML=`▲ +${mD.toFixed(1)}%`; em.className="text-lg md:text-xl font-bold py-1 rounded bg-green-100 text-green-700";} else if(mD<0){em.innerHTML=`▼ ${mD.toFixed(1)}%`; em.className="text-lg md:text-xl font-bold py-1 rounded bg-red-100 text-red-700";} else{em.innerHTML=`- คงที่`; em.className="text-lg md:text-xl font-bold py-1 rounded bg-gray-100 text-gray-600";}
+                document.getElementById('rLift1').innerText=p1.l.toLocaleString(); document.getElementById('rLift2').innerText=p2.l.toLocaleString(); uUI(p1.l,p2.l,'rLiftDiff'); document.getElementById('compResultArea').classList.remove('hidden');
+            });
+
+            // Export ภาพไม่แหว่ง
+            document.getElementById('exportBtn').addEventListener('click', () => {
+                showToast("ประมวลผลรูปภาพ...", "info"); let isDark = document.documentElement.classList.contains('dark'); let tEl = document.getElementById('dashboardSection');
+                let scr = tEl.querySelectorAll('.overflow-x-auto'); scr.forEach(el => {el.classList.remove('overflow-x-auto'); el.style.overflow='visible';});
+                html2canvas(tEl, { scale: 2, backgroundColor: isDark?"#111827":"#f3f4f6", windowWidth: 1440, onclone: cDoc => { let d=cDoc.getElementById('dashboardSection'); if(d){d.style.width='1440px'; d.style.maxWidth='1440px';} } }).then(canvas => {
+                    scr.forEach(el => {el.classList.add('overflow-x-auto'); el.style.overflow='';});
+                    let a=document.createElement('a'); a.download=`Report_${siteName}.png`; a.href=canvas.toDataURL("image/png"); a.click(); showToast("ดาวน์โหลดสำเร็จ", "success");
+                });
             });
         });
-
-        window.clearEmpFilterBtnClick = () => {
-            activeEmpFilter = null; document.getElementById('clearEmpFilterBtn').classList.add('hidden');
-            document.getElementById('vehicleChartSubtitle').innerText = "รวมทุกคน"; updateDashboard();
-        };
 
         function renderEmpUI() {
-            let empContainer = document.getElementById('empFormContainer'); let compEmpSelect = document.getElementById('compEmpSelect');
-            if(!empContainer) return; empContainer.innerHTML = ''; compEmpSelect.innerHTML = '<option value="ALL">รวมพนักงานทุกคน</option>';
-            Object.entries(employeeMapping).forEach(([id, name]) => {
-                let row = document.createElement('div'); row.className = 'flex items-center gap-2 bg-gray-50 border border-gray-200 p-2 rounded hover:border-red-300 transition-colors';
-                row.innerHTML = `<input type="text" value="${id}" class="emp-id w-14 p-1.5 text-center text-sm border rounded focus:outline-none focus:ring-1 focus:ring-red-500 font-medium text-gray-700"><input type="text" value="${name}" class="emp-name flex-1 p-1.5 text-sm border rounded focus:outline-none focus:ring-1 focus:ring-red-500 text-gray-700"><button class="remove-btn text-gray-400 hover:text-red-500 p-1 font-bold text-lg leading-none transition-colors">&times;</button>`;
-                row.querySelector('.remove-btn').addEventListener('click', () => row.remove()); empContainer.appendChild(row);
-                if (!name.includes("(ช่าง)")) compEmpSelect.innerHTML += `<option value="${id}">${name} (รหัส ${id})</option>`;
-            });
+            let c=document.getElementById('empFormContainer'); let s=document.getElementById('compEmpSelect'); c.innerHTML=''; s.innerHTML='<option value="ALL">รวมพนักงานทุกคน</option>';
+            Object.entries(employeeMapping).forEach(([i,n])=>{ let r=document.createElement('div'); r.className='flex gap-2 p-2 bg-gray-50 border rounded'; r.innerHTML=`<input type="text" value="${i}" class="emp-id w-14 p-1 border rounded text-center"><input type="text" value="${n}" class="emp-name flex-1 p-1 border rounded"><button class="remove-btn text-red-500">&times;</button>`; r.querySelector('.remove-btn').addEventListener('click', ()=>r.remove()); c.appendChild(r); if(!n.includes("(ช่าง)")) s.innerHTML+=`<option value="${i}">${n} (รหัส ${i})</option>`; });
         }
-        window.addEmpBtnClick = () => {
-            let row = document.createElement('div'); row.className = 'flex items-center gap-2 bg-gray-50 border border-gray-200 p-2 rounded hover:border-red-300 transition-colors';
-            row.innerHTML = `<input type="text" placeholder="รหัส" class="emp-id w-14 p-1.5 text-center text-sm border rounded focus:outline-none focus:ring-1 focus:ring-red-500 font-medium text-gray-700"><input type="text" placeholder="ชื่อ" class="emp-name flex-1 p-1.5 text-sm border rounded focus:outline-none focus:ring-1 focus:ring-red-500 text-gray-700"><button class="remove-btn text-gray-400 hover:text-red-500 p-1 font-bold text-lg leading-none transition-colors">&times;</button>`;
-            row.querySelector('.remove-btn').addEventListener('click', () => row.remove()); document.getElementById('empFormContainer').appendChild(row);
-        };
-        window.saveConfigBtnClick = () => {
-            let newMap = {}; document.getElementById('empFormContainer').querySelectorAll('div.flex').forEach(row => {
-                let id = row.querySelector('.emp-id').value.trim(); let name = row.querySelector('.emp-name').value.trim();
-                if (id && name) newMap[id] = name;
-            });
-            if (Object.keys(newMap).length === 0) return showToast("กรุณาใส่ข้อมูลพนักงานอย่างน้อย 1 คน", "error");
-            employeeMapping = newMap; renderEmpUI(); showToast("บันทึกการตั้งค่าเรียบร้อย", "success"); if (rawAttendant.length > 0) updateDashboard();
-        };
 
-        window.btnQuickMonthClick = () => {
-            if(rawAttendant.length === 0) return showToast("กรุณาอัปโหลดข้อมูลก่อน", "error");
-            let availableMonths = new Set();
-            rawAttendant.forEach(row => {
-                let dStr = row['Open Date'] || row['Date'];
-                if(dStr) { let parts = dStr.split(/[-/]/); if(parts.length===3) { let y = parts[0].length===4?parts[0]:parts[2]; let m = parts[1].padStart(2,'0'); availableMonths.add(`${y}-${m}`); } }
-            });
-            let sortedMonths = Array.from(availableMonths).sort();
-            if(sortedMonths.length < 2) return showToast("ต้องการข้อมูลอย่างน้อย 2 เดือน", "error");
-            let [lY, lM] = sortedMonths[sortedMonths.length - 1].split('-'); let [pY, pM] = sortedMonths[sortedMonths.length - 2].split('-');
-            const formatD = (y, m, d) => `${y}-${String(m).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
-            document.getElementById('comp1Start').value = formatD(pY, pM, 1); document.getElementById('comp1End').value = formatD(pY, pM, new Date(pY, pM, 0).getDate());
-            document.getElementById('comp2Start').value = formatD(lY, lM, 1); document.getElementById('comp2End').value = formatD(lY, lM, new Date(lY, lM, 0).getDate());
-            document.getElementById('btnCompare').click(); showToast("ดึงข้อมูลสำเร็จ", "success");
-        };
-
-        window.btnCompareClick = () => {
-            let start1 = document.getElementById('comp1Start').value; let end1 = document.getElementById('comp1End').value;
-            let start2 = document.getElementById('comp2Start').value; let end2 = document.getElementById('comp2End').value;
-            if(!start1||!end1||!start2||!end2) return showToast("กรุณาเลือกวันที่ให้ครบ", "error");
-            let empId = document.getElementById('compEmpSelect').value;
-            const getStats = (start, end) => {
-                let vol = 0, vpVol = 0, lifts = 0;
-                rawAttendant.forEach(row => {
-                    let d = row['Open Date'] || row['Date'];
-                    if(row['Category Name']==='Fuels' && d>=start && d<=end) {
-                        if(empId !== "ALL" && row['Attendant'] !== empId) return;
-                        if(empId === "ALL") { let name = employeeMapping[row['Attendant']] || ""; if(name.includes("(ช่าง)")) return; }
-                        let v = parseFloat(row['Volume'])||0; let l = parseInt(row['Delivery Count'])||0;
-                        let p = (row['Product Name']||"").toUpperCase(); let isVP = p.includes("VP ") || p.includes("VPOWER") || p.includes("V-POWER");
-                        if(v>0) { vol+=v; lifts+=l; if(isVP) vpVol+=v; }
-                    }
-                }); return { vol, mix: vol>0?(vpVol/vol)*100:0, lifts };
-            };
-            let p1 = getStats(start1, end1); let p2 = getStats(start2, end2);
-            const updateUI = (v1, v2, id) => {
-                let el = document.getElementById(id); let diff = v1>0?((v2-v1)/v1)*100:(v2>0?100:0);
-                if(diff>0) { el.innerHTML=`▲ +${diff.toFixed(1)}%`; el.className="text-lg md:text-xl font-bold py-1 rounded bg-green-100 text-green-700"; }
-                else if(diff<0) { el.innerHTML=`▼ ${diff.toFixed(1)}%`; el.className="text-lg md:text-xl font-bold py-1 rounded bg-red-100 text-red-700"; }
-                else { el.innerHTML=`- คงที่ (0%)`; el.className="text-lg md:text-xl font-bold py-1 rounded bg-gray-100 text-gray-600"; }
-            };
-            document.getElementById('rVol1').innerText = p1.vol.toLocaleString(undefined,{maximumFractionDigits:0}); document.getElementById('rVol2').innerText = p2.vol.toLocaleString(undefined,{maximumFractionDigits:0}); updateUI(p1.vol, p2.vol, 'rVolDiff');
-            document.getElementById('rVp1').innerText = p1.mix.toFixed(1)+'%'; document.getElementById('rVp2').innerText = p2.mix.toFixed(1)+'%'; let mDiff = p2.mix-p1.mix; let em = document.getElementById('rVpDiff');
-            if(mDiff>0) { em.innerHTML=`▲ +${mDiff.toFixed(1)}%`; em.className="text-lg md:text-xl font-bold py-1 rounded bg-green-100 text-green-700"; } else if(mDiff<0) { em.innerHTML=`▼ ${mDiff.toFixed(1)}%`; em.className="text-lg md:text-xl font-bold py-1 rounded bg-red-100 text-red-700"; } else { em.innerHTML=`- คงที่`; em.className="text-lg md:text-xl font-bold py-1 rounded bg-gray-100 text-gray-600"; }
-            document.getElementById('rLift1').innerText = p1.lifts.toLocaleString(); document.getElementById('rLift2').innerText = p2.lifts.toLocaleString(); updateUI(p1.lifts, p2.lifts, 'rLiftDiff');
-            document.getElementById('compResultArea').classList.remove('hidden');
-        };
-
-        document.getElementById('exportBtn').addEventListener('click', () => {
-            showToast("กำลังประมวลผลรูปภาพ...", "info");
-            let isDark = document.documentElement.classList.contains('dark'); let targetEl = document.getElementById('dashboardSection');
-            let scrollers = targetEl.querySelectorAll('.overflow-x-auto'); scrollers.forEach(el => { el.classList.remove('overflow-x-auto'); el.style.overflow = 'visible'; });
-            html2canvas(targetEl, { scale: 2, backgroundColor: isDark ? "#111827" : "#f3f4f6", windowWidth: 1440, onclone: function(cDoc) { let dSec = cDoc.getElementById('dashboardSection'); if(dSec) { dSec.style.width = '1440px'; dSec.style.maxWidth = '1440px'; } } }).then(canvas => {
-                scrollers.forEach(el => { el.classList.add('overflow-x-auto'); el.style.overflow = ''; });
-                let link = document.createElement('a'); link.download = `Report_${siteName}_${document.getElementById('dateFilter').value}.png`; link.href = canvas.toDataURL("image/png"); link.click(); showToast("ดาวน์โหลดรายงานสำเร็จ", "success");
-            }).catch(e => { scrollers.forEach(el => el.classList.add('overflow-x-auto')); showToast("เกิดข้อผิดพลาดในการสร้างภาพ", "error"); });
-        });
-
-        // --- File Handlers ---
+        // --- โยนและอ่านไฟล์ ---
         const fileInput = document.getElementById('fileUpload'); const dropZone = document.getElementById('dropZone');
         fileInput.addEventListener('change', (e) => processFiles(e.target.files));
         dropZone.addEventListener('dragover', (e) => { e.preventDefault(); dropZone.classList.add('drag-over'); });
         dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag-over'));
-        dropZone.addEventListener('drop', (e) => { e.preventDefault(); dropZone.classList.remove('drag-over'); if(e.dataTransfer.files.length > 0) { fileInput.files = e.dataTransfer.files; processFiles(e.dataTransfer.files); } });
+        dropZone.addEventListener('drop', (e) => { e.preventDefault(); dropZone.classList.remove('drag-over'); if(e.dataTransfer.files.length>0) { fileInput.files=e.dataTransfer.files; processFiles(e.dataTransfer.files); } });
 
         function processFiles(files) {
-            if (!files || files.length === 0) return;
-            document.getElementById('fileStatus').innerHTML = ''; let filesProcessed = 0; rawAttendant = []; rawHourly = []; rawProduct = [];
-            Array.from(files).forEach(file => {
-                let badgeId = 'badge-' + file.name.replace(/[^a-zA-Z0-9]/g, ''); let badge = document.createElement('span'); badge.id = badgeId; badge.className = `px-3 py-1 rounded-full border border-gray-200 bg-gray-100 text-gray-600 shadow-sm`; badge.innerText = `⏳ ${file.name.substring(0, 25)}...`; document.getElementById('fileStatus').appendChild(badge);
-                Papa.parse(file, {
+            if(!files||files.length===0) return; document.getElementById('fileStatus').innerHTML=''; let pCount=0; rawAttendant=[]; rawHourly=[]; rawProduct=[];
+            Array.from(files).forEach(f => {
+                let badge = document.createElement('span'); badge.className=`px-3 py-1 rounded-full border bg-gray-100 text-xs`; badge.innerText=`⏳ ${f.name.substring(0,25)}...`; document.getElementById('fileStatus').appendChild(badge);
+                Papa.parse(f, {
                     header: true, skipEmptyLines: true, encoding: "UTF-16", delimiter: "\t",
-                    complete: function(results) {
-                        const data = results.data;
-                        if (data.length>0 && !('Category Name' in data[0]) && !('Site Name' in data[0])) { badge.className = `px-3 py-1 rounded-full border border-red-200 bg-red-100 text-red-800 shadow-sm`; badge.innerText = `❌ ${file.name.substring(0, 25)}...`; } 
+                    complete: function(res) {
+                        if(res.data.length>0 && !('Category Name' in res.data[0])) badge.className=`px-3 py-1 rounded-full border bg-red-100 text-red-800 text-xs`;
                         else {
-                            badge.className = `px-3 py-1 rounded-full border border-green-200 bg-green-100 text-green-800 shadow-sm`; badge.innerText = `✅ ${file.name.substring(0, 25)}...`;
-                            if (data.length>0 && data[0]['Site Name'] && siteName==="ไม่ระบุสาขา") { siteName = data[0]['Site Name']; document.getElementById('dynamicSiteName').innerText = `สาขา: ${siteName}`; }
-                            let fName = file.name.toLowerCase();
-                            if (fName.includes("attendant")) rawAttendant = rawAttendant.concat(data);
-                            else if (fName.includes("hourly")) rawHourly = rawHourly.concat(data);
-                            else if (fName.includes("product")) rawProduct = rawProduct.concat(data);
+                            badge.className=`px-3 py-1 rounded-full border bg-green-100 text-green-800 text-xs`; badge.innerText=`✅ ${f.name.substring(0,25)}...`;
+                            if(res.data[0]&&res.data[0]['Site Name'] && siteName==="ไม่ระบุสาขา") { siteName=res.data[0]['Site Name']; document.getElementById('dynamicSiteName').innerText=`สาขา: ${siteName}`; }
+                            let n=f.name.toLowerCase(); if(n.includes("attendant")) rawAttendant=rawAttendant.concat(res.data); else if(n.includes("hourly")) rawHourly=rawHourly.concat(res.data); else if(n.includes("product")) rawProduct=rawProduct.concat(res.data);
                         }
-                        filesProcessed++;
-                        if (filesProcessed === files.length) {
-                            if (rawAttendant.length>0 || rawProduct.length>0) {
-                                document.getElementById('dashboardSection').classList.remove('hidden'); document.getElementById('exportBtn').classList.remove('hidden');
-                                populateDateFilter(); updateDashboard(); showToast(`ประมวลผลสำเร็จ ${filesProcessed} ไฟล์`, "success");
-                            } else showToast("ไม่พบข้อมูลที่ตรงกับรูปแบบระบบ", "error");
-                        }
+                        pCount++; if(pCount===files.length) { if(rawAttendant.length>0||rawProduct.length>0){ document.getElementById('dashboardSection').classList.remove('hidden'); document.getElementById('exportBtn').classList.remove('hidden'); populateDateFilter(); updateDashboard(); showToast("ประมวลผลสำเร็จ", "success"); } else showToast("ไฟล์ไม่ถูกต้อง", "error"); }
                     }
                 });
             });
         }
 
+        // สร้างรายการเลือกเดือนและวันที่
         function populateDateFilter() {
             let dates = new Set(); let months = new Set();
-            rawAttendant.forEach(row => { let d = row['Open Date'] || row['Date']; if (d) { dates.add(d); let p = d.split(/[-/]/); if(p.length===3) months.add(`${p[0].length===4?p[0]:p[2]}-${p[1].padStart(2, '0')}`); } });
-            let df = document.getElementById('dateFilter'); df.innerHTML = '<option value="ALL">รวมข้อมูลทั้งหมด (All Data)</option>';
-            let mNames = ["มกราคม", "กุมภาพันธ์", "มีนาคม", "เมษายน", "พฤษภาคม", "มิถุนายน", "กรกฎาคม", "สิงหาคม", "กันยายน", "ตุลาคม", "พฤศจิกายน", "ธันวาคม"];
-            Array.from(months).sort().forEach(m => { let opt = document.createElement('option'); opt.value = `MONTH_${m}`; let [y, mo] = m.split('-'); opt.innerText = `[สรุปทั้งเดือน] ${mNames[parseInt(mo)-1]} ${y}`; opt.className = "font-bold text-blue-700 bg-blue-50"; df.appendChild(opt); });
-            let sep = document.createElement('option'); sep.disabled = true; sep.innerText = "──────────────"; df.appendChild(sep);
-            Array.from(dates).sort().forEach(d => { let opt = document.createElement('option'); opt.value = d; opt.innerText = d; df.appendChild(opt); });
-            df.disabled = false;
+            rawAttendant.forEach(r => { let d = r['Open Date'] || r['Date']; if(d){ dates.add(d); let p=d.split(/[-/]/); if(p.length===3) months.add(`${p[0].length===4?p[0]:p[2]}-${p[1].padStart(2,'0')}`); } });
+            let df = document.getElementById('dateFilter'); df.innerHTML='<option value="ALL">รวมข้อมูลทั้งหมด</option>'; let mN=["มกราคม","กุมภาพันธ์","มีนาคม","เมษายน","พฤษภาคม","มิถุนายน","กรกฎาคม","สิงหาคม","กันยายน","ตุลาคม","พฤศจิกายน","ธันวาคม"];
+            Array.from(months).sort().forEach(m => { let opt=document.createElement('option'); opt.value=`MONTH_${m}`; let [y,mo]=m.split('-'); opt.innerText=`[สรุปเดือน] ${mN[parseInt(mo)-1]} ${y}`; opt.className="font-bold text-blue-700 bg-blue-50"; df.appendChild(opt); });
+            let sep = document.createElement('option'); sep.disabled=true; sep.innerText="──────────────"; df.appendChild(sep);
+            Array.from(dates).sort().forEach(d => { let opt=document.createElement('option'); opt.value=d; opt.innerText=d; df.appendChild(opt); }); df.disabled=false;
         }
 
+        // ดึงข้อมูลตามตัวกรองอัปเดตหน้า Dashboard
         function updateDashboard() {
             let sd = document.getElementById('dateFilter').value;
             const fFn = (r) => { if(sd==="ALL") return true; let d = r['Open Date'] || r['Date']; if(!d) return false; return sd.startsWith('MONTH_') ? d.includes(sd.replace('MONTH_','')) : d===sd; };
-            currentAttData = rawAttendant.filter(fFn); let filteredProduct = rawProduct.filter(fFn);
+            currentAttData = rawAttendant.filter(fFn); let fPrd = rawProduct.filter(fFn);
             
-            processData(currentAttData, filteredProduct);
+            processData(currentAttData, fPrd);
             processDailyRanking(currentAttData);
-            processHourlyData(currentAttData); // 🌟 ใช้ Data จาก Attendant แทน เพื่อให้กรองรถใหญ่/เล็กได้ 100%
+            processHourlyData(currentAttData); 
             
-            if (sd === "ALL" || sd.startsWith('MONTH_')) { processForecast(currentAttData); } 
-            else {
-                document.getElementById('forecastInfoText').innerText = "*ไม่สามารถคาดการณ์ยอดทั้งเดือนได้ เนื่องจากกำลังดูข้อมูลรายวัน"; document.getElementById('forecastResult').innerText = "N/A";
-                document.getElementById('forecastProgressBar').style.width = '0%'; document.getElementById('forecastStatusBox').className = "p-2 md:p-3 rounded text-center flex flex-col justify-center items-center col-span-2 md:col-span-1 bg-gray-100";
-                document.getElementById('forecastStatusText').innerText = "กรุณาเลือก 'รวมข้อมูลทั้งหมด' หรือ 'สรุปทั้งเดือน'"; document.getElementById('forecastStatusText').className = "text-xs md:text-sm font-bold text-gray-500";
-                document.getElementById('forecastRunRate').innerText = "-"; document.getElementById('forecastPercentText').innerText = "เป้าหมาย 100%";
-            }
+            if (sd === "ALL" || sd.startsWith('MONTH_')) processForecast(currentAttData);
+            else { document.getElementById('forecastInfoText').innerText="*พยากรณ์ล่วงหน้าไม่ได้เมื่อดูแบบรายวัน"; document.getElementById('forecastResult').innerText="-"; document.getElementById('forecastProgressBar').style.width='0%'; document.getElementById('forecastStatusBox').className="p-2 rounded bg-gray-100 text-gray-500"; document.getElementById('forecastStatusText').innerText="กรุณาเลือกดูแบบรวมทั้งหมด หรือรายเดือน"; document.getElementById('forecastPercentText').innerText=""; document.getElementById('forecastRunRate').innerText=""; }
         }
 
-        // 🔮 AI พยากรณ์ล่วงหน้า 1 เดือน (ลบข้อจำกัดเดือนปัจจุบันทิ้ง)
+        // 🔮 AI คาดการณ์ + เปอร์เซ็นต์ (คำนวณจากยอดในระบบ พุ่งไปข้างหน้า 1 เดือนเสมอ)
         function processForecast(attData) {
-            if (attData.length === 0) return;
-            let totalSvpVol = 0; let activeDates = new Set(); let latestDate = new Date(0); 
-            
-            attData.forEach(row => {
-                let dStr = row['Open Date'] || row['Date']; if (!dStr) return;
-                let d = new Date(dStr); if (isNaN(d)) { let p = dStr.split(/[-/]/); if (p.length===3) d = p[0].length===4 ? new Date(p[0], p[1]-1, p[2]) : new Date(p[2], p[1]-1, p[0]); }
-                if (!isNaN(d)) {
-                    if (d > latestDate) latestDate = d; 
-                    if (row['Category Name'] === 'Fuels') {
-                        let pName = (row['Product Name'] || "").toUpperCase(); let v = parseFloat(row['Volume']) || 0;
-                        if ((pName.includes("VP ") || pName.includes("V-POWER") || pName.includes("VPOWER")) && v > 0) { totalSvpVol += v; activeDates.add(dStr); }
-                    }
+            if(attData.length===0) return; let tSvp=0; let aDates=new Set(); let lDate=new Date(0); 
+            attData.forEach(r => {
+                let dStr = r['Open Date'] || r['Date']; if(!dStr) return;
+                let d = new Date(dStr); if(isNaN(d)){ let p=dStr.split(/[-/]/); if(p.length===3) d = p[0].length===4 ? new Date(p[0],p[1]-1,p[2]) : new Date(p[2],p[1]-1,p[0]); }
+                if(!isNaN(d)) {
+                    if(d>lDate) lDate=d; 
+                    if(r['Category Name']==='Fuels') { let pN=(r['Product Name']||"").toUpperCase(); let v=parseFloat(r['Volume'])||0; if((pN.includes("VP ")||pN.includes("VPOWER")||pN.includes("V-POWER")) && v>0) { tSvp+=v; aDates.add(dStr); } }
                 }
             });
-            if (activeDates.size === 0) return;
-
-            let nextMonth = latestDate.getMonth() + 1; let nextYear = latestDate.getFullYear();
-            if (nextMonth > 11) { nextMonth = 0; nextYear++; } 
+            if(aDates.size===0) return;
             
-            let mNames = ["มกราคม", "กุมภาพันธ์", "มีนาคม", "เมษายน", "พฤษภาคม", "มิถุนายน", "กรกฎาคม", "สิงหาคม", "กันยายน", "ตุลาคม", "พฤศจิกายน", "ธันวาคม"];
-            let tDaysNext = new Date(nextYear, nextMonth + 1, 0).getDate(); 
+            let nMonth=lDate.getMonth()+1; let nYear=lDate.getFullYear(); if(nMonth>11){nMonth=0; nYear++;} 
+            let mN=["มกราคม","กุมภาพันธ์","มีนาคม","เมษายน","พฤษภาคม","มิถุนายน","กรกฎาคม","สิงหาคม","กันยายน","ตุลาคม","พฤศจิกายน","ธันวาคม"];
+            let tDays = new Date(nYear, nMonth+1, 0).getDate(); 
+            let runRate = tSvp / aDates.size; let fVol = runRate * tDays; let tgt = parseFloat(document.getElementById('targetSvpVolume').value)||30000;
+            let pct = (fVol/tgt)*100;
             
-            let runRate = totalSvpVol / activeDates.size; 
-            let fVol = runRate * tDaysNext; 
-            let tVol = parseFloat(document.getElementById('targetSvpVolume').value) || 30000;
-            let pct = (fVol / tVol) * 100;
-
-            document.getElementById('forecastTargetLabel').innerText = `เป้าหมายเดือน ${mNames[nextMonth]}`;
-            document.getElementById('forecastTarget').innerText = tVol.toLocaleString(undefined, {maximumFractionDigits:0});
-            document.getElementById('forecastCurrentLabel').innerText = "ฐานข้อมูลที่ใช้เฉลี่ย (ย้อนหลัง)";
-            document.getElementById('forecastCurrent').innerText = `${activeDates.size} วัน`;
-            document.getElementById('forecastResultLabel').innerText = `คาดการณ์เดือน ${mNames[nextMonth]}`;
-            document.getElementById('forecastResult').innerText = fVol.toLocaleString(undefined, {maximumFractionDigits:0});
-            document.getElementById('forecastInfoText').innerText = `*พยากรณ์ล่วงหน้าไปที่เดือน ${mNames[nextMonth]} ${nextYear} อ้างอิงจากยอดขายเฉลี่ยตลอด ${activeDates.size} วันที่คุณกรองมา`;
-            document.getElementById('forecastRunRate').innerText = `(แนวโน้มเฉลี่ย ${runRate.toLocaleString(undefined, {maximumFractionDigits:0})} ลิตร/วัน)`;
+            document.getElementById('forecastTargetLabel').innerText=`เป้าหมาย ${mN[nMonth]}`; document.getElementById('forecastTarget').innerText=tgt.toLocaleString();
+            document.getElementById('forecastCurrentLabel').innerText="อิงประวัติฐานข้อมูล (ย้อนหลัง)"; document.getElementById('forecastCurrent').innerText=`${aDates.size} วัน`;
+            document.getElementById('forecastResultLabel').innerText=`คาดการณ์ล่วงหน้าเดือน ${mN[nMonth]}`; document.getElementById('forecastResult').innerText=fVol.toLocaleString(undefined,{maximumFractionDigits:0});
+            document.getElementById('forecastRunRate').innerText=`(เฉลี่ย ${runRate.toLocaleString(undefined,{maximumFractionDigits:0})} ลิตร/วัน)`;
             
-            let pText = pct.toLocaleString(undefined, {maximumFractionDigits:1}) + '%';
-            document.getElementById('forecastPercentText').innerText = `แนวโน้ม: ${pText}`;
-                
-            let sBox = document.getElementById('forecastStatusBox'); let sText = document.getElementById('forecastStatusText'); let pBar = document.getElementById('forecastProgressBar');
-            if (fVol >= tVol) {
-                sBox.className = "p-2 md:p-3 rounded text-center flex flex-col justify-center items-center col-span-2 md:col-span-1 bg-green-100 border border-green-200 transition-colors";
-                sText.className = "text-xs md:text-sm font-bold text-green-700"; sText.innerText = `✅ ทะลุเป้าหมาย (${pText})`; pBar.className = "bg-green-500 h-4 transition-all duration-1000";
-            } else {
-                sBox.className = "p-2 md:p-3 rounded text-center flex flex-col justify-center items-center col-span-2 md:col-span-1 bg-red-100 border border-red-200 transition-colors";
-                sText.className = "text-xs md:text-sm font-bold text-red-700"; sText.innerText = `⚠️ เสี่ยงตกเป้า (${pText})`; pBar.className = "bg-red-500 h-4 transition-all duration-1000";
-            }
-            setTimeout(() => { pBar.style.width = Math.min(pct, 100) + '%'; }, 100);
+            let pText = pct.toLocaleString(undefined,{maximumFractionDigits:1})+'%'; document.getElementById('forecastPercentText').innerText=`แนวโน้มความสำเร็จ: ${pText}`;
+            let sBox=document.getElementById('forecastStatusBox'); let sTxt=document.getElementById('forecastStatusText'); let pBar=document.getElementById('forecastProgressBar');
+            if(fVol>=tgt) { sBox.className="p-2 rounded bg-green-100 border border-green-200"; sTxt.className="text-sm font-bold text-green-700"; sTxt.innerText=`✅ ทะลุเป้าหมาย (${pText})`; pBar.className="bg-green-500 h-4"; } 
+            else { sBox.className="p-2 rounded bg-red-100 border border-red-200"; sTxt.className="text-sm font-bold text-red-700"; sTxt.innerText=`⚠️ เสี่ยงตกเป้า (${pText})`; pBar.className="bg-red-500 h-4"; }
+            setTimeout(() => { pBar.style.width = Math.min(pct,100)+'%'; }, 100);
         }
 
-        // 🏆 NEW: จัดอันดับ จันทร์-อาทิตย์ (มี Filter)
+        // 🏆 จัดอันดับยอดขายรายวัน (มี Filter + เรียงมากไปน้อย)
         function processDailyRanking(attData) {
-            let metric = document.getElementById('drMetric').value; let vehF = document.getElementById('drVeh').value; let fuelF = document.getElementById('drFuel').value;
-            let dayT = {0:0, 1:0, 2:0, 3:0, 4:0, 5:0, 6:0}; let daySets = {0:new Set(), 1:new Set(), 2:new Set(), 3:new Set(), 4:new Set(), 5:new Set(), 6:new Set()};
-            
-            attData.forEach(row => {
-                if (row['Category Name'] !== 'Fuels') return;
-                let dStr = row['Open Date'] || row['Date']; if(!dStr) return;
-                let d = new Date(dStr); if (isNaN(d)) { let p = dStr.split(/[-/]/); if (p.length===3) d = p[0].length===4 ? new Date(p[0], p[1]-1, p[2]) : new Date(p[2], p[1]-1, p[0]); }
-                if(isNaN(d)) return;
-
-                let dayW = d.getDay(); daySets[dayW].add(dStr);
-                let vCode = (row['Vehicle Code'] || "").trim().toUpperCase(); let pName = (row['Product Name'] || "").toUpperCase();
-                let isVP = pName.includes("VP ") || pName.includes("VPOWER") || pName.includes("V-POWER");
-                
-                let pVeh = (vehF==='ALL') || (vehF==='2W'&&vCode==='2W') || (vehF==='4W'&&vCode==='4W') || (vehF==='HEAVY'&&vCode==='HEAVY');
-                let pFuel = (fuelF==='ALL') || (fuelF==='VP'&&isVP) || (fuelF==='NM'&&!isVP);
-
-                if (pVeh && pFuel) {
-                    dayT[dayW] += metric==='volume' ? (parseFloat(row['Volume'])||0) : (parseInt(row['Delivery Count'])||0);
+            let m=document.getElementById('drMetric').value; let vF=document.getElementById('drVeh').value; let fF=document.getElementById('drFuel').value;
+            let dT={0:0,1:0,2:0,3:0,4:0,5:0,6:0}; let dS={0:new Set(),1:new Set(),2:new Set(),3:new Set(),4:new Set(),5:new Set(),6:new Set()};
+            attData.forEach(r => {
+                if(r['Category Name']!=='Fuels') return; let dStr=r['Open Date']||r['Date']; if(!dStr) return;
+                let d=new Date(dStr); if(isNaN(d)){ let p=dStr.split(/[-/]/); if(p.length===3) d=p[0].length===4?new Date(p[0],p[1]-1,p[2]):new Date(p[2],p[1]-1,p[0]); }
+                if(isNaN(d)) return; let dW=d.getDay(); dS[dW].add(dStr);
+                let vC=(r['Vehicle Code']||"").trim().toUpperCase(); let pN=(r['Product Name']||"").toUpperCase(); let isVP=pN.includes("VP ")||pN.includes("VPOWER");
+                if((vF==='ALL'||(vF==='2W'&&vC==='2W')||(vF==='4W'&&vC==='4W')||(vF==='HEAVY'&&vC==='HEAVY')) && (fF==='ALL'||(fF==='VP'&&isVP)||(fF==='NM'&&!isVP))) {
+                    dT[dW] += m==='volume' ? (parseFloat(r['Volume'])||0) : (parseInt(r['Delivery Count'])||0);
                 }
             });
-
-            let dNames = ["อาทิตย์", "จันทร์", "อังคาร", "พุธ", "พฤหัสบดี", "ศุกร์", "เสาร์"];
-            let result = [];
-            for(let i=0; i<=6; i++) {
-                if(daySets[i].size > 0) result.push({ day: dNames[i], avg: dayT[i] / daySets[i].size });
-            }
-            result.sort((a,b) => b.avg - a.avg); // มากไปน้อย
-
-            let ctx = document.getElementById('dailyRankingChart').getContext('2d'); if(charts.dr) charts.dr.destroy();
-            let labelSuffix = metric==='volume' ? ' ลิตร/วัน' : ' คัน/วัน';
-            charts.dr = new Chart(ctx, {
-                type: 'bar',
-                data: { labels: result.map(r=>r.day), datasets: [{ label: `ยอดเฉลี่ย (${metric==='volume'?'ลิตร':'คัน'})`, data: result.map(r=>r.avg), backgroundColor: 'rgba(59, 130, 246, 0.8)', borderRadius: 4 }] },
-                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false }, tooltip: { callbacks: { label: function(c) { return c.raw.toLocaleString(undefined,{maximumFractionDigits:0}) + labelSuffix; } } } }, scales: { y: { beginAtZero: true } } }
-            });
+            let dNames=["อาทิตย์","จันทร์","อังคาร","พุธ","พฤหัสบดี","ศุกร์","เสาร์"]; let res=[];
+            for(let i=0;i<=6;i++) { if(dS[i].size>0) res.push({ d: dNames[i], v: dT[i]/dS[i].size }); }
+            res.sort((a,b)=>b.v-a.v);
+            let ctx=document.getElementById('dailyRankingChart').getContext('2d'); if(charts.dr) charts.dr.destroy();
+            let lS = m==='volume'?' ลิตร/วัน':' คัน/วัน';
+            charts.dr=new Chart(ctx,{ type:'bar', data:{ labels:res.map(r=>r.d), datasets:[{ label:`เฉลี่ย (${m==='volume'?'ลิตร':'คัน'})`, data:res.map(r=>r.v), backgroundColor:'#3b82f6', borderRadius:4 }] }, options:{ responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}, tooltip:{callbacks:{label:c=>c.raw.toLocaleString(undefined,{maximumFractionDigits:0})+lS}}}, scales:{y:{beginAtZero:true}} } });
         }
 
-        // ⏱️ UPGRADE: กราฟรถเข้าลานเจาะลึก (Fix เพดาน + กรองครบ)
+        // ⏱️ เจาะลึกรายชั่วโมง (Fixed Max Y-axis + Full Filters)
         function processHourlyData(attData) {
-            let metric = document.getElementById('hrMetric').value; let vehF = document.getElementById('hrVeh').value; let fuelF = document.getElementById('hrFuel').value; let selDay = document.getElementById('hourlyDayFilter').value;
-            let hrSums = Array.from({length: 8}, () => ({})); let dSets = Array.from({length: 8}, () => new Set());
-            let globalMax = 0;
-
-            // กวาดข้อมูลหาค่าของแต่ละชั่วโมง
-            attData.forEach(row => {
-                if (row['Category Name'] !== 'Fuels') return;
-                let dStr = row['Open Date'] || row['Date']; let timeStr = row['Open Time'] || row['Time'];
-                if(!timeStr || !dStr) return;
-                let hStr = timeStr.split(':')[0]; // ดึงเฉพาะชั่วโมง 08, 09
-                if(hStr.length === 1) hStr = "0" + hStr;
-
-                let d = new Date(dStr); if (isNaN(d)) { let p = dStr.split(/[-/]/); if (p.length===3) d = p[0].length===4 ? new Date(p[0], p[1]-1, p[2]) : new Date(p[2], p[1]-1, p[0]); }
-                if(isNaN(d)) return;
-
-                let vCode = (row['Vehicle Code'] || "").trim().toUpperCase(); let pName = (row['Product Name'] || "").toUpperCase();
-                let isVP = pName.includes("VP ") || pName.includes("VPOWER") || pName.includes("V-POWER");
-                
-                let pVeh = (vehF==='ALL') || (vehF==='2W'&&vCode==='2W') || (vehF==='4W'&&vCode==='4W') || (vehF==='HEAVY'&&vCode==='HEAVY');
-                let pFuel = (fuelF==='ALL') || (fuelF==='VP'&&isVP) || (fuelF==='NM'&&!isVP);
-
-                if (!pVeh || !pFuel) return;
-                let val = metric==='volume' ? (parseFloat(row['Volume'])||0) : (parseInt(row['Delivery Count'])||0);
-                
-                let dayW = d.getDay();
-                if(!hrSums[dayW][hStr]) hrSums[dayW][hStr] = 0; hrSums[dayW][hStr] += val; dSets[dayW].add(dStr);
-                if(!hrSums[7][hStr]) hrSums[7][hStr] = 0; hrSums[7][hStr] += val; dSets[7].add(dStr); // 7 = ALL Days
+            let m=document.getElementById('hrMetric').value; let vF=document.getElementById('hrVeh').value; let fF=document.getElementById('hrFuel').value; let selD=document.getElementById('hourlyDayFilter').value;
+            let hS=Array.from({length:8},()=>({})); let dS=Array.from({length:8},()=>new Set()); let gMax=0;
+            attData.forEach(r => {
+                if(r['Category Name']!=='Fuels') return; let dStr=r['Open Date']||r['Date']; let tStr=r['Open Time']||r['Time']; if(!tStr||!dStr) return;
+                let hStr=tStr.split(':')[0]; if(hStr.length===1) hStr="0"+hStr;
+                let d=new Date(dStr); if(isNaN(d)){ let p=dStr.split(/[-/]/); if(p.length===3) d=p[0].length===4?new Date(p[0],p[1]-1,p[2]):new Date(p[2],p[1]-1,p[0]); }
+                if(isNaN(d)) return; let vC=(r['Vehicle Code']||"").trim().toUpperCase(); let pN=(r['Product Name']||"").toUpperCase(); let isVP=pN.includes("VP ")||pN.includes("VPOWER");
+                if((vF==='ALL'||(vF==='2W'&&vC==='2W')||(vF==='4W'&&vC==='4W')||(vF==='HEAVY'&&vC==='HEAVY')) && (fF==='ALL'||(fF==='VP'&&isVP)||(fF==='NM'&&!isVP))) {
+                    let val = m==='volume' ? (parseFloat(r['Volume'])||0) : (parseInt(r['Delivery Count'])||0); let dW=d.getDay();
+                    if(!hS[dW][hStr]) hS[dW][hStr]=0; hS[dW][hStr]+=val; dS[dW].add(dStr);
+                    if(!hS[7][hStr]) hS[7][hStr]=0; hS[7][hStr]+=val; dS[7].add(dStr);
+                }
             });
-
-            // หาค่า Global Max (ยอดที่สูงที่สุดในบรรดาทุกวันและทุกเวลา)
-            for(let i=0; i<=7; i++) {
-                let nDays = dSets[i].size || 1;
-                Object.values(hrSums[i]).forEach(sum => { let avg = sum / nDays; if (avg > globalMax) globalMax = avg; });
-            }
-
-            let tIdx = selDay === "ALL" ? 7 : parseInt(selDay); let nSelDays = dSets[tIdx].size || 1;
-            let sHours = Object.keys(hrSums[tIdx]).sort(); let cData = sHours.map(h => hrSums[tIdx][h] / nSelDays);
-
-            // 🎯 การล็อกเพดาน (Fix Y-Axis) 
-            // ถ้าเป็นลิตร (ยอดเป็นร้อย/พัน) ให้บวกบัฟเฟอร์ 10% ถ้าเป็นคัน (ยอดยี่สิบ/สามสิบ) ให้บวกไป 10 ตรงๆ
-            let yBuffer = metric === 'volume' ? Math.max(10, Math.ceil(globalMax * 0.1)) : 10;
-            let fixedYMax = Math.ceil(globalMax + yBuffer);
-
+            for(let i=0;i<=7;i++) { let n=dS[i].size||1; Object.values(hS[i]).forEach(v=>{ let avg=v/n; if(avg>gMax) gMax=avg; }); }
+            let tIdx = selD==="ALL" ? 7 : parseInt(selD); let nD = dS[tIdx].size||1; let sH = Object.keys(hS[tIdx]).sort(); let cD = sH.map(h => hS[tIdx][h]/nD);
+            
+            let yBuf = m==='volume' ? Math.max(10, Math.ceil(gMax*0.1)) : 10; let fMax = Math.ceil(gMax+yBuf);
             let ctx = document.getElementById('hourlyChart').getContext('2d'); if(charts.hr) charts.hr.destroy();
-            let labelName = metric === 'volume' ? 'เฉลี่ยปริมาณ (ลิตร/ชม.)' : 'เฉลี่ยรถเข้าลาน (คัน/ชม.)';
-            
-            charts.hr = new Chart(ctx, { 
-                type: 'line', 
-                data: { labels: sHours, datasets: [{ label: labelName, data: cData, borderColor: '#dd1d21', backgroundColor: 'rgba(221, 29, 33, 0.1)', borderWidth: 3, fill: true, tension: 0.3, pointBackgroundColor: '#fbce07' }] }, 
-                options: { 
-                    responsive: true, maintainAspectRatio: false, 
-                    scales: { 
-                        y: { beginAtZero: true, max: fixedYMax } // 📌 ล็อคเพดานตายตัวตรงนี้
-                    },
-                    plugins: { tooltip: { callbacks: { label: function(c) { return c.raw.toLocaleString(undefined,{maximumFractionDigits:0}); } } } }
-                } 
-            });
+            charts.hr = new Chart(ctx, { type:'line', data:{ labels:sH, datasets:[{ label:`เฉลี่ย (${m==='volume'?'ลิตร':'คัน'})/ชม.`, data:cD, borderColor:'#dd1d21', backgroundColor:'rgba(221, 29, 33, 0.1)', fill:true, tension:0.3 }] }, options:{ responsive:true, maintainAspectRatio:false, plugins:{tooltip:{callbacks:{label:c=>c.raw.toLocaleString(undefined,{maximumFractionDigits:0})}}}, scales:{ y:{beginAtZero:true, max:fMax>0?fMax:10} } } });
         }
 
+        // 🚗 Global KPI + พฤติกรรมการเติม (100% Stacked Chart)
         function processData(attData, prdData) {
-            let globalStats = { totalVol: 0, vpowerVol: 0, totalCars: 0, totalBills: 0, goPlusBills: 0 };
-            let employeeStats = {}; let empActiveDates = {}; 
-            let vehicleStats = { "2W": { name: "มอเตอร์ไซค์ (2 ล้อ)", vpower: 0, normal: 0 }, "4W": { name: "รถยนต์ (4 ล้อ)", vpower: 0, normal: 0 } }; // ตัด Heavy ทิ้งในกราฟพฤติกรรม
-            let activeEmpCountForAvg = 0; 
-
-            attData.forEach(row => {
-                if (row['Category Name'] === 'Fuels') {
-                    let dStr = row['Open Date'] || row['Date']; let empId = row['Attendant'];
-                    let volume = parseFloat(row['Volume']) || 0; let deliveryCount = parseInt(row['Delivery Count']) || 0;
-                    let pName = (row['Product Name'] || "").toUpperCase(); let vCode = (row['Vehicle Code'] || "").trim().toUpperCase();
-                    if (!empId || volume <= 0) return;
-                    
-                    let isVP = pName.includes("VP ") || pName.includes("V-POWER") || pName.includes("VPOWER");
-                    let empRawName = employeeMapping[empId] || `รหัส ${empId}`;
-
-                    if (!empActiveDates[empRawName]) empActiveDates[empRawName] = new Set();
-                    if (dStr) empActiveDates[empRawName].add(dStr);
-
-                    if (!employeeStats[empRawName]) { employeeStats[empRawName] = { totalVol: 0, vpowerVol: 0, normalVol: 0, deliveryCount: 0 }; if (!empRawName.includes("(ช่าง)") && !empRawName.includes("(แคช)")) activeEmpCountForAvg++; }
-                    
-                    employeeStats[empRawName].totalVol += volume; employeeStats[empRawName].deliveryCount += deliveryCount; globalStats.totalVol += volume; globalStats.totalCars += deliveryCount;
-                    if (isVP) { employeeStats[empRawName].vpowerVol += volume; globalStats.vpowerVol += volume; } else { employeeStats[empRawName].normalVol += volume; }
-
-                    if (!activeEmpFilter || empRawName === activeEmpFilter) {
-                        let vG = vCode;
-                        if (vehicleStats[vG]) { if(isVP) vehicleStats[vG].vpower += volume; else vehicleStats[vG].normal += volume; }
-                    }
+            let g = { tV:0, vp:0, tC:0, tB:0, go:0 }; let eS = {}; let eAD = {}; let vS = { "2W":{v:0,n:0}, "4W":{v:0,n:0} }; let aEmp = 0; 
+            attData.forEach(r => {
+                if (r['Category Name']==='Fuels') {
+                    let dStr=r['Open Date']||r['Date']; let eId=r['Attendant']; let v=parseFloat(r['Volume'])||0; let c=parseInt(r['Delivery Count'])||0;
+                    if(!eId||v<=0) return; let pN=(r['Product Name']||"").toUpperCase(); let vC=(r['Vehicle Code']||"").trim().toUpperCase(); let isVP=pN.includes("VP ")||pN.includes("VPOWER");
+                    let eN=employeeMapping[eId]||eId; if(!eAD[eN]) eAD[eN]=new Set(); if(dStr) eAD[eN].add(dStr);
+                    if(!eS[eN]) { eS[eN]={v:0, vp:0, n:0, c:0}; if(!eN.includes("(ช่าง)")&&!eN.includes("(แคช)")) aEmp++; }
+                    eS[eN].v+=v; eS[eN].c+=c; g.tV+=v; g.tC+=c; if(isVP){eS[eN].vp+=v; g.vp+=v;} else eS[eN].n+=v;
+                    if(!activeEmpFilter||eN===activeEmpFilter){ if(vS[vC]){ if(isVP) vS[vC].v+=v; else vS[vC].n+=v; } }
                 }
             });
+            prdData.forEach(r => { if(r['Category Name']==='Fuels'){ let l=(r['Loyalty']||"").toUpperCase(); let c=parseInt(r['Delivery Count'])||parseInt(r['Purchase Count'])||0; if(c>0){ g.tB+=c; if(l.includes("GO+")||(l!=="NOLOYALTY"&&l!=="")) g.go+=c; } } });
 
-            prdData.forEach(row => {
-                if (row['Category Name'] === 'Fuels') {
-                    let loyalty = (row['Loyalty'] || "").toUpperCase(); let count = parseInt(row['Delivery Count']) || parseInt(row['Purchase Count']) || 0;
-                    if(count > 0) { globalStats.totalBills += count; if (loyalty.includes("GO+") || (loyalty !== "NOLOYALTY" && loyalty !== "")) globalStats.goPlusBills += count; }
-                }
-            });
+            let nM = Array.from(document.getElementById('dateFilter').options).filter(o=>o.value.startsWith('MONTH_')).length; let tT = parseFloat(document.getElementById('targetTotalVolume').value)||150000; let fT = (document.getElementById('dateFilter').value==="ALL"&&nM>0)?tT*nM:tT;
+            document.getElementById('kpiTotalTargetLabel').innerText=`เป้าหมาย: ${fT.toLocaleString()}`; let kT = document.getElementById('kpiTotalVol'); kT.innerText = g.tV.toLocaleString(undefined,{maximumFractionDigits:0}); kT.className = g.tV>=fT ? "text-xl md:text-2xl font-bold text-blue-600 mt-1" : "text-xl md:text-2xl font-bold mt-1";
+            let tvp = parseFloat(document.getElementById('targetVpMix').value)||20; let vM = g.tV>0?(g.vp/g.tV)*100:0; document.getElementById('kpiTargetLabel').innerText=`เป้าหมาย: ${tvp}%`; let kV = document.getElementById('kpiVpowerMix'); kV.innerText=vM.toFixed(1)+'%'; kV.className=vM>=tvp?"text-xl md:text-2xl font-bold text-green-600 mt-1":"text-xl md:text-2xl font-bold text-red-600 mt-1";
+            document.getElementById('kpiGoPlusMix').innerText=g.tB>0?((g.go/g.tB)*100).toFixed(1)+'%':'0%'; document.getElementById('kpiTotalCars').innerText=g.tC.toLocaleString();
 
-            let kpiVolTargetVal = parseFloat(document.getElementById('targetTotalVolume').value) || 150000;
-            let numMonths = Array.from(document.getElementById('dateFilter').options).filter(o => o.value.startsWith('MONTH_')).length;
-            let finalVolTarget = (document.getElementById('dateFilter').value === "ALL" && numMonths > 0) ? kpiVolTargetVal * numMonths : kpiVolTargetVal;
-
-            document.getElementById('kpiTotalTargetLabel').innerText = `เป้าหมาย: ${finalVolTarget.toLocaleString()} ลิตร`;
-            let kpiTotalVolEl = document.getElementById('kpiTotalVol'); kpiTotalVolEl.innerText = globalStats.totalVol.toLocaleString(undefined, {maximumFractionDigits: 0});
-            kpiTotalVolEl.className = globalStats.totalVol >= finalVolTarget ? "text-lg md:text-2xl font-bold text-blue-600 mt-1 transition-colors" : "text-lg md:text-2xl font-bold text-gray-900 mt-1 transition-colors";
-
-            let targetVp = parseFloat(document.getElementById('targetVpMix').value) || 20; let vMix = globalStats.totalVol > 0 ? (globalStats.vpowerVol / globalStats.totalVol) * 100 : 0;
-            document.getElementById('kpiTargetLabel').innerText = `เป้าหมาย: ${targetVp}%`; document.getElementById('kpiVpowerMix').innerText = vMix.toFixed(1) + '%';
-            document.getElementById('kpiVpowerMix').className = vMix >= targetVp ? "text-lg md:text-2xl font-bold text-green-600 mt-1 transition-colors" : "text-lg md:text-2xl font-bold text-red-600 mt-1 transition-colors";
+            let sE = Object.entries(eS).sort((a,b)=>b[1].v-a[1].v); let oN = sE.map(i=>i[0]);
+            renderEmployeeChart(sE.map(i=>`${i[0].replace(/\(แคช\)|\(ช่าง\)/g,'').trim()} (VP: ${((i[1].vp/i[1].v)*100).toFixed(1)}%)`), sE.map(i=>i[1].vp), sE.map(i=>i[1].n), aEmp>0?(g.tV/aEmp):0, oN);
             
-            document.getElementById('kpiGoPlusMix').innerText = globalStats.totalBills > 0 ? ((globalStats.goPlusBills / globalStats.totalBills) * 100).toFixed(1) + '%' : '0%';
-            document.getElementById('kpiTotalCars').innerText = globalStats.totalCars.toLocaleString();
-
-            let sortedEmp = Object.entries(employeeStats).sort((a, b) => b[1].totalVol - a[1].totalVol); let originalNames = sortedEmp.map(i => i[0]);
-            let empLabels = sortedEmp.map(item => { let mix = ((item[1].vpowerVol / item[1].totalVol) * 100).toFixed(1); return `${item[0].replace(/\(แคช\)|\(ช่าง\)/g, '').trim()} (VP: ${mix}% | ยก: ${item[1].deliveryCount.toLocaleString()})`; });
-            renderEmployeeChart(empLabels, sortedEmp.map(i => i[1].vpowerVol), sortedEmp.map(i => i[1].normalVol), activeEmpCountForAvg > 0 ? (globalStats.totalVol / activeEmpCountForAvg) : 0, originalNames);
-
-            // 🚗 UPGRADE: กราฟพฤติกรรม เป็นแบบแนวนอน 100% (ดูแต่ 2 ล้อ กับ 4 ล้อ)
-            let vLabels = []; let vVpPct = []; let vNmPct = [];
-            ["2W", "4W"].forEach(vType => {
-                let stat = vehicleStats[vType]; let tVol = stat.vpower + stat.normal;
-                let vpP = tVol > 0 ? (stat.vpower / tVol) * 100 : 0; let nmP = tVol > 0 ? (stat.normal / tVol) * 100 : 0;
-                vLabels.push(stat.name); vVpPct.push(vpP); vNmPct.push(nmP);
-            });
-            renderVehicle100Chart(vLabels, vVpPct, vNmPct);
-            buildKpiTable(sortedEmp, empActiveDates); 
+            // 🚗 100% Stacked Chart (2W vs 4W) ตัดรถใหญ่ทิ้ง เน้นเทียบ V-Power Mix
+            let vL=["มอเตอร์ไซค์ (2 ล้อ)", "รถยนต์ (4 ล้อ)"]; let vpP=[]; let nmP=[];
+            ["2W","4W"].forEach(vT => { let s=vS[vT]; let t=s.v+s.n; vpP.push(t>0?(s.v/t)*100:0); nmP.push(t>0?(s.n/t)*100:0); });
+            let ctx = document.getElementById('vehicleChart').getContext('2d'); if(charts.veh) charts.veh.destroy();
+            charts.veh = new Chart(ctx, { type:'bar', data:{ labels:vL, datasets:[{label:'V-Power Mix', data:vpP, backgroundColor:'#dd1d21'},{label:'มาตรฐาน', data:nmP, backgroundColor:'#fbce07'}] }, options:{ responsive:true, maintainAspectRatio:false, indexAxis:'y', scales:{ x:{stacked:true, max:100, ticks:{callback:v=>v+'%'}}, y:{stacked:true} }, plugins:{ tooltip:{callbacks:{label:c=>c.dataset.label+': '+c.raw.toFixed(1)+'%'}} } } });
+            buildKpiTable(sE, eAD);
         }
 
-        // กราฟ 100% แนวนอน
-        function renderVehicle100Chart(labels, vpPct, nmPct) {
-            const ctx = document.getElementById('vehicleChart').getContext('2d'); if(charts.veh) charts.veh.destroy();
-            charts.veh = new Chart(ctx, { 
-                type: 'bar', 
-                data: { labels: labels, datasets: [ { label: 'V-Power Mix', data: vpPct, backgroundColor: '#dd1d21' }, { label: 'มาตรฐาน', data: nmPct, backgroundColor: '#fbce07' } ] }, 
-                options: { 
-                    responsive: true, maintainAspectRatio: false, indexAxis: 'y', 
-                    plugins: { legend: { position: 'top' }, tooltip: { callbacks: { label: function(c) { return c.dataset.label + ': ' + c.raw.toFixed(1) + '%'; } } } }, 
-                    scales: { x: { stacked: true, max: 100, ticks: { callback: function(v){return v+'%'} } }, y: { stacked: true } } 
-                } 
-            });
+        function renderEmployeeChart(labels, vpData, nmData, avgV, oNames) {
+            let ctx=document.getElementById('employeeChart').getContext('2d'); if(charts.emp) charts.emp.destroy();
+            charts.emp=new Chart(ctx,{ type:'bar', data:{ labels:labels, datasets:[{label:'V-Power', data:vpData, backgroundColor:oNames.map(n=>(activeEmpFilter&&n!==activeEmpFilter)?'rgba(221,29,33,0.2)':'#dd1d21')},{label:'มาตรฐาน', data:nmData, backgroundColor:oNames.map(n=>(activeEmpFilter&&n!==activeEmpFilter)?'rgba(251,206,7,0.2)':'#fbce07')}] }, options:{ responsive:true, maintainAspectRatio:false, scales:{x:{stacked:true},y:{stacked:true}}, plugins:{annotation:avgV>0?{annotations:{l1:{type:'line',yMin:avgV,yMax:avgV,borderColor:'rgba(34,197,94,0.9)',borderWidth:2,borderDash:[5,5]}}}:{} }, onClick:(e,els)=>{ if(els.length>0){ activeEmpFilter=oNames[els[0].index]; document.getElementById('clearEmpFilterBtn').classList.remove('hidden'); let clN = activeEmpFilter.replace(/\(แคช\)|\(ช่าง\)/g, '').trim(); document.getElementById('vehicleChartSubtitle').innerText=`เฉพาะ: ${clN}`; document.getElementById('vehicleChartSubtitle').className="text-[10px] md:text-xs font-bold text-red-600 bg-red-100 px-2 py-1 rounded"; updateDashboard(); } } } });
         }
 
-        function buildKpiTable(sortedEmp, empActiveDates) {
-            let tbody = document.getElementById('kpiTableBody'); if(!tbody) return; tbody.innerHTML = '';
-            let tF_VP = parseFloat(document.getElementById('targetDailyForecourt').value) || 190; let tC_VP = parseFloat(document.getElementById('targetDailyCashier').value) || 85; let tT_VP = parseFloat(document.getElementById('targetDailyTech').value) || 85;
-            let tF_Tot = parseFloat(document.getElementById('targetDailyTotalForecourt').value) || 1000; let tC_Tot = parseFloat(document.getElementById('targetDailyTotalCashier').value) || 500; let tT_Tot = parseFloat(document.getElementById('targetDailyTotalTech').value) || 500;
-
-            sortedEmp.forEach(([name, stats]) => {
-                let aDays = empActiveDates[name] ? empActiveDates[name].size : 1; 
-                let dVP = tF_VP; let dTot = tF_Tot;
-                if (name.includes("(แคช)")) { dVP = tC_VP; dTot = tC_Tot; } else if (name.includes("(ช่าง)")) { dVP = tT_VP; dTot = tT_Tot; }
-                let pVP = dVP * aDays; let pTot = dTot * aDays; let diffVP = stats.vpowerVol - pVP; let diffTot = stats.totalVol - pTot;
-                
-                let sVP = stats.vpowerVol >= pVP ? `<span class="text-green-600 font-bold">✅ ผ่าน (+${diffVP.toLocaleString(undefined,{maximumFractionDigits:0})})</span>` : `<span class="text-red-600 font-bold">❌ ตก (${diffVP.toLocaleString(undefined,{maximumFractionDigits:0})})</span>`;
-                let sTot = stats.totalVol >= pTot ? `<span class="text-blue-600 font-bold">✅ ผ่าน (+${diffTot.toLocaleString(undefined,{maximumFractionDigits:0})})</span>` : `<span class="text-red-600 font-bold">❌ ตก (${diffTot.toLocaleString(undefined,{maximumFractionDigits:0})})</span>`;
-
-                tbody.innerHTML += `
-                    <tr class="hover:bg-gray-50 transition border-b border-gray-100 dark:border-gray-700">
-                        <td class="py-3 px-3 text-xs md:text-sm font-medium text-gray-800 dark:text-gray-200">${name.replace(/\(แคช\)|\(ช่าง\)/g, '').trim()}</td>
-                        <td class="py-3 px-2 text-center text-xs md:text-sm text-gray-500 border-r">${aDays} วัน</td>
-                        <td class="py-3 px-3 text-right text-xs md:text-sm text-blue-600 bg-blue-50/50">${pTot.toLocaleString()}</td>
-                        <td class="py-3 px-3 text-right text-sm md:text-base font-bold text-blue-700 bg-blue-50/50">${stats.totalVol.toLocaleString(undefined,{maximumFractionDigits:0})}</td>
-                        <td class="py-3 px-3 text-center text-xs md:text-sm bg-blue-50/50 border-r">${sTot}</td>
-                        <td class="py-3 px-3 text-right text-xs md:text-sm text-purple-600 bg-purple-50/50">${pVP.toLocaleString()}</td>
-                        <td class="py-3 px-3 text-right text-sm md:text-base font-bold text-purple-700 bg-purple-50/50">${stats.vpowerVol.toLocaleString(undefined,{maximumFractionDigits:0})}</td>
-                        <td class="py-3 px-3 text-center text-xs md:text-sm bg-purple-50/50">${sVP}</td>
-                    </tr>
-                `;
+        function buildKpiTable(sE, eAD) {
+            let tb=document.getElementById('kpiTableBody'); if(!tb) return; tb.innerHTML='';
+            let tF_VP=parseFloat(document.getElementById('targetDailyForecourt').value)||190; let tC_VP=parseFloat(document.getElementById('targetDailyCashier').value)||85; let tT_VP=parseFloat(document.getElementById('targetDailyTech').value)||85;
+            let tF_Tot=parseFloat(document.getElementById('targetDailyTotalForecourt').value)||1000; let tC_Tot=parseFloat(document.getElementById('targetDailyTotalCashier').value)||500; let tT_Tot=parseFloat(document.getElementById('targetDailyTotalTech').value)||500;
+            sE.forEach(([n, s]) => {
+                let aD=eAD[n]?eAD[n].size:1; let dVP=tF_VP; let dTot=tF_Tot; if(n.includes("(แคช)")){dVP=tC_VP;dTot=tC_Tot;} else if(n.includes("(ช่าง)")){dVP=tT_VP;dTot=tT_Tot;}
+                let pVP=dVP*aD; let pTot=dTot*aD; let stVP=s.vp>=pVP?`<span class="text-green-600 font-bold">✅ (+${(s.vp-pVP).toLocaleString(undefined,{maximumFractionDigits:0})})</span>`:`<span class="text-red-600 font-bold">❌ (${(s.vp-pVP).toLocaleString(undefined,{maximumFractionDigits:0})})</span>`;
+                let stTot=s.v>=pTot?`<span class="text-blue-600 font-bold">✅ (+${(s.v-pTot).toLocaleString(undefined,{maximumFractionDigits:0})})</span>`:`<span class="text-red-600 font-bold">❌ (${(s.v-pTot).toLocaleString(undefined,{maximumFractionDigits:0})})</span>`;
+                tb.innerHTML+=`<tr class="border-b"><td class="py-2 px-3">${n.replace(/\(แคช\)|\(ช่าง\)/g,'').trim()}</td><td class="py-2 px-2 text-center border-r">${aD} วัน</td><td class="py-2 px-3 text-right bg-blue-50">${pTot.toLocaleString()}</td><td class="py-2 px-3 text-right font-bold text-blue-700 bg-blue-50">${s.v.toLocaleString(undefined,{maximumFractionDigits:0})}</td><td class="py-2 px-3 text-center bg-blue-50 border-r">${stTot}</td><td class="py-2 px-3 text-right bg-purple-50">${pVP.toLocaleString()}</td><td class="py-2 px-3 text-right font-bold text-purple-700 bg-purple-50">${s.vp.toLocaleString(undefined,{maximumFractionDigits:0})}</td><td class="py-2 px-3 text-center bg-purple-50">${stVP}</td></tr>`;
             });
         }
     </script>
