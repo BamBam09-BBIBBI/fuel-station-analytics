@@ -303,7 +303,7 @@
                 </div>
                 <p class="text-xs md:text-sm text-gray-500 mb-4">*ข้อมูลด้านล่างนี้คำนวณจากยอดของ 2 ล้อ และ 4 ล้อ เท่านั้น (ไม่รวมรถใหญ่)</p>
                 
-                <div class="grid grid-cols-1 md:grid-cols-4 gap-3 md:gap-4 bg-blue-50 p-3 md:p-4 rounded-lg mb-4 md:mb-6 border border-blue-100">
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-3 md:gap-4 bg-blue-50 p-3 md:p-4 rounded-lg mb-4 md:mb-6 border border-blue-100 mt-4">
                     <div>
                         <label class="block text-xs font-bold text-gray-600 mb-1">เลือกพนักงาน</label>
                         <select id="compEmpSelect" class="w-full p-2 border rounded text-sm focus:outline-none focus:ring-1 focus:ring-blue-500"></select>
@@ -480,10 +480,56 @@
             });
 
             // 🎛️ Checkbox Event Listeners for Hourly Trends
-            document.getElementById('hrMetric').addEventListener('change', () => processHourlyData(currentAttData));
-            document.getElementById('hourlyDayFilter').addEventListener('change', () => processHourlyData(currentAttData));
+            document.getElementById('hrMetric').addEventListener('change', () => {
+                // ต้องไปดึงข้อมูลจาก Hourly เหมือนเดิม (ไม่ใช่ Attendant)
+                let sd = document.getElementById('dateFilter').value;
+                const filterFn = (r) => {
+                    if (sd === "ALL") return true;
+                    let dStr = r['Open Date'] || r['Date'];
+                    if (!dStr) return false;
+                    if (sd.startsWith('MONTH_')) {
+                        let targetMonthStr = sd.replace('MONTH_', ''); 
+                        return dStr.includes(targetMonthStr); 
+                    } else {
+                        return dStr === sd;
+                    }
+                };
+                let filteredHourlyData = rawHourly.filter(filterFn);
+                processHourlyData(filteredHourlyData);
+            });
+            document.getElementById('hourlyDayFilter').addEventListener('change', () => {
+                let sd = document.getElementById('dateFilter').value;
+                const filterFn = (r) => {
+                    if (sd === "ALL") return true;
+                    let dStr = r['Open Date'] || r['Date'];
+                    if (!dStr) return false;
+                    if (sd.startsWith('MONTH_')) {
+                        let targetMonthStr = sd.replace('MONTH_', ''); 
+                        return dStr.includes(targetMonthStr); 
+                    } else {
+                        return dStr === sd;
+                    }
+                };
+                let filteredHourlyData = rawHourly.filter(filterFn);
+                processHourlyData(filteredHourlyData);
+            });
             document.querySelectorAll('.hr-veh, .hr-fuel').forEach(cb => {
-                cb.addEventListener('change', () => processHourlyData(currentAttData));
+                cb.addEventListener('change', () => {
+                    let sd = document.getElementById('dateFilter').value;
+                    const filterFn = (r) => {
+                        if (sd === "ALL") return true;
+                        let dStr = r['Open Date'] || r['Date'];
+                        if (!dStr) return false;
+                        if (sd.startsWith('MONTH_')) {
+                            let targetMonthStr = sd.replace('MONTH_', ''); 
+                            return dStr.includes(targetMonthStr); 
+                        } else {
+                            return dStr === sd;
+                        }
+                    };
+                    let filteredHourlyData = rawHourly.filter(filterFn);
+                    processHourlyData(filteredHourlyData);
+                });
             });
             
             // Settings Buttons
@@ -643,7 +689,6 @@
                 let isDark = document.documentElement.classList.contains('dark');
                 let targetEl = document.getElementById('dashboardSection');
                 
-                // Temporarily disable overflow hidden for exporting full width
                 let scrollers = targetEl.querySelectorAll('.overflow-x-auto');
                 scrollers.forEach(el => {
                     el.classList.remove('overflow-x-auto');
@@ -662,7 +707,6 @@
                         }
                     }
                 }).then(canvas => {
-                    // Restore overflow hidden
                     scrollers.forEach(el => {
                         el.classList.add('overflow-x-auto');
                         el.style.overflow = '';
@@ -904,7 +948,9 @@
             // Trigger updates
             processData(filteredAttendant, filteredProduct);
             processDailyRanking(filteredAttendant);
-            processHourlyData(filteredAttendant);
+            
+            // 🚨 แก้ไขให้ส่งข้อมูล Hourly กลับไปใช้ไฟล์ HourlyTrends ตามเดิม 🚨
+            processHourlyData(filteredHourlyData);
             
             // Forecast logic
             if (sd === "ALL" || sd.startsWith('MONTH_')) {
@@ -1113,7 +1159,7 @@
         }
 
         // --- 📈 Hourly Trends Chart (Fixed Time 05:00 - 22:00 & Fixed Y-Axis) ---
-        function processHourlyData(attData) {
+        function processHourlyData(hrData) {
             let metric = document.getElementById('hrMetric').value; 
             let selDay = document.getElementById('hourlyDayFilter').value;
             
@@ -1132,14 +1178,16 @@
             let dSets = Array.from({length: 8}, () => new Set()); 
             let globalMax = 0;
 
-            attData.forEach(row => {
+            // 🚨 ใช้ hrData (ข้อมูล HourlyTrends) และอ่านคอลัมน์ Hour ให้ถูกต้อง
+            hrData.forEach(row => {
                 if (row['Category Name'] !== 'Fuels') return;
                 
                 let dStr = row['Open Date'] || row['Date']; 
-                let timeStr = row['Open Time'] || row['Time'];
+                // คอลัมน์เวลาในไฟล์ HourlyTrends คือ 'Hour'
+                let timeStr = row['Hour'] || row['Open Time'] || row['Time'];
                 if (!timeStr || !dStr) return;
                 
-                let hStr = timeStr.split(':')[0]; 
+                let hStr = timeStr.toString().split(':')[0]; 
                 if (hStr.length === 1) hStr = "0" + hStr; // เติมเลข 0 ข้างหน้าถ้าเป็นเลขหลักเดียว
 
                 let d = new Date(dStr); 
@@ -1247,6 +1295,7 @@
             let employeeStats = {};
             let empActiveDates = {}; 
             
+            // Only 2W and 4W for the behavior chart
             let vehicleStats = { 
                 "2W": { name: "มอเตอร์ไซค์ (2 ล้อ)", vpower: 0, normal: 0 }, 
                 "4W": { name: "รถยนต์ (4 ล้อ)", vpower: 0, normal: 0 } 
@@ -1368,7 +1417,7 @@
             let avgVolPerEmp = activeEmpCountForAvg > 0 ? (globalStats.targetVehicleVol / activeEmpCountForAvg) : 0;
             renderEmployeeChart(empLabels, sortedEmp.map(i => i[1].vpowerVol), sortedEmp.map(i => i[1].normalVol), avgVolPerEmp, originalNames);
 
-            // 🚗 100% Stacked Chart (2W vs 4W)
+            // 🚗 NEW: 100% Stacked Chart (2W vs 4W)
             let vLabels = ["มอเตอร์ไซค์ (2 ล้อ)", "รถยนต์ (4 ล้อ)"]; 
             let vVpPct = []; 
             let vNmPct = [];
