@@ -214,6 +214,18 @@
         .sales-bar-base { background: #8694a6; }
         .sales-bar-value { text-align: right; white-space: nowrap; }
         .sales-loyalty-note { margin: 6px 0 0; font-size: .73rem; color: var(--muted); }
+        .go-plus-summary { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; margin-top: 14px; }
+        .go-plus-table { width: 100%; border-collapse: collapse; font-size: .83rem; font-variant-numeric: tabular-nums; }
+        .go-plus-table caption { padding: 0 0 8px; text-align: left; font-weight: 600; }
+        .go-plus-table th, .go-plus-table td { padding: 10px 8px; text-align: right; border-bottom: 1px solid var(--line); }
+        .go-plus-table th:first-child { text-align: left; }
+        .go-plus-table thead { background: var(--subtle); }
+        .go-plus-table tbody tr:last-child { font-weight: 600; background: var(--subtle); }
+        .go-plus-compare-row { display: grid; grid-template-columns: minmax(0, 1fr) 10em; gap: 8px; align-items: center; margin-top: 4px; }
+        @media (max-width: 560px) {
+            .go-plus-summary { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+            .go-plus-summary > :last-child { grid-column: 1 / -1; }
+        }
         .sales-report-insights { align-self: start; padding: 10px 13px; border-radius: 11px; background: var(--subtle); font-size: .79rem; }
         .sales-report-insights p { margin: 7px 0; }
         .sales-report-insights ol { margin: 6px 0 0; padding-left: 18px; list-style: decimal; }
@@ -395,6 +407,7 @@
                 <button id="tab-staff" type="button" role="tab" aria-controls="pane-staff" aria-selected="false" tabindex="-1">พนักงานและ KPI</button>
                 <button id="tab-trends" type="button" role="tab" aria-controls="pane-trends" aria-selected="false" tabindex="-1">กราฟและแนวโน้ม</button>
                 <button id="tab-report" type="button" role="tab" aria-controls="pane-report" aria-selected="false" tabindex="-1">รายงานยอดขาย</button>
+                <button id="tab-go-plus" type="button" role="tab" aria-controls="pane-go-plus" aria-selected="false" tabindex="-1">Shell GO+</button>
             </nav>
             <p id="exportContext" class="export-context" hidden></p>
             <div id="pane-overview" class="dashboard-pane" role="tabpanel" aria-labelledby="tab-overview">
@@ -420,8 +433,9 @@
                     <p id="kpiTargetLabel" class="text-[10px] text-gray-400 mt-1 border-t pt-1">เป้าหมาย: -</p>
                 </div>
                 <div class="metric">
-                    <p class="text-[10px] md:text-xs font-bold leading-tight text-red-600">บิล Shell GO+ · รถ 2/4 ล้อ</p>
+                    <p class="text-[10px] md:text-xs font-bold leading-tight text-red-600">สัดส่วนใช้ Shell GO+ · รถทุกประเภท</p>
                     <h3 id="kpiGoPlusMix" class="text-lg md:text-xl font-bold text-gray-900 mt-1">-</h3>
+                    <p id="kpiGoPlusScope"></p>
                 </div>
             </div>
 
@@ -897,6 +911,59 @@
                             <div id="salesReportInsights"></div>
                         </section>
                     </div>
+                </section>
+            </div>
+            <div id="pane-go-plus" class="dashboard-pane" role="tabpanel" aria-labelledby="tab-go-plus" hidden>
+                <section class="card accent-card" aria-labelledby="goPlusTitle">
+                    <h2 id="goPlusTitle">การใช้ Shell GO+</h2>
+                    <p id="goPlusScope" class="section-note" aria-live="polite"></p>
+                    <div class="go-plus-summary">
+                        <div class="metric">
+                            <p>เติมทั้งหมด</p><h3 id="goPlusTotal">–</h3>
+                            <p id="goPlusFleet"></p>
+                        </div>
+                        <div class="metric">
+                            <p>ใช้ Shell GO+</p><h3 id="goPlusUsed">–</h3>
+                            <p>นับเป็นครั้งเติม</p>
+                        </div>
+                        <div class="metric metric-primary">
+                            <p>สัดส่วนใช้ Shell GO+</p><h3 id="goPlusRate">–</h3>
+                            <p id="goPlusEligible"></p>
+                        </div>
+                    </div>
+                    <p id="goPlusDataNote" class="section-note" hidden></p>
+                </section>
+                <section class="card">
+                    <div class="overflow-x-auto">
+                        <table class="go-plus-table">
+                            <caption>ครั้งเติมแยกตามประเภทรถ</caption>
+                            <thead>
+                                <tr>
+                                    <th scope="col">ประเภทรถ</th>
+                                    <th scope="col">ทั้งหมด</th>
+                                    <th scope="col">Fleet Card</th>
+                                    <th scope="col">เข้าเกณฑ์</th>
+                                    <th scope="col">ใช้ GO+</th>
+                                    <th scope="col">ไม่ได้ใช้</th>
+                                    <th id="goPlusUnknownLoyalty" scope="col" hidden>ไม่ทราบสถานะ</th>
+                                    <th id="goPlusUnknownPayment" scope="col" hidden>ไม่ระบุวิธีชำระ</th>
+                                    <th scope="col">อัตราใช้ GO+</th>
+                                </tr>
+                            </thead>
+                            <tbody id="goPlusVehicleRows"></tbody>
+                        </table>
+                    </div>
+                    <p class="section-note">อัตราใช้ GO+ คิดจากครั้งที่ใช้สมาชิก ÷ ครั้งเติมที่เข้าเกณฑ์ ลูกค้าคนเดิมอาจเติมหลายครั้ง</p>
+                    <p id="goPlusInsight" class="section-note" hidden></p>
+                </section>
+                <section class="card" aria-labelledby="goPlusTrendTitle">
+                    <h2 id="goPlusTrendTitle">อัตราใช้ GO+ เทียบเดือนก่อน</h2>
+                    <p id="goPlusComparisonDates" class="section-note"></p>
+                    <div id="goPlusComparisonLegend" class="sales-bars-legend" hidden>
+                        <span><i class="sales-bar-current"></i>เดือนที่ดู</span>
+                        <span><i class="sales-bar-base"></i>เดือนก่อน</span>
+                    </div>
+                    <div id="goPlusComparison" class="sales-bars"></div>
                 </section>
             </div>
         </div>
@@ -1759,6 +1826,187 @@
             '2W': 'มอเตอร์ไซค์ 2 ล้อ', '4W': 'รถยนต์ 4 ล้อ', HEAVY: 'รถใหญ่'
         };
 
+        const goPlusVehicleNames = { ...kpiVehicleNames, OTHER: 'รถอื่น ๆ / ไม่ระบุ' };
+
+        function summarizeGoPlus(rows) {
+            const vehicles = Object.entries(goPlusVehicleNames).map(([code, label]) => ({
+                code, label, total: 0, fleet: 0, eligible: 0, used: 0, unused: 0, unknownLoyalty: 0, unknownPayment: 0
+            }));
+            const byVehicle = Object.fromEntries(vehicles.map(vehicle => [vehicle.code, vehicle]));
+            for (const row of rows) {
+                if (!isFuel(row)) continue;
+                const count = numberField(row, 'Delivery Count');
+                const code = row['Vehicle Code'];
+                const vehicle = Object.hasOwn(byVehicle, code) ? byVehicle[code] : byVehicle.OTHER;
+                vehicle.total += count;
+                const payment = staffPaymentCode(row.MOP);
+                if (!payment) {
+                    vehicle.unknownPayment += count;
+                } else if (payment === 'FLEET') {
+                    vehicle.fleet += count;
+                } else {
+                    vehicle.eligible += count;
+                    const loyalty = row.Loyalty?.trim().toUpperCase();
+                    if (loyalty === 'GP') vehicle.used += count;
+                    else if (loyalty === 'NOLOYALTY') vehicle.unused += count;
+                    else vehicle.unknownLoyalty += count;
+                }
+            }
+            const total = { label: 'รวม' };
+            for (const key of ['total', 'fleet', 'eligible', 'used', 'unused', 'unknownLoyalty', 'unknownPayment']) {
+                total[key] = vehicles.reduce((sum, vehicle) => sum + vehicle[key], 0);
+            }
+            return { total, vehicles };
+        }
+
+        function goPlusRate(stats) {
+            return stats.eligible > 0 && stats.used + stats.unused > 0 ? 100 * stats.used / stats.eligible : null;
+        }
+
+        function goPlusRateText(stats) {
+            const rate = goPlusRate(stats);
+            return rate === null ? '–' : rate.toFixed(1) + '%';
+        }
+
+        function goPlusCountText(count) {
+            return formatNumber(count, 0);
+        }
+
+        function goPlusDataNote(stats) {
+            if (!stats.total) return 'ไม่พบรายการเติมน้ำมันในช่วงที่เลือก';
+            if (stats.unknownPayment === stats.total) return 'ต้องใช้รายงาน CVGO ที่มีวิธีชำระเงิน (MOP) เพื่อแยก Fleet Card';
+            const notes = [];
+            if (stats.unknownPayment) notes.push('วิธีชำระเงินไม่ระบุ ' + goPlusCountText(stats.unknownPayment) + ' ครั้ง · ยังไม่รวมในฐานเข้าเกณฑ์');
+            if (stats.unknownLoyalty) notes.push('สถานะสมาชิกไม่ทราบ ' + goPlusCountText(stats.unknownLoyalty) + ' ครั้ง · รวมในฐานเข้าเกณฑ์');
+            if (notes.length) notes.push('ยอดใช้ GO+ แสดงเฉพาะครั้งที่ยืนยันได้');
+            return notes.join(' · ');
+        }
+
+        function goPlusCounts(stats) {
+            return goPlusCountText(stats.used) + ' จาก ' + goPlusCountText(stats.eligible) + ' ครั้งที่เข้าเกณฑ์';
+        }
+
+        function renderGoPlusDashboard(attData, hrData) {
+            const rows = attData.length ? attData : hrData;
+            const { total, vehicles } = summarizeGoPlus(rows);
+            const rate = goPlusRate(total);
+            const hasPayments = total.total > total.unknownPayment;
+            const showUsed = hasPayments && (!total.eligible || total.used + total.unused > 0);
+            const fleetText = hasPayments ? 'Fleet Card ' + goPlusCountText(total.fleet) + ' ครั้ง' : 'วิธีชำระเงินไม่ระบุ';
+            const selectedDates = [...new Set(rows.map(rowDate))].sort();
+            const dateLabel = selectedDates.length ? reportWindowLabel({ start: selectedDates[0], end: selectedDates.at(-1) }) : '';
+            byId('goPlusScope').textContent = [siteName, dateLabel,
+                attData.length ? 'CVGO Attendant' : hrData.length ? 'CVGO Hourly' : ''].filter(Boolean).join(' · ');
+            byId('kpiGoPlusMix').textContent = goPlusRateText(total);
+            byId('kpiGoPlusScope').textContent = rate === null ? (goPlusDataNote(total) || 'ไม่มีครั้งเติมที่เข้าเกณฑ์')
+                : goPlusCounts(total) + ' · ' + fleetText + (total.unknownPayment || total.unknownLoyalty ? ' · ข้อมูลบางรายการไม่ครบ' : '');
+            byId('goPlusTotal').textContent = goPlusCountText(total.total);
+            byId('goPlusFleet').textContent = total.total ? fleetText : '';
+            byId('goPlusUsed').textContent = showUsed ? goPlusCountText(total.used) : '–';
+            byId('goPlusRate').textContent = goPlusRateText(total);
+            byId('goPlusEligible').textContent = hasPayments ? 'จาก ' + goPlusCountText(total.eligible) + ' ครั้งที่เข้าเกณฑ์' : '';
+            const note = byId('goPlusDataNote');
+            note.textContent = goPlusDataNote(total);
+            note.hidden = !note.textContent;
+
+            const tbody = byId('goPlusVehicleRows');
+            byId('goPlusUnknownLoyalty').hidden = !total.unknownLoyalty;
+            byId('goPlusUnknownPayment').hidden = !total.unknownPayment;
+            tbody.replaceChildren();
+            for (const stats of [...vehicles.filter(group => group.code !== 'OTHER' || group.total), total]) {
+                const row = tbody.insertRow();
+                const heading = document.createElement('th');
+                heading.scope = 'row';
+                heading.textContent = stats.label;
+                row.appendChild(heading);
+                const paymentKnown = !stats.total || stats.total > stats.unknownPayment;
+                const usageKnown = paymentKnown && (!stats.eligible || stats.used + stats.unused > 0);
+                for (const amount of [stats.total, paymentKnown ? stats.fleet : null, paymentKnown ? stats.eligible : null,
+                    usageKnown ? stats.used : null, usageKnown ? stats.unused : null,
+                    ...(total.unknownLoyalty ? [stats.unknownLoyalty] : []),
+                    ...(total.unknownPayment ? [stats.unknownPayment] : [])]) {
+                    row.insertCell().textContent = amount === null ? '–' : goPlusCountText(amount);
+                }
+                row.insertCell().textContent = goPlusRateText(stats);
+            }
+            const topUsage = vehicles.reduce((top, group) => group.used > top.used ? group : top, vehicles[0]);
+            const opportunity = vehicles.reduce((top, group) => group.unused > top.unused ? group : top, vehicles[0]);
+            const highlights = [];
+            if (total.used) highlights.push(topUsage.label + ' คิดเป็น ' + (100 * topUsage.used / total.used).toFixed(1) + '% ของครั้งที่ใช้ GO+');
+            if (opportunity.unused) highlights.push(opportunity.label + ' มีครั้งเติมที่เข้าเกณฑ์แต่ไม่ได้ใช้ GO+ มากที่สุด '
+                + goPlusCountText(opportunity.unused) + ' ครั้ง');
+            const insight = byId('goPlusInsight');
+            insight.hidden = !highlights.length;
+            insight.textContent = highlights.join(' · ');
+            renderGoPlusComparison(selectedDates.at(-1), attData.length ? rawAttendant : rawHourly);
+        }
+
+        function renderGoPlusComparison(anchor, sourceRows) {
+            const container = byId('goPlusComparison');
+            container.replaceChildren();
+            const dates = byId('goPlusComparisonDates');
+            const legend = byId('goPlusComparisonLegend');
+            legend.hidden = true;
+            dates.textContent = '';
+            if (!anchor) {
+                appendMessage(container, 'นำเข้าข้อมูลการเติมเพื่อเทียบเดือน');
+                return;
+            }
+            const [currentWindow, previousWindow] = salesComparisonWindows(anchor, 'MONTH');
+            dates.textContent = reportWindowLabel(currentWindow) + ' เทียบ ' + reportWindowLabel(previousWindow);
+            const sourceDates = new Set(sourceRows.map(rowDate));
+            const missing = [currentWindow, previousWindow].map(period => period.dates.filter(date => !sourceDates.has(date)));
+            if (missing.some(days => days.length)) {
+                appendMessage(container, 'ข้อมูลไม่ครบช่วง · วันที่ขาด ' + reportMissingDateLabels(missing.flat()), 'section-note');
+                return;
+            }
+            const statsFor = period => summarizeGoPlus(sourceRows.filter(row => rowDate(row) >= period.start && rowDate(row) <= period.end));
+            const current = statsFor(currentWindow);
+            const previous = statsFor(previousWindow);
+            if ([current.total, previous.total].some(stats => stats.unknownPayment || stats.unknownLoyalty)) {
+                appendMessage(container, 'ยังเทียบอัตราไม่ได้ · ตรวจวิธีชำระเงินและสถานะสมาชิกให้ครบทั้งสองช่วง', 'section-note');
+                return;
+            }
+            legend.hidden = false;
+            const previousGroups = [previous.total, ...previous.vehicles];
+            [current.total, ...current.vehicles].forEach((stats, index) => {
+                const base = previousGroups[index];
+                if (stats.code === 'OTHER' && !stats.total && !base.total) return;
+                const group = document.createElement('div');
+                group.className = 'sales-bar-group';
+                const header = document.createElement('div');
+                header.className = 'sales-bar-label';
+                const label = document.createElement('strong');
+                label.textContent = stats.label;
+                header.appendChild(label);
+                const rate = goPlusRate(stats), baseRate = goPlusRate(base);
+                if (rate !== null && baseRate !== null) {
+                    const change = document.createElement('span');
+                    change.textContent = reportDelta(roundReport(rate - baseRate, 1), ' จุดเปอร์เซ็นต์');
+                    header.appendChild(change);
+                }
+                group.appendChild(header);
+                for (const [period, style, periodLabel] of [[stats, 'sales-bar-current', 'เดือนที่ดู'], [base, 'sales-bar-base', 'เดือนก่อน']]) {
+                    const row = document.createElement('div');
+                    row.className = 'go-plus-compare-row';
+                    const track = document.createElement('div');
+                    track.className = 'sales-bar-track';
+                    track.setAttribute('aria-hidden', 'true');
+                    const fill = document.createElement('div');
+                    fill.className = 'sales-bar-fill ' + style;
+                    fill.style.width = (goPlusRate(period) ?? 0) + '%';
+                    track.appendChild(fill);
+                    const value = document.createElement('span');
+                    value.className = 'sales-bar-value';
+                    value.textContent = goPlusRateText(period) + ' · ' + goPlusCountText(period.total) + ' ครั้งเติม';
+                    value.setAttribute('aria-label', periodLabel + ' ' + value.textContent);
+                    row.append(track, value);
+                    group.appendChild(row);
+                }
+                container.appendChild(group);
+            });
+        }
+
         function shiftReportDate(date, distance) {
             const result = new Date(date + 'T00:00:00Z');
             result.setUTCDate(result.getUTCDate() + distance);
@@ -1783,8 +2031,7 @@
         }
 
         function summarizeSalesWindow(rowsByDate, window) {
-            const result = { volume: 0, deliveries: 0, vPower: 0, passengerVolume: 0, memberFills: 0,
-                fillsWithStatus: 0, missing: [] };
+            const result = { volume: 0, deliveries: 0, vPower: 0, passengerVolume: 0, missing: [] };
             for (const date of window.dates) {
                 const rows = rowsByDate.get(date);
                 if (!rows) {
@@ -1797,11 +2044,6 @@
                     const count = numberField(row, 'Delivery Count');
                     result.volume += volume;
                     result.deliveries += count;
-                    const loyalty = row.Loyalty?.trim().toUpperCase();
-                    if (loyalty) {
-                        result.fillsWithStatus += count;
-                        if (loyalty === 'GP') result.memberFills += count;
-                    }
                     if (isSmallVehicle(row)) {
                         result.passengerVolume += volume;
                         if (isVPower(row)) result.vPower += volume;
@@ -1890,31 +2132,30 @@
         }
 
 
-        function renderLoyaltyMetric(container, current, previous, comparable, hasCurrent) {
+        function renderLoyaltyMetric(container, currentRows, previousRows, comparable) {
             const card = document.createElement('div');
             card.className = 'sales-report-metric';
-            appendMessage(card, 'สมาชิก Shell GO+ (ครั้งเติม)');
+            appendMessage(card, 'ใช้ Shell GO+ (ครั้งเติม)');
+            const { total: current } = summarizeGoPlus(currentRows);
+            const { total: previous } = summarizeGoPlus(previousRows);
             const amount = document.createElement('strong');
-            const available = hasCurrent && current.fillsWithStatus > 0;
-            amount.textContent = available ? formatNumber(current.memberFills, 0) : '–';
+            const rate = goPlusRate(current);
+            const fleetOnly = current.total > 0 && current.fleet === current.total;
+            amount.textContent = rate !== null || fleetOnly ? goPlusCountText(current.used) : '–';
             card.appendChild(amount);
-            const note = byId('salesLoyaltyNote');
-            note.hidden = !available;
-            if (!available) {
-                appendMessage(card, 'รายงานช่วงนี้ไม่มีข้อมูลสถานะสมาชิก');
-            } else {
-                const statusIsComplete = current.fillsWithStatus === current.deliveries;
-                const share = current.memberFills / current.fillsWithStatus * 100;
-                appendMessage(card, formatNumber(share, 1) + '% ' + (statusIsComplete
-                    ? 'ของครั้งเติมทั้งหมด' : 'ของ ' + formatNumber(current.fillsWithStatus, 0) + ' ครั้งที่ระบุสถานะ'));
-                if (comparable && statusIsComplete && previous.fillsWithStatus > 0
-                    && previous.fillsWithStatus === previous.deliveries) {
-                    const change = current.memberFills - previous.memberFills;
-                    appendMessage(card, 'ช่วงก่อน ' + formatNumber(previous.memberFills, 0) + ' · ' + reportDelta(change, ' ครั้ง'),
-                        change > 0 ? 'goal-met' : change < 0 ? 'goal-gap' : '');
-                }
-                note.textContent = 'Shell GO+ นับจากจำนวนครั้งเติมที่ระบุว่าเป็นสมาชิก ลูกค้าคนเดิมอาจเติมหลายครั้ง';
+            if (rate !== null) appendMessage(card, goPlusRateText(current) + ' · ' + goPlusCounts(current));
+            else if (fleetOnly) appendMessage(card, 'ไม่มีครั้งเติมที่เข้าเกณฑ์');
+            if (comparable && goPlusRate(previous) !== null && rate !== null &&
+                ![current, previous].some(stats => stats.unknownPayment || stats.unknownLoyalty)) {
+                const change = current.used - previous.used;
+                appendMessage(card, 'ช่วงก่อน ' + goPlusCountText(previous.used) + ' · ' + reportDelta(change, ' ครั้ง'),
+                    change > 0 ? 'goal-met' : change < 0 ? 'goal-gap' : '');
             }
+            const note = byId('salesLoyaltyNote');
+            const status = goPlusDataNote(current);
+            note.textContent = 'Shell GO+ · รถทุกประเภท · แยก Fleet Card ออกจากฐาน · ลูกค้าคนเดิมอาจเติมหลายครั้ง'
+                + (status ? ' · ' + status : '');
+            note.hidden = false;
             container.appendChild(card);
         }
 
@@ -2100,8 +2341,10 @@
                 .map(([period, label]) => 'วันที่ขาดช่วง' + label + ' ' + reportMissingDateLabels(period.missing)).join(' · ');
 
             const vehicles = new Set([...document.querySelectorAll('.staff-kpi-vehicle:checked')].map(choice => choice.value));
-            const paymentsFor = window => summarizeReportPayments(useAttendant ? window.dates.flatMap(date => rowsByDate.get(date) || []) : [], vehicles);
-            const payment = paymentsFor(currentWindow), basePayment = paymentsFor(previousWindow);
+            const rowsFor = window => window.dates.flatMap(date => rowsByDate.get(date) || []);
+            const currentRows = rowsFor(currentWindow), previousRows = rowsFor(previousWindow);
+            const payment = summarizeReportPayments(useAttendant ? currentRows : [], vehicles);
+            const basePayment = summarizeReportPayments(useAttendant ? previousRows : [], vehicles);
             const comparePayments = comparable && payment.hasData && basePayment.hasData && !payment.unknownRows && !basePayment.unknownRows;
             const scope = byId('salesReportPaymentScope');
             const scopeName = [...vehicles].map(code => kpiVehicleNames[code]).join(', ');
@@ -2126,7 +2369,7 @@
             stationMetric('ยอดเติมรวมสถานี (ลิตร)', 'volume', '', 'ทุกประเภทรถ · ทุกวิธีชำระ');
             paymentMetric('ยอด B2C (ลิตร)', 'retail', 'ทุกวิธีชำระยกเว้น Fleet Card', 'salesReportB2C');
             paymentMetric('ยอด Fleet Card (ลิตร)', 'fleet', 'เฉพาะ Fleet Card · B2B', 'salesReportFleet');
-            renderLoyaltyMetric(container, current, previous, comparable, hasCurrent);
+            renderLoyaltyMetric(container, currentRows, previousRows, comparable);
             stationMetric('V-Power สถานี (ลิตร)', 'vPower', '', 'รถ 2/4 ล้อ · ทุกวิธีชำระ');
             paymentMetric('V-Power เข้า KPI พนักงาน (ลิตร)', 'staffSvp', 'B2C · รถที่เลือก · ระบุรหัสพนักงาน', 'salesReportKpiSvp');
             stationMetric('V-Power Mix รถ 2/4 ล้อ', 'mix', '%');
@@ -2583,6 +2826,7 @@
             renderAwardsTable(filteredAttendant);
             renderMonthProgress();
             renderSalesReport();
+            renderGoPlusDashboard(filteredAttendant, filteredHourlyData);
             renderCoachTable(filteredAttendant);
             updateStaffKpis(filteredAttendant);
             reconcileReports(filteredAttendant, filteredHourlyData);
@@ -2911,9 +3155,7 @@
                 totalVol: 0,        // รวมทุกคัน (รวมรถใหญ่ด้วย)
                 totalCars: 0,       // รวมทุกคัน
                 targetVehicleVol: 0, // ยอดลิตรเฉพาะ 2ล้อ/4ล้อ
-                vpowerVol: 0,       // V-Power เฉพาะ 2ล้อ/4ล้อ
-                totalSmallCarsDeliveryCount: 0, // บิลทั้งหมด (เฉพาะ 2ล้อ/4ล้อ)
-                goPlusSmallCarsDeliveryCount: 0 // บิล GO+ (เฉพาะ 2ล้อ/4ล้อ)
+                vpowerVol: 0        // V-Power เฉพาะ 2ล้อ/4ล้อ
             };
             
             const employeeStats = Object.create(null);
@@ -2935,7 +3177,6 @@
                     let deliveryCount = parseInt(row['Delivery Count']) || 0;
                     let pName = (row['Product Name'] || "").toUpperCase();
                     let vCode = (row['Vehicle Code'] || "").trim().toUpperCase();
-                    let loyalty = (row['Loyalty'] || "").trim().toUpperCase();
                     
                     if (!volume && !deliveryCount) return;
                     
@@ -2952,12 +3193,6 @@
                     globalStats.targetVehicleVol += volume;
                     if (isVpower) globalStats.vpowerVol += volume;
                     
-                    // 🛠️ นับบิล Shell GO+ จากไฟล์ Attendant โดยตรง (ตัดรถใหญ่ทิ้ง)
-                    globalStats.totalSmallCarsDeliveryCount += deliveryCount;
-                    if (loyalty === 'GP') {
-                        globalStats.goPlusSmallCarsDeliveryCount += deliveryCount;
-                    }
-
                     if (empId) {
                         const stats = employeeStats[empId] ??= { totalVol: 0, vpowerVol: 0, normalVol: 0, deliveryCount: 0 };
                         stats.totalVol += volume;
@@ -3018,12 +3253,6 @@
                 vpElement.className = "text-lg md:text-xl font-bold text-red-600 mt-1 transition-colors";
             }
             
-            // 🛠️ Shell GO+ Mix (นับจากบิล 2ล้อ/4ล้อ ที่เป็น GP)
-            let goMix = globalStats.totalSmallCarsDeliveryCount > 0 
-                ? ((globalStats.goPlusSmallCarsDeliveryCount / globalStats.totalSmallCarsDeliveryCount) * 100).toFixed(1) 
-                : 0;
-            document.getElementById('kpiGoPlusMix').innerText = attData.length && globalStats.totalSmallCarsDeliveryCount > 0 ? goMix + '%' : '–';
-
             // Employee processing (เฉพาะ 2ล้อ/4ล้อ)
             let sortedEmp = Object.entries(employeeStats).sort((a, b) => b[1].totalVol - a[1].totalVol);
             let originalNames = sortedEmp.map(i => i[0]);
