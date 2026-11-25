@@ -188,13 +188,41 @@
         .sales-report-controls label { font-size: .74rem; color: var(--muted); }
         .sales-report-controls select { display: block; margin-top: 3px; max-width: 100%; }
         .sales-report-coverage { margin: 11px 0; font-size: .75rem; color: var(--muted); }
-        .sales-report-metrics { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 9px; }
-        .sales-report-metric { padding: 10px 12px; border-radius: 11px; background: var(--subtle); }
+        .sales-report-metrics { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; }
+        .sales-report-metric { min-width: 0; padding: 12px 14px; border: 1px solid var(--line); border-radius: 11px; background: var(--subtle); }
         .sales-report-metric.is-primary { background: #fff4c9; }
         html.dark .sales-report-metric.is-primary { background: #413817; }
         .sales-report-metric p { margin: 0; font-size: .73rem; }
-        .sales-report-metric p:last-child { color: var(--muted); }
-        .sales-report-metric strong { display: block; margin: 3px 0; font-size: clamp(1.08rem, 2vw, 1.55rem); }
+        .sales-report-metric .metric-detail, .metric-period { color: var(--muted); }
+        .metric-reading { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0 8px; }
+        .metric-reading strong { display: block; margin: 3px 0; font-size: clamp(1.08rem, 2vw, 1.55rem); font-variant-numeric: tabular-nums; }
+        .metric-period { font-size: .72rem; }
+        .sales-report-metric .report-change-line { margin: 2px 0 5px; }
+        .report-change { font-weight: 650; }
+        .report-context { color: var(--muted); }
+        .report-quality { margin: 10px 0; font-size: .75rem; color: var(--muted); }
+        .report-quality summary { width: fit-content; cursor: pointer; }
+        .sales-report .report-gap { margin: 10px 0; color: var(--red); font-weight: 650; }
+        .penetration-panel { margin-top: 14px; }
+        .penetration-panel h4 { margin: 10px 0 4px; font-size: .9rem; font-weight: 650; }
+        .penetration-panel .monthly-chart { height: clamp(180px, 27vw, 260px); }
+        .penetration-scatter { display: grid; grid-template-columns: minmax(0, 1fr) minmax(180px, 230px); gap: 8px 20px; align-items: start; }
+        .penetration-scatter .monthly-chart { height: clamp(230px, 34vw, 340px); margin: 4px 0 0; }
+        .penetration-legend { display: flex; flex-wrap: wrap; gap: 4px 8px; margin: 0; padding: 0; list-style: none; }
+        .penetration-legend button { display: inline-flex; align-items: center; gap: 7px; min-height: 36px; padding: 6px 9px; border: 1px solid transparent; border-radius: 7px; font-size: .78rem; color: var(--ink); background: transparent; }
+        .penetration-legend button[aria-pressed="true"] { border-color: var(--line); background: var(--subtle); }
+        .penetration-legend i { flex: none; width: .72rem; height: .72rem; border: 1px solid var(--muted); border-radius: 50%; }
+        .penetration-reference { display: flex; align-items: baseline; gap: 7px; margin: 8px 0 0; padding-inline: 9px; color: var(--muted); font-size: .75rem; }
+        .penetration-reference i { flex: 0 0 16px; border-top: 2px dashed currentColor; align-self: center; }
+        .penetration-detail { margin: 8px 0 0; padding: 9px 10px; border: 1px solid var(--line); border-radius: 8px; font-size: .78rem; }
+        .penetration-detail strong, .penetration-detail span { display: block; }
+        @media (max-width: 650px) {
+            .penetration-scatter { grid-template-columns: minmax(0, 1fr); }
+        }
+        .penetration-panel .coach-table { width: 100%; }
+        .penetration-panel .coach-table :is(td, th):not(:first-child) { text-align: right; }
+        .penetration-panel .coach-table td { font-variant-numeric: tabular-nums; }
+        .penetration-summary { margin: 10px 0; padding: 9px 12px; border-radius: 8px; background: var(--subtle); font-size: .82rem; }
         .sales-report-metric .sales-loyalty-rate { font-size: clamp(1.45rem, 2.6vw, 1.9rem); line-height: 1.2; }
         .sales-report-metric .sales-loyalty-rate-change { margin: 4px 0; font-weight: 600; }
         .sales-report-target { display: flex; flex-wrap: wrap; gap: 4px 12px; padding: 10px 12px; border-radius: 9px; margin: 12px 0; background: var(--subtle); font-size: .79rem; }
@@ -291,14 +319,15 @@
         }
         .staff-vehicle-list label:has(input:checked) { background: var(--subtle); }
         .staff-vehicle-list input { accent-color: #b47500; }
-        #staffKpiPayment { display: block; min-height: 35px; border: 1px solid var(--line); border-radius: 9px; padding: 4px 8px; }
+        #staffKpiPayment { display: block; max-width: 100%; min-height: 35px; border: 1px solid var(--line); border-radius: 9px; padding: 4px 8px; background: var(--paper); color: var(--ink); }
+        html { color-scheme: light; }
+        html.dark { color-scheme: dark; }
         .scope-caption { margin: 7px 0 0; font-size: .8rem; font-weight: 550; }
         #staffKpiBasis { font-size: .75rem; color: var(--muted); margin: 5px 0 0; }
         .staff-goal-grid { display: grid; gap: 14px; min-width: 0; }
         .staff-goal-grid > div { min-width: 0; }
         .staff-goal-grid table { text-align: left; }
-        .staff-goal-grid td:nth-child(3), .staff-goal-grid td:nth-child(4),
-        .staff-goal-grid th:nth-child(3), .staff-goal-grid th:nth-child(4) { text-align: right; }
+        .staff-goal-grid :is(td, th):not(:first-child) { text-align: right; }
         .staff-goal-grid td:nth-child(4) { font-weight: 600; }
         .staff-compare-table :is(td, th):not(:first-child),
         .staff-compare-table thead tr:last-child th { text-align: right; }
@@ -308,7 +337,7 @@
         .goal-met { color: #12603d; }
         .goal-gap { color: var(--red); }
         html.dark .goal-met { color: #73dba7; }
-        @media (min-width: 1180px) { .staff-goal-grid { grid-template-columns: repeat(2,minmax(0,1fr)); } }
+        @media (min-width: 1320px) { .staff-goal-grid { grid-template-columns: repeat(2,minmax(0,1fr)); } }
         @media (max-width: 640px) { .forecast-metrics { grid-template-columns: repeat(2,minmax(0,1fr)); } }
         html.dark { --canvas: #121720; --paper: #202734; --subtle: #2a3343; --ink: #f1f4f8; --muted: #bac4d3; --line: #394456; --red: #ff9198; }
         html.dark body { background: var(--canvas); color: var(--ink); }
@@ -334,6 +363,12 @@
             .month-metrics > div:last-child { grid-column: 1 / -1; }
             .import-card { padding: 11px 12px; }
         }
+        .monthly-controls { margin: 10px 0; justify-content: flex-start; }
+        .monthly-chart { position: relative; height: clamp(210px, 34vw, 330px); margin: 12px 0; }
+        #monthlyTableWrap { overflow-x: auto; margin-top: 12px; }
+        #monthlyTableWrap .coach-table { min-width: 520px; }
+        #monthlyTableWrap td small, #monthlyTableWrap th small { display: block; margin-top: 4px; font-weight: 400; }
+        #monthlyTableWrap th small { white-space: normal; }
     </style>
 </head>
 <body>
@@ -343,7 +378,8 @@
             <div class="workspace-brand">
                 <img class="brand-mark" width="46" height="42" alt="Shell" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAALYAAACoCAYAAABNLBTvAAAQAElEQVR4Aex9B7wkRbX3mXDj3hw2syyIEgREgiiIgZxFchJBffCBgIIkEbMEQQFJSl4RnwqIRAGVp6L4BAwYMDwTy8Lmm/PE7/+vme6p7ume6XTTcudXZyqdOlVdfbr61DlV1XGZ+831wCbYA3OMvQne1LlLEplj7BBckM/nawBLAYcATgNcDLgCcC3gdsD3AE8Afgn4A+BPgF8BngLcD7gTQNzPwj8PQBpvh78IUBeiaa/7onOMXYUFwGBLAAcDzgJcCfgW4H8AL6LoS4BfA+4G3AS4CvBJwHmAjwCOBRwI2BOwI2B7wDsA+wOOBnwIQNzPwb8c8BXAI4DfAP6MOn4PYF3/Df8awNmAgwDLkD/nKvTAHGPbOgdMsxngQMClgCeR/TSAjHsz/EsAJwPeC3gL4I2AJYBuQCMgjGtA4Q4AaS2GvxVgJwDrOgH+BYAbAWzLj9G2xwBsI9u6GdLnnNYDr3vGBnN0AfYGXAZ4DH3zKOB7AI6gB8DfGjAfEMzl8yLZrORTKQUMC9OCUWOpBfh7E+AQwOUi8iD8R9F2wmfg81pqkPa6dq9bxgYDbA/gCPx9cMBTgC8CyCwciVsQdne5nGR7e2Xizy/JyBNPycBtd0jPF74k6846R1Yfe4K8euAhsmqv98gru+8pK3fZXV7eaVdZ+ZZdFKgw0phHHOKyDMuSBmmRJmmzDkFd7g1RORzp2eZDEfs84LuAJ3FtFwDeDEgg/rpzrxvGxg2OARYA+Orm65yj85W44+8CJAGOLj8xIal//EOG7v++bLzsM7L6yGNk5a67K4Z97eDDZN0ZZ0rPl66QgTvukpHHHpfxXz8nqb/8VdIrX5HMmjWS3bhRcgMDkhsZKQDCTGMecYjLMixLGqRFmqTNh4J1sU7WzTawLWyTY2MLiRRl9kbwGsDjgDtwzfsB5gNeN/d7k79Q3Mx6wBtxgy8GPAR4AnAqYHNAmaPIMP6b30rfDTfJ6mOOl5U7v01e3ecA2fCJC2XwnnuFedmNPUq8KCscdQJEGNbFOlk328C2sE1sG9vIPLbZpWpeI6/1R8inyHIJ+uJNgE1e47LJMjZuXi1gW9zQOwC/AnB0fjv8MpfdsEGNyGs/fLpwlOQI2feVa2X8ueclNzRUhj/dCWwT28Y2sq1sM9vOEZ3X4tI+amYuR97zgNvQN28BbLKy+CbH2LhZCcAOuHmcAP4B/kmALoDFUX4d+s531ahMeZej4eiPf6LEBgviLIhQ1GHbeQ28Fo7mvDZeo0PzW5F2CuAFwL3oq50Bm5wcPqsYGzeiosMN2hUIVNFRx3wEwtYRCROxsWd+IRzdyAAbLr5Ujcr5TAaom4bjtXA057XxGnmtvGaHSSj7hnp2Mvgj6Lt3bBo9ULiKWc/YuCG0/h0B/zlcEm/SvvAt15Xr75eB2++QVe/eR9ac/EHh6FZlAgYSs9/xGnmtvGZeO/uAfWG7MvbVwUijRZQWUhqAYojPaseLmrUXAGbeDY1/BsCJ0dvgW1z65Zdl42c+J6+8Yy/p+eIV0FSstOS/niLplStVH7Av2CfsG4frpxz+Q6Q/g76lpRTB2elmJWOj02lUuQFd/iyAE0LLCJP6xz9l/cfPl1f33l8GV9yj1Gwy91M9QLUj+4R9wz5iX6kM6987EaU5/2voaxqEEJ1dblYxNjqZYgfXYPwW3XwOgHIivIJL/+c/sv5j58mr+x0oww8+JJQ3Czlz//YeYN+wj9hX7DP2nQ2HvHEu0p5Fv38A/qxybPysaDA6dw80lHro2+AvA5iOcmPP578kr+4Lhv7Bw+IwUTJx5wK2HsCEehh9xr7rQR+yL20Yb0CcqxAfxj3g2xHRwG7KCs54xkZnNgG4Yu5x9AonOSWxAzdlEEaTVe/ZRwbuvEvy6TRQ5lyQHmDfsQ/Zl+xT2+DAN+PhoEvtCY08NOMjOnPdjGZsMDQthl9H910BaAOYbvx3v5PXDjtCmbmzvX1m+lwgXA+wL2m+Z9+yj23UaK6noesbuDdb2vJmVHTGMjY67iD01H8DuEwUXsHlRkel57NfkNXvP0Ym/vTnQuLcf+Q9wL5lH7Ov2ee2Cmjg4SaKA2zpMyY64xgbDN0AuBA9dA+ABhd4BTf2y2fltf0PkoG7V0jIpZ8FgnP/lXsgn1d9zT5n39uQeW+46YK7hkrioQ1puqIzirHB0Fy0fws642pAyQyezUrvVVfLmpNOkfQrq5A1Qxx6L1afl3hzThJtBYi35CRWl6/awFhChLjJBVlJLsooSHRkJT4vJ7GafNXyU4nAPmff8x6o9eSlyimaUExcgXtXul+l/GkL4dZMW92WitEx70YCJ4hcjYZgwXFpJ9c+9N/yjWkdpeONeanbPiUtRw9L18V9svD6DbJkxVpZei/gnrUqrOLfLMS7Lqwg96PX51++UZai/OLb1snib6xXsOTudbLkW6AFeovvWCcLrtwoHWcOyLx9RqVmSQZPQqFPpuUfozfvAe8FjT1aG3A1QtGEa8BnjFmejdLaOD1BMDVlNaryuGDebMTIk0/Ja4ccppaKmolTGOAo3HTgiMz/Yo9i3AVgxrYPDErjHmNSu0VaEq25wujKXoyhYQSEOYrXLHfX0MRieanZHIyKURulLE6N5HiIkt1ZqdsuJay/89x+WXTLelly1zrp/Hi/NOw2LrHa6RnVuUz2tYMPl+FHuNHI0vRdEON2tX3gT7vDbZjeNoCpj0ILyNQlrQdGh96rvyLrTj9TcoNTvGwUzFn/1gnpvqxXFt+5To2Y9TtOiBfxAtdhuoqMB4aOJfwzZqI9K/PeO6raRiZvP2NAkoszZp1TFeCy2fVnf0x4j2xzHe7ZpL6bu3mmqjmO9UwrY4OpuaT0PrSsHqBcHlqPdR89V/pvoqitkqbmDww9791jsujG9TL/cz2FUTHpn/mMxsYpZ4OmEbf47HWCJdFfhHJ988EjshgjedclvVK7ZdofgQiweY94r3jPNHLzEH4Q95biCYLT40J2b/BG48J57MC3QMFsQ3bdOll9/ElqixXSp8zVbZ2ShddtkM7z+6Rms4hGwKRIzLwysfxieGBi8eAPjZWYSOM7xmXhtRuk9fghS9ZURLiljfeM906rrwZhbkk7G/60OJeun9y2gKk/gxquBZhjWuqvf5PXjjxWJl7k3gDkTKFLdOSUzBxllUoUcdFuUI6O/Kgi9GT6ZfJTlFfhjRbvGe8d76FWgo35Ku41t+RpyVMTjIKxfbUUF8rtSdxNbZab+MMfZc2JH5DMqlVm2lQGUi9jeI26QozIbnI0J5cCRoy6ykm5Do+N5L3jPeS91IrUInwV7vlX4U+pm1LGxgV+DFfHg1/gFdz4c8/LmuNPlGxPTyFhEv/d9MOZdUnJDUXbFRRD3Cacbu0Ic+lsf3YjZqUuRKgfd8mKLJn3kPeS99RGlKdoTalYEu3dtF2NHgVTn4Y4R2o+xQiKjP3il7Lmgx+S3Mioik/KH0bG+p0mhBOsBVdvdK4iJ5L6D9+cztmBUlFvzIXkZDB2+tWk5DOo1KGxlOkX3bBBFnx5o1AnrsQkB7wokngveU95bzV6VA58DjwwZctfp4SxcUFU6V2JC+VGUngiPEtj7UfOENuMWuVF8cfRklqDRTdDy/H5HjXBouYgCUufE/3UP1y40AnZY1qsAU+MA+5kMHal9te+ATr3rqzUbZOSTujEl9y5TlpPGFIWU4fmhU7iPeW95T3WiHUiTLGEqwQRnFw36YwNpn4PLuEagLkTY+L3L6oNtfmxMSRH6zgxazpoRBZ/fb1Qz6ssdloV1ElrUTM48ZL5IjHTwgZcGTj6qmTi/9yJNuw+brkUmvKpQVl863ppPXZIJmME573lRmLea61ynknI02X31NImJTipjA2m5jEI16PlWwCUS7+8UtZ+5HTItEMqHuVfwy4TMHWvl47/NyCJzqwjaftNNpBSKzFiR6SBM2jGXHhtMhgpXUGUatjVythG+yh3t540JItuWi8Nb3PGMXCD+DTk8F7znmvl34Dw18Ebb4Y/aW7SGBsN54Kmm9Fy00zOw1zWfvA0yW5wkXWBHMTRWNF5Xp90f6ZHapZV1kPXvTnlOEJlexKS7XeffAVqV2POsZjrSO6IXT0xNxqXzFrnticgglTTzVM86/5Ur3R+rF+UxqZ6lZ4xeK8L93yDXoYDHs8Pp6VST48sPGmMjRbyrOe94CvHHRo8eDH9n5dVPKq/+u0xSsM4Me893sSaOJit9o0OVrq8SOrf0ar93Jgk6hE7szrhOnGs3z4lXnXm8/YeVYYeyuRR3R/S4T3nvScPMF4ELpjimeLFaLTepDA2Rutz0czjAKbbeMmnZByqPTMhgkDzoSPCBUrJ+c5ih1sVjW93fghSf3eRHdwIVUmPN+JpccChCOCQHDhpokK7/YoYnJMsuHKjNO4RrWjCe08esF3kCeCV021pkUQjZ2w0dGe07CpADKAcj8Yduv8BFY7qr+20QWn/rwHxOhrp9VL9p8eN8MRfI2ZsF61IvN6Z4Y12+PVTf3NuN9V89TtM+CUn1Ch1XdSrVhb6LlyhAHlg4PY77RjXg2e2syeGjUfK2GhgHRp0L8Dc7Dn282ek5wryOVIjch0f7ZeWI4YDU6PMyWWhdgJpTiBz9tTg8ZjLiE3GCU61vKSbDp4iBTUg5SU8pMREuBa8+ZARD8jeUXouv1LIE1qJBoT5KRL6CEbjImVsNIky07bwlePCmPXnXyC2Hc8qL+gfR+mm/YMbdFS9uGl1bykfybIDcclUsN6psj7+4i4jdpQydm40Jpl1zhPHemiJfDTXEbX99AGZt2/I/tYp53JCniBvaMlUMHwFAyPujJYaIhgZY6NRtCrxMJtCc/J5Wf+JiyLVgLQcNSyUqwsVhPtvfLuzDJn6N9R+4Uibpd1GZrd0s6CPQGY1LI4pZ35o2MX5Gn2QV6ideEPWw3qrIhH8UVNC3rCt5T4LpC3zMsQDu0gYG0xNPfXVeiv6b71d1CmfemKIcANGH+5eCUHCUrRu25Q4jZypCOXseIOzLO1Ur6VxPiKpfzk/iIm2XHQrFsElXNJLtaCPplVEJW+QR2xIV4OXqOe2JfuPosn+C+kl0BC+B7k0caGRnnrpL9J3TYQLujAgtXKtMXyjjrB+vAk3HqZmO51KGgY7brV4zJWxq5X0nu/W3rodIWrxzngnVRGT2+DUPaiI5S+TPEJe0UpthvAnwFPOTysyvbrQjI2K+Lm2M+AXXDYrGy65NNpTmTDw5TMF8lH+O1nk0qvwak9H8wRNhR7bbcRudBG1ouy/sLSo1yavCHhGo3UmwqH3TYZibDxZ7WjEZQDT9d/8dbGtyTXzwgQGH2wKU9yxbMNuGNVsObnhuOtkzIZaNRp3mzy6pFclaEPIj2PiuKbcqEQ1Xx0MVzb0cFEMLoM/iP4ekFfIM7bG8YtnblZJG6pzNBRjg+SJAB6bAE8k/c9/Sd8NN6pw1H9jv6kXpY6L807H5AAAEABJREFUkHDNsrTjmpJUhQVFfqp3myTGXUQUP7SJm1mLt8tE+dulZnlG7aAnTlQw9gL6/5XyhygK+uQZ8o5GiyM2eUtL8hcMzNgYramioWxt1sjvFOZTDuZqEyNEQI0Y3Ccagoa9KHjCabY/4WLwsBevFncVRVy2jFWjZ893E0MaItKG6PVNxhvToE+eIe8Y8aLPUZs8Voz68wIxNpiahpiPoioK+/BERn74hIz+7OcqPFl/o880SmZ9hDMiNLTRYVVb6u81yAnv1GInPDx2Sirdnhgg7jZx9GtGr1Y1l/RGbZW110neIQ9p6ZsjfDZ4zdmsisxKLhBjgyA/+nkqfOXyqZT0XvllFY7ir/lwZ2tXPisy9Gi0cl7ddqnCoTdaw9N8xUN+1ZICBanWc9r36Lazxm8lqf8rfwCpvajZItq35uBD0fa523WSh8hLWj55bD8t7jnom7HxBDWD+iUAs1cH7loB+fcVJIV3tHS1f3hAmlysXcNPNQothOFrKlCgydnOCJyUpR0mZYUS3v+56cFxLUsEokgeRhk+gPbW1O0wIapee0bAOLecUb52K94KNWx9RBNVHmdHXtLqolB/fpHntOTqQd+MDZIcrc2T7fmNQZ7phvTQjmtAjLUJrScMiZMeOI/J0vBj0crazuJIoDegtQ8gNZUxGUSTGG+XFdM5ViE1gwcvPwZiNpyGXSdsKeGig9/HaI35jROV2q3S0nLksHR/ule4zt0Jx28aeYk8pZXjlyyoUtaSqgd9MTaeHHIUD7ppNEj333aH5Pr7jWhgn1ZFfQ0IF8i3uCx0GnpynnBUDVyZrWC9AzNMRCBnUwwp04yAF6mOszXBd9TR9I+7We+wBsY38WIBbr4Y/YX72iSusOT1cZLMjQo1y8OLQOQl8lSxCfTq8XcueM/XSIOuQDHvjmoY87Nz2d5eGVzxTe+lXTCbDh5Rp5jaszkaOK3Cyw3GZfgpPmP2EsHiNVT7dUCA14pHsjYbTCxJ63CnToAKcG6f1jQVdJKvazdPC48iVggR/A0+hAHExVjVuOeY6CII15h3X9orPF8wbNXkKfKWRocSwt5avGrQM2PjicGLVbiBgDK2Ijxw5wrJDQ2rcNA/vsLaPzLgWJyTr9ZTBh3zhiCOcDLpmOkzkeICJ5F6MWpfciOeu0cvagmX6awxM4li8jjxTxCy1CTqvEFbUuAoDVUjT5svZgsdanXaThmypDHCtSRdF/RJ2MOAyFPkLSn9OIpx1OZQUUqtEPJz5/YHHXO05kbNwW/eg6Tgjq+wzrP7K0525r1rTLhgyV4LGW/0Z84db8f1Em98h3UlXB4jFSdOXspWwiET6PlKPIlbR3E930uYbcu8lixDjVLNN/zjRnF7sJuPGJHkwkxZ/UzgGeKtJw4xGArIW+QxjQjndgQtyT3oh7EvBRlztB763v2SG3QeTYHnybV/aMDTMbiU5ZwIDj6MBzkcj5hkeSwDR24zAYFUBIYavqJBynRq4uin182SpUB2Q6KM6VgPLY4lrOAhalyG2LcOJCjqtB495JBTSmo9Zkjsb8BSrrcQeYs8pmHjZsvHxePPUxdDDHkT6JlWIH78ciCkbM0nu+kAcwE7yLu7uq1TMs9hs256ZY2MPc+5hXtZrznxlpzUbGmd/Ez8rfx175WegVd2BANlbs8vVIOK1XeyOLI/7W8HaynvMU4Ys32UPMvLtJ08JHzTludoKbg+qm3FmYSGWDlIHiOvaVh7gxe30uKuQU+MjdIfBPCJgScy+qOfSCbMt2BQK0drRczjXyvVfw6n+A/cb75EPFJyR7O/ylP/8jURdyTMkVTPiEIjMuFgmGmMajVfXmTgAaj49EYXw9zdz53sxWhFj198aD50uCJOtUzyGHlNw2tBmEYbeJUdWKwyAp4QPH/CY6lMXPXVrsrFKuY27TMq3I9XEcmWSZmu+bARW6oIj/aiybcsI0BCw1utcja3iVEDE4CUWYTqMDOCQBQTxzKNDe5MfURqPr4BuSsHTS1z7adhkk9uKMtxTmg9elh9LMo511uqA68dDZ7EFVcuXxUBxd8J4IdE4Ymk//1vGX/+BRUO8scRq6WKjOZGtwWyW6I9V5Y9cF80ozZFkXirRh8awBTEnbIKfSRQs6OjhxUXqAlK2yaOSl3pcvKVXreX8KCL+ZzqPWqwvNAwcCjeNR86YkQD+eQ18pxWmKLIjlrcMeiFsbl8kIueFIGh79wntr1qKt3rXyO0HMmF4BivBTQ8qs5aTyqfsI6/WCduO7W14lWDnDzajytIhZSzuVNHr9ht57qOUynMo4KpitNxGiLaj8g338RfysUvPoxtHyzvd70NbuEm2Cjsby03XMf0fF4Uz5UyKbnz5N5SikOoImNjyCcRiiGqKAX54YcfUeGgfy3vC/cEN+076ijGDLrIhX7b2WhT+4VdwmqfaMUd5gl+2ugk97udR+iHLnHdNhI0454lXU6pZbkCOP8n2nLC0d4511sqeY68p2FTHKk4s6/I2CB0EMDcy8hjYTNr1yIpmKuDdqNmeTpYYaMUZLy208pHj9H/bRC3YwiMol58pabi41xEVm8CTKiKUd9e2eQxLGPbTP18I3BS57thtgLU2XMzhy1ZWTKpvrOn+4k37edN++VGkzxH3tPyeWor15BoSdZgNcbmDNTEGf4Bv1pnJeAnNi/kBRp1UVywj6wC6cZtxDHKefGpp62Fid3AzfYmhGDE/fr2Edsuc/ulN/FPq6hAuZeigl86dny1kcDhAW47yYN6z07MFqeBLRlwxDdIOfDeRyBRYJgzMKy+ybTWZIrRea5+OdBIz09MyOjTPzWivn12fqPtnGbfRLQCbTC1cyKqJcnITxpDMaFBq14/dhc3O7Wy3Mpn4Fbz7ef3hWJsPLxp2/asBr2t1Rrjkq8WOz3D221FqMMbll9AsKYGiIH9wopL5D3yoFY7pQlXI4YrY4MAjTKmzXr8d78H0/QiOZir3TotnCUHK11eKrk4I8029R9NzUOPm+r28kIeU+wPYCrEWSNlIza//+ixHXa0TE8C1l7tloFh6iOYONKCy76z16cmjKjDnh4k7nYQqFdaXBRFHtTw+YWELbW4Jaj1kiWdEY7W5mWNPvkU0wJDw25WHXFgQlrBFupJYTHUkmT4icYyc7Oe7yWs1H4a3TATSL6p9DrDjNi0tOq0eDKq35Nm9fIMU8My8uPywYAfc6WYQ5wogGu3ndbX+6HtwIPmRnI7HUfGhuzCdy+/b27ij/403H7GbK9jVSb9IAFOnFqPH7IU5cKd4R+ZLxpLnteIXe2nGApigFHej08VpY4fhrHta8SjEEPUYqdRc/xSTeVbhqKeikT0xwe8xmXhlNcqHHjwveDVchkKBN24jY/wbshXjlt20i+/rMJB/4YhIkzGhtDmg0bKvmIw9Og8cXq1+mm7bl7nVjRaIf2UN3DtOly7zG3gefHtx0LobfRS3o7DPmJf2dO5Dp4bPezpYeLjf4KtIaSxizxIXtTawRWnjqOYG2NTvjYXDNhULRpd78F8JiYbv9Iu2T63Kr3TsmCCXNupMPVqiZwMjfzc8UHWsCoH63dMib5f0Ul/XJlCIVeN0LFCmP+xRs2yyQSvgGLqzVHEpxqRr/diNJDHPmJf6YUp2rS47FzS8fyEef5Jz1fbRXANfso54dp4kWtHeG5kGSrYwpqGoZ23wbLudeyXz1qRAsZoNYvqAvUmNOwyIQ22szSGeGoRNBo6np8w1X40VRtlgr5tyhg7oB472we140DpdtVtkxb728BoqycffaP6yIZMESQUXRu9/AQGtC9jQNPabkPxFXXgRccvkJV6qkSe5nOqUgopMGmO/+a3hXAE/3wl9d1hfu4xAooFEm2nwmijXQ0NDqO/CjdqN2h7IYOeNUKVJDcXFFopUraMVbz9UvwsNpjRwA4rhoz+ul7YRwY9+nXbpaRxrzEGI4Pem9rEcX9mwBoUL4InteLvwmBsShdGusYKRpJQZtndiPFLX5k1a4xoJD5VcmEnePaG1CzLCD9YqqerHdZ6gs9wg6YjDnxYJabh+oo+NYL7bAfRU/p3ZvBOrd95nMmBYchhsVO7g0U3cAUoyP4fcdCPIyuwIy+SJzUC/EgT5BwtBUEnxuZhgMUnQCT1179BNopAOEJluuu7tVXCqNF0Wka49bghoabEiHNB/vgf+AIyUvz5XFpr0Kv0yblKVNXmXe0ckaCMPfGPksWxBjp8ysKV6q2Ux4VO9r7nOuvaN6UqFfOVR/N8/7coAvsqVh05lyvwZAlzEYKeGHtrIJpODf1mLLqAmkxeA9kLJuuoqNIARN22Ti/M4igyIV/PBr2UzZxtpFf0MXToC5+o9qqI75SZF0lr1s/6t4Y7O4QjqV6NUu+dbFWb6vl+wxRxeq5rE0G7/Zb1gu/Ak2RuS1F0uyXOiOVE+Yk//olpwcGphiI1TiY3XtUeWjVXJKe8ZlgjkxjRVAR/43+EmslhRzeyPLlGbWcKRzpPhexIIUdsNXHE5NEgG8bYlYbKbey3Vks0P4GSiGg9N99sG6/qEBp+jPZG7TvwJNdoW6qxsB2EcMrXy3SM9L//o0d9h5sPHXY8M8QgxIMV+74R3WSSkzXO7A369AcfCL4RoZ4ma8i0pMPdOvT9Akd+o4weNtKq+Wp9SFEa5Ohat01wkUGN1tpISpGmJUL1Xs/1bcL5iNs1UVwMq6Z04Mnl9vosjI1MMjZ12AiK5EZGJLNunQoH+eNul9bjhoWnPHFUcKMx/JNGcTIUuOFXS+fKP64ANPBGn6sXt+1OBo6bz5HMUPulVycDnUClWx/JmG51uaWnNPmaTB2EBmnzDTn6rHW05iAQ5GEjPTsM/HezjKGv7elGvPXEIWk9YQgD3ZCRFMgnT5I3tcKLMChD9iml2BmbV61pRDbiRgaffTe+c8yczLEDKzF3312tQrGh1LRwIbVmuzjS0jCgRqqAJBt2Lsi01MmSuf2SMfXCaA/fKH7L67vlddHIEx0NSR0yBEOZkcS1IFGp90afbZCB77m/GRVTY3LPw3TYn8ak3GiLHz8/Pm7/Gh1HbMsE0omxu4xKMitXGsFAvr3TyNxuRwST+Wi8yWzQVvkHqrVQiBoNfYH7yM8a0BnBaOtqP7tZu1Bb5X9aCRUGeludK6Ii3v8oFxvY9RSNjIgPnzLv8JNcKVEshIesnbr/YjSMx/b13GgZMC3kWo8dEoogRiIf9LATYBtv7graFhUMuhpJJbcAQTMtsza4GEINRe1W5bIgjwjmBA/1lLlsf1x6oCmhxqQsM0BC64mDYogBpEn9eQAyUvumtMSLpvAgE0jeSNarVH8+z+3jLnkuV2V5ysPJgAuJhp9qlNwYuJmEAFxnXRuBeo/t23AFFAAabZA3nWLqk4bMuBEI8+YhDRtvUqdLNTWzFJhMrGIi3UVfeekQIzYXqXOVnCJk++NZfU0HjthSC9EoJ5OU8VswWhQoi3DEyn23ZMsAABAASURBVA3ZL9nIdfcpg/K1TYxUAA1LvKk4W0PVbn1C2k6QghaDbzPmKaNMiTeZ5AnUyU6PmKYJ4RuEO2M8Fa6EhMvaeF27cC2IExpVr60OTE1c1Z/oD4aDgANvVmRsi3oiuybE/sY3pyq2t+PMAXE7CYpLKaOaTDYfOiLJRRnVFo5YQS2ehgmbZwZyaawi6PGPDwZRFVP7lIZ0TUyjpnokPa+gFjvhbWjgtxw5rPYyGvGgfv+KFhn/HQfLcgpkaioNynMKKTyVlW+gQsz/vwNvlp5ckLM/M41IM11m/Xoz7DfAEbtamY6z+l2ZO6rJJJmKM3GjLUMYuTgJNOJe/XoeSIPRkks9K6mznOgZoohADFHiiBOSS5phIaQmpDaImg+j6tDDpXvOzQncde5SnefkkZ82yqCDWZ4EqjE1cQhhNnY78GbpIkG8ImPzYEDg+HegqhtJKhHoOLNf5r13tBwFelufk8lyGsUUtRukyBRZjFwcwYpZnr3kgqw58lvWbXigEG/CxQBPaUTwcCDo2aVfLpwyUPfGlDlf8FwYiGqx06okQgXH7V6BrJ+F4uqfD1vvLZaXu0rnX/Phw0q9y3A14DVVw3HLd+BNbWYs+opjRcKir7Ed46oQvPzFG3KSaC7czKr4MZHOjzkzdxZMuPHKDgkywtrrbdMW+Kgd2Vk7RvV4wy4Twh7jja2OXcIwTOpqa1SslF4txIkZdc/Ea9BWGjLuFYa0UbUeGpWGkBuqs70J2Xg1Joup8gtpPnxE2j886LVpklya8YxrR3TgTaqqTTSMrWaYgRJj5/PKQMNEv8BJm6+TNtFHbszNhUy9N7mrkry2rQ4jNkdu4mfWJGWkwicoiOME3JAaQ1vZJqd8tzRzxNZM6264ejrXXPBIM6bVaysNGfcCfAAJChd3ui2sei8rsvGr7WLfnED6BaYeYNAzhJGxlYEGPKpVZhGjcblalkhJTmGhVNqS6TXCWbdXXBMPDNN5br/jqUFc+hjGwGLU0fqBQTHk3SFtJDPyq/k8mIY7YLIDccnibVIN38g36tSXrxp5lXxDA0MGoGxcCdcpb/C+0u1s2n9EeAKqE57XNK6jn/hzbRl6EKYmkQTPScR9Z9g3kDfJo6WClobZGduc4uazWbEdK1UiUSUUn5evguGSjdbwUw+Ne46VIXAJJJdClmX4SEh2Z6Xl/cOqBE948kuPDFoHnTY3DqRXFWRfRazKX6yx0B9+ZdsJfvoafVLP3UE+GYDrS8Z+V3g7x+flpBXm7CrNrJhNPfjQDy1irMJvgtqWtgkV8fnHCTH70mcxhU7eJI+qSOGv9BQjjm7DPxxs7Vz8VBJFcrnAjE0GAMlgDi3q/ESfNO5hY27wBpdCBl3zYTSm+YhhIYMzHuTkKLWyDio7P4YaamZYn+Ez7AUo8lD0UbK9lwIajlr4hT5jUuuxw6G+ra52Pd1aPlkkU3ec6U/8YHsMUEyN+23ERbyHyNgCHtVKWJ46nSyH8tL0WQ3zxZ7RSnsJ+r2BdprU93Ze0CcNb7OuU6FZeOM17RJmMhlvyEtL8cgGvlZNGdTeCJd4/c7jSpzxs1WMdZKcn36hrpwTR5ap2y7F4p6ByxJGi4udajBBazqs8JbyTEBDpN5eWYOz1lcGbRBhmFpVYSWpkrz/gTcVj5oldF7mHN/MoECN6YEZDxwwJjyBCaAgmbvr4nLm5v65sJNJdfD8VrxckSGfsjbVftT4qDOq0bdoalWnRBDcRDJpVeQiAieOXDBUs0VaWQqLyZ48HnXBJQRE5voc9iXDfoE6ezI15xR6WcXUsEHoaTMtrHM5mToVRQO52DwKOtT7dl0E5qaMqREceaZBQk0mwWTU55IkT/CnPMqwV6jbFt2EnnPSDjjR4HVwCPHD2LQ4UqRr9Glt5FuNllu2I6x6r/cbraLkfBIrQtP+o0LDWjEayuPDl7e9CUIQxE0plcbtKURisdirCJXeWfG4xOIQJpHo1+UG4n6LuOJztOv6ZJ/wJulIajL5QmFypKd7DfMrYY3vGJc8Hme/sjbl7Hh93vvu69q8kLnjPibVXEVIEYaij9drIh4neWRujvZhNucOPTJPHfJJmgZw4VTHR/uNaGhffV0Z/R+EkOJN8KhWdkILi50DSzO2BJg6WRK59ULVwlkeipOvhuU9n8zNTxqTGc1SoK92a9g+W2Hmewhw1CbDjfFs7fW4Xg9liEKdeByaBq/yeQzdyHqoBWB5L8CJI1cUUkb2gk8cLnbiQi+Gmw4YkaAma67/6LvbOlkkU3eeEx1Ts412EYdpnoG8SR4tFRgrBaWMsUeNzFgsJrEa3BEjwYdPi1nOZRmjDzIWVL7GFXPvUHowOTLRMpmznT1nKVghklyUEepg2VbKpRVQLVm0IMbbc55HbM7+qcOmaGEQquSzPZRveTgmR95KuHreyE8bhJM9PnRtAdV7nDvQCGOsKCR9LnlQTB1jLDrwKwLqNZM3YzFLg0rSBhDtI/Yg0goOw3ysPtirnrJTdn2wh6JQufM/R7zuy3pFLXksoqRXJaXna5bNE8Ucb14LP9jUlpORXzZYj+itUryOcnZGlChTBVXInHwwCeLhl8FbKN6ck0Y/5m+8wYZ/VNB4tR43LHEaPzzUpaNQNOBkkQOGkU5rLa3CvAYjLSrf6xvPqT7Fm+BRLW9cC7uP2ESKN1l03kzyDNReeEb2gVhg7h5RjFUsN/breuF+u2LUlxeH8aT1pEHhvIB7L70WbnjrhMTxQGQ3eHiAMbBwtDbWjFSrg8c8JNqyUrd9qhqqmc+9hhRfajbLSNOhlsHLxKkW6LmpTWi4MvD4IazOj/fJZDC14OfHFgB0i3PgzYqiiDWzuWSvsVD1EBl/0TRiesD2h0Jm7P40Ru6tU2ZB7rcLeqQZP9iUXJyRUWhbvOrIkwszyuhhmL3NhrgE+ECSuV2yLcn8QClHXIoUlowKkaHiti+ugQ6i3ht8oEn4RV6jCu5X7ToPTG1/pxsIIX0+QGkf1lt7dfFy3hzRcezNLokiwErMn4//YI6LjEaetqxLCUbIpRRvevdne0Xf3tRzQ5sEktvQC22nDEmmJ+F9cRRG4QRGbO74cWmiJTlenxOvoki2LyEceS0EKkTUZ+z+WisNu45Lgx/xpUiTKs/+e0tbBmn17YL1t+x9XsQP67HPuEJQl+P90nTgTcv+s7iN4EY9XvsG1y8h6GjO4ZwIGY2aC8puzkjhUsnc8z8D5n5DWhHKY8K68eoOCTKZJFPUwWgz+vMG4RxBEazyV/uGlOSGY1WwCtmccHphbPYVVwPa1ZsFKs7/hiak7RTLuOSMbEtVG3GvxRwFMjqzFFNfOHkjNVWr6z/ZFfg4DLaR4MCbPUw3wM7YPB2neIkitdtsY+AF9kd+2ihrzusWPqWBiVQoyEnW/M/1mCvX0iEmk22nDQjXG1NerVClmVWLCSTXneTT1ZmbTE1xxCzsEsisS6q1LLWbFx5WFzQzmYw5jtG6ab/RsgPwTSSXAA1pHDmphSEK9fpchDYZI3W2Py4bruiQ/hUtQtsB6wsDNt7EMCrrdXp2xh5HpqmsrNnKctoZsoK5zOqk8Cml0j8Yhcql4i056QZz1xSZIehksmZZRurfMlE49MV8vN3rpgEl0ZGTzNqEO1IxJw6DDvGLUVePMnuyKytemWv46QY1t2s93vImdqWvZ/Btqkz3SGyEhbPzwl7xtY4e5by4ccy31p7fXehXLwU84Nh48wUUMfkW4bLuG0bi8wDlkkuXiFKrqFi4Pz6lfXe2qt0XujopHNVSacq78z/fY45aA/c3y+izDSUEj6HWE4YkCwOT18N7eEC8flKTWzUxGHQEFki3fCOdjJaEft2IV/Kps554qU5ajho2DyYSj7/+bzebjMbFZp0QP4JMOitWh8GB2qr1n+sUr8sPKtIrZpInyZvFKL1V+LMsM7SP2LR+/BFIylGlUrNsMxWO6o/MtpaiicOC9bB1cOfO/C+AuZdmhBMT7stLF/cMeqVN0YY3evz33rQ6ZEKvIzatj9XaQXGltjhnqIbL+QBPNG2ClbEarp4/Cp394PcLGi/OLbjYzEvbdBrVwnzo1l/WWTgdCgxeDd9PPnmSvKmV+VcsFrPMDy2MjUxaHv9PKyC1222nRyMJ86LXXdYlA/ehcyO+6ER7VoklZDi+GTZc3S5+zxJpOnhE7ZChWFDtgmny5oq/anjxeXlYcvMV0ahqpBhC0aoiIjJp3eVXetWE0XIXkVnBcXEVFzfxS8Zc5811OFEz9eiv6oWD1/ifvQ0OFZrrmOXAkxaeZSGnLvkXMwyo33UXIxitj3s8gNfh+ohfU2wkJ3Tzv9ijdpXTirdRm/Uzvxrwldy4x7h4MiDERJILMkJtRiW6sbqccM1IJRx+C560KuEYeaP/C6twTsoWhxn5Tj4fhp7rCg96wy7j0nVJL9qEG+GErKd5DHMS3XcbxM0vd0BbFPdYyj+aA0/+3U7FqXYe2Gde7byDD5SGd1u+tWSnESrOicWaj3eb8l4oYlphg7mpD+ainv5vlvS0GpprkOIINSSUeV2RihmcQFbDizflqzJRGgaLRDcmjkW6bh4ZKLMmKW2nDrqhlKfnRfiAcy0IJ8hdl/R51quXEytPSa9MyrqLumTo8YJZvxwjmhTyInlSo4Yrkx4troJOjM0D+8xRO9HVJYvuWSEdF35CxGqbVwSi+ONIQlVQ310tkaiCjDaRublwisw9+EiT8JAXI8+Lz0M1vUwM4zB/V2NsqvskWbnWfFrEy/cVx16okzxGaz8bfPvubhHOG8jUXG+j2lO5OZ5zuVR27QXdMlnLKFRDwHsdF12geJE8qdIKf6/Aq87YkLNHgHgpgBoSeHAxkbZzPiqL7v2mJBcuRMLkOJ5YtO7i7rKvWYWpjbK2Yu6laem7o0W8yM1GfZzE0QDDLVpGmpNPEz8nrk55RhoZiav8jLiTn1yQFYpBTnlmGsanLCyTrceVbo+Z5xIY+Z9GGXq0SX0yMEqmzo3GhIca9d7SJnmHc0ZcmuM7uWbZMll8/3el7eyzROk2xfyhN+QWxKozNpAkFovdD/9wAA028Aqu4Z17ypInH5d5B+xXSJiEf05u1l3YZVm3ELYaMncX1FkcDXuub/c1meSaiWqjMduXhJxN3w3i8zjE8j44Y+Rh5OEbxjm3lMoVcTG8ZxW9UrJriPOEvttblbmdfcAHzBXZRwa/e8kJ4sgz/lWqPqqRpvcdJkueeFTqd+NJwZaSlMPOR8pN4Fd0LkKaQxdpMS0I5J8iugfgQQD0Z/iHS3S0y4Lbb5XOz14GmbHKuxX4QZyyiH2lXXq/3hrZSEBxRK1/QBf0XN8mVJN5aRtHYm6spbhUCV/hYQRzw1HrsfHmc8vPbkh4WmqahQXPq3qPumPK1XXbT0jX+ZCpG9wfLLd2OaVzwdS6S7tgmJqc+886Y3V10nXl5TL/xq+Jw4InakGOBI9eD6Amj0UEFLFoAAAOB0lEQVQsELfEbBEU4nGrxyH5swCLArz1wx+SRfd9R5KbRavnRj2m4xqItRd0CVeCmYkhArQsdkETwK8S9MO060DKMalh93G1QMoxs5jIkTDNI3+LcbsXa8QTVaG3ybDcKWQvp8fTq5JCsafMrKYjFcM0iHHDQA10+p0RMXUWhqsNn+8UbsujnaBYVeRe7XbbypJHH5KWk06w0+ZyznuQ+F7w5tPwXV2Fri6UAYEM4ArEjgJQUIdXcFS7LMVroumwQwsJk/BPZqFoMvzEvEioK+a+oE9Gn6+XkZ95e41Sz0sZsqJKD6MxjTtujaym6ktCvnYra6TzTVYPk78Rr+T3w8obq8tL18W9gQ6ztNPm4UJrPz5fxlyODbbjB423nHKyLHn4QandxvJVRpKj6PFRBE4FP66GX9FVZWyjNIjxCdkJccrf5jst3tIi82++Qbqu+JLw9YH8yB3lTxoVeKYIxYKwFXBSSHmTa7i5ON8LvbqtU5Ktcmh8JRmZpvdK9fAjTpXyOaLT+FQJx8gbebpReLZI10URMHVW1MKlDV/sUEYro46ofYob86/7qnR96QtOfPQb1LcHePAOgMl7SHN1nhmbFEC0Dz7fD5+Ab5FtWk4+URY/9IDURLRwCvTLHE3Ba6HznniptizPb0LtlmnhSrbem9skCy2Dp/KZWEWZnyOkJzpBkFB3cj64rEpZThbHX6xTJ9h6WXRViVxmdVLWfbJLuNS0El7YvLqd3ypLHntImo56v51UBgk3A/YB770E37PzxdikigqygOsQ3htg0ZrUvfnNsvSxh6X5mKORNTlOmeM/jc5+qCl0BRy5208fUCOSVOcZoXaFb4/QFfskQDEo7mEPIyeL3N7WfsaAxItncvusykSnzn/N+d2TttzYqKj1jP+SxQ98T2q22MJIMnyu/TgSkXPAbxRDEPTufDO2QRqVPYcwP523Ar7pYo2N0v3Vq6X72msw0ZmkHTRgwn4YHDZ8qSO0Qadum5Q0Hzbs2WLmVc0mEf44Ma02seQDN4iHvf1Dg6GZmuIeRT9u3IjwMiykEp2dsvCu26XzU5900q49CORdwWOPAjyJHsAvuoIXmLFZHJVugP//AGcC+gGmaz76KFnyw0ekbscdzLSoA2Mv1Asnl2Hp1m6VlvqdJsTrUtWw9U1GeZ7+1HrsUGimZttokKo4USZSCKBZfCnsIY377mOnMo4EirmcIHJpB6LBXCjGZpVg7gn4twL2B5hLXhGWmi23lMUP3i8tJ5/E6KQA10xEQZjaEk7gOOmKgt5U0uDhmvP2GpNKWhk/7aG45wffM65pFr9bEgvK9tP+DXTIQ9RNDyEcyoVmbNYO5s4DuIuBDfse0jIA5WK1tdJ1xRehOblRqEFRiRH+ZdZU373itTquvYhBbUeZ1muZ6cYjE3KuEBVT83q8rC8nnh9ILttMFsPuUTCLo5NLhSFYyn2I7h+LxX4BgMIfsZAuEsY22oBGcQHVBxC/GMAwvIJrOuwQWfrEY1K/+9sKCRH9RzViG81JdGWrLkE1cGeCT4snNwpH2RZqQ6Kk13T4YYV7/7bd7GQpylL0+BB4Z5U9M0w8UsZmQ9DANOBahKkW5CiOYMElN1sqi7/7bWnDTLiQEv4/vTZ6s66Xhf7hWx4NhWqTyiC1RNWntGvQvjH/JkezOHnjUPDK1wAjQdpZqUzkjG1UhsZyrQmtlQ8hzRRNJJGQDsyEF955myQ6LB9TBZp/x4mO/1KbRonJugquWwlL2zSLw75hozWGOM3i+4FHzP21SIvUTRpjs5VoOF8v1EVyrQn1kkxW0LjfvrLkqcel4V17qXjQv+xAXKjqClp+rpy1B3imSrYvHFs0n3i8LHno+05m8VdQ23mAU8EbA/AnzYW7Ag/NwgVwYsm1JrTa8PVjlkouWCCLvrVC2s/7mEjMMqEQrz+qpbi30Sv+HF7lHsiNxIRrUipjOedyg+38G6+X7quucDrd4H9R6v2xWOxWQB7hSXWTzthG63ExP0eY1soH4JdcLKYYu+nII0ppfkLoomzPlF2Gn5bNSlxuhwu6cq/9wvOl6X1cxm+5dKqDaal+dywW+50lZxIjU8oRuLBhwDG4nnMAVMbDK7i6bbctBAL88/SkAMXmijj0QNbHAfj24vU772xP4lcyjsE9Px+QtmdOZnxKGdu4EFzkTQgfCzBdcvPNzbDfQJS6bL91b2r46TUBtUyxmCQXLtC7gwPXjrFY7FE9carC08LYxYvjUsRiUKQGqkAzUhaonJCZBJVf5Ro33dygOux4Q4PE29v1juE+xMk5WESvxSUcd0mfimRanEaNipSJFSZXI+7Hp/XND/4crnsPBLU6xjs7hVZmjfKLCE+p+IH6TDedjM1JhbkTIt7aKvF5wXbJzMb1HeYdmGGBoH2ZXLzIfiX/RgLvMbypd9PJ2DTacOGLuupYMimJ7i4V9vuXoy47E0xd6LeuTRmf9oBcfzCWqFm2zN41r0C+HrYnTlU82FVE0zqKItxtbFJLLl5shv0EcmNxof7VT5k53PIeoD2AfVmeUz2lZnnZ5J/GmOoFJwlj2hgbTzNnzXxdmZdWE1QzkhNR+leT0lwgSA8oe0A+SEmR5PLl9oLW9dT23EmOxyeZfjXyLwPB7MqaLcqeemR7c2H0r95q2PSxwtgDapaVHcPBlXvT1mnTzdh8XZmMndy87Kn33DFzmhHPXeWKGNgeEItJYkGZDptvZJmu33QzNr8bYjJ2KF12UMPCdPX8DKw36Np26rATLc36FfUiMm2qPtTt5Uwhok0acB2u+WQnuF0ooC47sMVs0i5t9hFOe/iWjtNVxTs7JAYDjZZH+XraVH1sx3SP2Jj2yWtsCCGMLjuKNcRsw+sZshuDmdOVNgviiNZ33PtKda6WNLXB6WZsvq4oZ6urVrrsri4V9vun1hBTgei3YPT4s5IiddhZ2AOCNN5h4kilwOt6xKZ8/U90Jn14IsklAXXZo9BlAxSRuT/fPUAdNte2+y6IAjXLl+Pf4l6OxWLTOszELc2Z+ggZ+h+oliIJPJGazcssWCq96h8o8MBEfqCIo89Ug9djiSteB3pjqtut6puICT9nEvQakuXGGcrYFS91sjPjk11BJfrFp5qfBcEtLWDWbFH29BcyPPz3fq1dXj1lobx68tTD6jPnB/qupHFZ/EwgaUxH29lnPMPQaItfv8Z6lDTvpSle+qUVFf60MnbxIiiPYbwtxMKsy+aZ0HydTgdQVcbPN/PoNV87UHDlLMOypDEdbVd1BhUcYjGxfROGsjW1XTKdv5nA2GvQAbi9+IerCbEuG8Wn3Q0+1CTrPt3l6Uu02Z6EwmWZaW94wAZQzRfvKFuHHfQxCdiK8mLhGLucXpAU7lbmSfWqbAIWrFgiocKz9Y9Hjq05p1uGfjhPnE6VYhrziEPc2XqdbHcCOmwaaBguAtW306rqYztmAmNT5cfdFmyPxFtaAS0qPJv/eGJp362tsvr0+dJzQ5vwk3EEhpnGPOLM5mtk25OLFonthAFqueZGbBE1F6ecjaBIrCYpifndsqn8sn0J4RcG+Mk4AsNM21Suz7YOmyIllyLTn9ZLnAkjNjvAZGxGkkuX0puDWdADDlqsf8VisTlRpHjvuC7blLMdFq0X0ea8mdYDNoMaVX2Wr1xMV3unfcTG083OoFxmvr5qli+frv543dUb9oKTS5boJChb81g7PW1awtPO2MWr5t5HdoqKJoNaH1Xpub8p64FYTNQCqFKFHJymdYOB0ZSZwtjcrV4SRZZaRgGjrXP+DOsBpcOGuk9rFtdhT7t8zfbMFMamus/skER3t8SSCbZvDmZwDyQ6OsSmw+YANSNaPCMYOxZTK8H4DUnVKfGmZok3z35dtrqYTfhPnSUSsxx7wcVPpkg5nZc+Ixi72AE0rReCibgkuJumEJv7n6E9kCxfYswFbTOitTOJsS0rwpqOOFzq37671L11p4hgkujsuIPEGxsju5ncRVS301tm9jXjnjTsuYc07s1Toc1L5xyJjE0tl5k4XYGZxNh8jZn90HbWmeorU0seflBmNDz2sCz9nx9Jw17vNNseNNC4376y2c+fliWP/GBmXzPuyaLv3CtN7ztMv1RqRP4ei8XmGFvvFYRpfQz9fT/QmXJHldeib98jnZ++VGL19b7rj9XUSMclF0lU3+Xx3YBoCnDybxmcoiEbjMpMGrG5xiAR7DJmRqnW//qIbPaTp6Tp/e+DVsfDxth4XOYddIAsefIxaTuLHzieGdcRsBW1KGcRJxGfNjeTGJvfKOEXfr+N3rhrFsDdaOMPAJQr4RVcctlmMv9r18lmzz4jHZ+6RIkoyUULhSfJUn5OLlqk0pi37Jc/kwW3fl1q3/jGQuHS/1oEfwhgHbOhL+5BW/ltGYojCE6/mzGMDdksA+AnHU6G/+FZAPzo5pG4hfsBrgcMAkyXBDO3nXG6UERZ9tyvZPM//FaWv/gbWfbcsyqNeS6LvX4CIofi+g8BsI7Z0BcfRFvPRbsn1/mgPmMY20ebZxQqbuh/APzE275o2AoAv2MIz+rUoejuGyg44aIoRubgN1t+ay09F/PbA3OM7bfHXPDB3C8ATkP2ewD3AXh8G7/YwEkVohZHIwYfAJqg/4qcswFvR/kbAf0Iz7mQPTDH2CE70F4cjPk84Dik8xyJ98K/GPB9wEuAvwAeBHwW8H7A1sDdDnALwLS8In3OheyBOcYO2YFuxcGoEwAy+bXw+fHWHYC7A8JHAS4HPAWwfK0Y+XMuoh6YY+yIOrIaGTBxHjBjtAbV2jvb8/8/AAAA//86YcUmAAAABklEQVQDAH+KWqofy7raAAAAAElFTkSuQmCC">
                 <div>
-                    <h1>Car-to-Cash Dashboard</h1>
+                            <h1>Car-to-Cash Dashboard</h1>
+                    <p class="section-note" id="dashboardVersion">รุ่น 2026.11.25.7</p>
                     <p id="dynamicSiteName">นำเข้าไฟล์ CVGO เพื่อเริ่มวิเคราะห์</p>
                 </div>
             </div>
@@ -582,7 +618,7 @@
                             <table class="w-full text-sm text-left whitespace-nowrap coach-table tabular-nums">
                                 <thead class="bg-gray-50"><tr>
                                     <th scope="col">พนักงาน</th><th scope="col">วันที่มีรายการเติม</th>
-                                    <th scope="col">เป้า (ลิตร)</th><th scope="col">ทำได้ (ลิตร)</th><th scope="col">เทียบเป้า</th>
+                                    <th scope="col">เป้า (ลิตร)</th><th scope="col">ทำได้ (ลิตร)</th><th scope="col">ผลต่างจากเป้า</th>
                                     <th scope="col">ครั้งเติม B2C</th>
                                 </tr></thead>
                                 <tbody id="kpiTableBody"></tbody>
@@ -595,7 +631,7 @@
                             <table class="w-full text-sm text-left whitespace-nowrap coach-table tabular-nums">
                                 <thead class="bg-gray-50"><tr>
                                     <th scope="col">พนักงาน</th><th scope="col">วันที่มีรายการเติม</th>
-                                    <th scope="col">เป้า SVP (ลิตร)</th><th scope="col">ทำได้ (ลิตร)</th><th scope="col">เทียบเป้า</th>
+                                    <th scope="col">เป้า SVP (ลิตร)</th><th scope="col">ทำได้ (ลิตร)</th><th scope="col">ผลต่างจากเป้า</th>
                                 </tr></thead>
                                 <tbody id="svpKpiTableBody"></tbody>
                             </table>
@@ -795,8 +831,9 @@
                             <button type="button" data-fuel="COMPARE" aria-pressed="false">เทียบธรรมดา / V-Power</button>
                         </div>
                         <div style="position: relative; height: 250px; width: 100%;">
-                            <canvas id="hourlyChart" role="img" aria-label="กราฟยอดเติมรายชั่วโมง"></canvas>
+                            <canvas id="hourlyChart" role="img" aria-label="กราฟยอดเติมรายชั่วโมง" aria-describedby="hourlyScope hourlyCoverage"></canvas>
                         </div>
+                        <p id="hourlyCoverage" class="section-note" hidden></p>
                         <div class="hourly-table-wrap" tabindex="0" role="region" aria-label="รายละเอียดรายชั่วโมง">
                             <table class="go-plus-table">
                                 <caption>รายละเอียดรายชั่วโมง <span id="hourlyTableUnit"></span></caption>
@@ -909,19 +946,27 @@
                             </fieldset>
                             <label>ช่วงเปรียบเทียบ
                                 <select id="salesReportMode" class="ui-button">
-                                    <option value="AUTO">อัตโนมัติ · เลือกช่วงที่มีข้อมูลครบ</option>
+                                    <option value="AUTO">อัตโนมัติ · เทียบเดือนที่มีข้อมูล</option>
                                     <option value="WEEK">7 วันล่าสุด เทียบ 7 วันก่อน</option>
                                     <option value="DAY">รายวัน เทียบวันเดียวกันสัปดาห์ก่อน</option>
                                     <option value="MONTH">เดือนนี้ เทียบช่วงวันเดียวกันเดือนก่อน</option>
+                                    <option value="CUSTOM_MONTHS">เลือกเดือนเทียบเอง</option>
                                 </select>
                             </label>
+                            <div id="salesReportMonthOptions" class="sales-report-controls" hidden>
+                                <label>เดือนที่ดู<select id="salesReportCurrentMonth" class="ui-button"></select></label>
+                                <label>เดือนฐาน<select id="salesReportBaseMonth" class="ui-button"></select></label>
+                            </div>
                             <button id="saveSalesReport" type="button" class="ui-button ui-button-dark">บันทึกภาพรายงาน</button>
                         </div>
                     </header>
-                    <p id="salesReportCoverage" class="sales-report-coverage" aria-live="polite"></p>
-                    <p id="salesReportMissingDates" class="section-note" hidden></p>
-                    <p id="salesReportClose" class="section-note" hidden></p>
-                    <p id="salesReportReconcile" class="section-note" hidden></p>
+                    <p id="salesReportMissingDates" class="section-note report-gap" role="status" hidden></p>
+                    <details id="salesReportQuality" class="report-quality">
+                        <summary>รายละเอียดข้อมูลและการกระทบยอด</summary>
+                        <p id="salesReportCoverage" class="section-note"></p>
+                        <p id="salesReportClose" class="section-note" hidden></p>
+                        <p id="salesReportReconcile" class="section-note" hidden></p>
+                    </details>
                     <div class="sales-report-metrics" id="salesReportMetrics"></div>
                     <div class="sales-report-notes">
                         <p class="section-note" id="salesReportPaymentScope" hidden></p>
@@ -948,6 +993,113 @@
                             <div id="salesReportInsights"></div>
                         </section>
                     </div>
+                    <section id="monthlyAnalysis" class="branch-comparison" aria-labelledby="monthlyAnalysisTitle">
+                        <div class="branch-comparison-header">
+                            <h3 id="monthlyAnalysisTitle" class="font-semibold">เปรียบเทียบรายเดือน</h3>
+                            <label class="sales-report-controls" data-html2canvas-ignore>มุมมอง
+                                <select id="monthlyView" class="ui-button">
+                                    <option value="compare">เทียบเดือนที่เลือก</option>
+                                    <option value="penetration">สัดส่วนและจำนวนครั้งเติม</option>
+                                    <option value="trend">แนวโน้มระยะยาว</option>
+                                </select>
+                            </label>
+                        </div>
+                        <div id="monthlyControls" class="sales-report-controls monthly-controls" data-html2canvas-ignore hidden>
+                            <div id="monthlyCompareControls" class="sales-report-controls">
+                                <label>เดือนแรก<select id="monthlyFirst" class="ui-button"></select></label>
+                                <label>เดือนที่สอง<select id="monthlySecond" class="ui-button"></select></label>
+                                <label>เดือนที่สาม<select id="monthlyThird" class="ui-button"></select></label>
+                                <label>ช่วงข้อมูล<select id="monthlyComparePeriod" class="ui-button">
+                                    <option value="matched">ถึงวันเดียวกันของทุกเดือน</option>
+                                    <option value="closed">เต็มเดือนที่ปิดยอดแล้ว</option>
+                                </select></label>
+                            </div>
+                            <div id="monthlyTrendControls" class="sales-report-controls" hidden>
+                                <label>ย้อนหลัง<select id="monthlyTrendRange" class="ui-button">
+                                    <option value="6">6 เดือน</option>
+                                    <option value="12">12 เดือน</option>
+                                    <option value="all">ทั้งหมด</option>
+                                </select></label>
+                                <label><input id="monthlyClosedOnly" type="checkbox"> เฉพาะเดือนที่ปิดยอดแล้ว</label>
+                                <label><input id="monthlyRolling" type="checkbox"> ค่าเฉลี่ยย้อนหลัง 3 เดือน</label>
+                            </div>
+                            <label>พนักงาน<select id="monthlyEmployee" class="ui-button"></select></label>
+                            <label id="monthlyPaymentControl">กลุ่มชำระเงิน<select id="monthlyPayment" class="ui-button">
+                                <option value="RETAIL">B2C</option>
+                                <option value="FLEET">Fleet Card</option>
+                            </select></label>
+                            <label id="monthlyMetricControl">ตัวชี้วัดบนกราฟ<select id="monthlyMetric" class="ui-button">
+                                <option value="liters">ยอดเติม (ลิตร)</option>
+                                <option value="litersPerDay">ลิตรเฉลี่ยต่อวัน</option>
+                                <option value="deliveries">จำนวนครั้งเติม</option>
+                                <option value="deliveriesPerDay">ครั้งเติมเฉลี่ยต่อวัน</option>
+                                <option value="litersPerDelivery">ลิตรต่อครั้ง</option>
+                                <option value="mix">V-Power Mix</option>
+                                <option value="goPlus">อัตราใช้ Shell GO+</option>
+                            </select></label>
+                            <label id="penetrationMetricControl" hidden>สัดส่วนที่ต้องการดู<select id="penetrationMetric" class="ui-button">
+                                <option value="goPlus">Shell GO+</option>
+                                <option value="svp">SVP รวม</option>
+                                <option value="vpd">VPD · V-Power Diesel</option>
+                                <option value="vpg">VPG · V-Power Gasohol 95</option>
+                            </select></label>
+                            <label id="penetrationBasisControl" hidden>ฐานคำนวณสัดส่วน<select id="penetrationBasis" class="ui-button">
+                                <option value="all">ครั้งเติมทั้งหมดในกลุ่มชำระที่เลือก</option>
+                                <option value="family">เฉพาะน้ำมันกลุ่มเดียวกัน</option>
+                            </select></label>
+                        </div>
+                        <p id="monthlyScope" class="section-note" aria-live="polite"></p>
+                        <div id="monthlyChartWrap" class="monthly-chart" hidden><canvas id="monthlyChart" role="img" aria-describedby="monthlyScope"></canvas></div>
+                        <div id="monthlyTableWrap" class="overflow-x-auto" hidden>
+                            <table class="coach-table branch-comparison-table text-left" aria-labelledby="monthlyAnalysisTitle">
+                                <thead id="monthlyTableHead"></thead><tbody id="monthlyTableBody"></tbody>
+                            </table>
+                        </div>
+                        <section id="penetrationPanel" class="penetration-panel" aria-label="สัดส่วนและจำนวนครั้งเติม" hidden>
+                            <div class="branch-comparison-header">
+                                <h4 id="penetrationTitle"></h4>
+                                <label class="sales-report-controls" data-html2canvas-ignore>รูปแบบกราฟ
+                                    <select id="penetrationChartMode" class="ui-button">
+                                        <option value="scatter">กราฟจุด X–Y</option>
+                                        <option value="timeline">แนวโน้มรายเดือน</option>
+                                    </select>
+                                </label>
+                            </div>
+                            <p id="penetrationBasisNote" class="section-note"></p>
+                            <div id="penetrationScatterWrap" class="penetration-scatter" hidden>
+                                <div class="monthly-chart">
+                                    <canvas id="penetrationScatterChart" role="img" aria-labelledby="penetrationTitle" aria-describedby="penetrationBasisNote penetrationReference"></canvas>
+                                </div>
+                                <div>
+                                    <ul id="penetrationLegend" class="penetration-legend" aria-label="สีประจำเดือน"></ul>
+                                    <p class="penetration-reference"><i id="penetrationReferenceKey" aria-hidden="true"></i><span id="penetrationReference"></span></p>
+                                    <p id="penetrationPointDetail" class="penetration-detail" aria-live="polite"></p>
+                                </div>
+                            </div>
+                            <div id="penetrationTimeline" hidden>
+                                <h4 id="penetrationRateHeading">สัดส่วนตามจำนวนครั้งเติม (%)</h4>
+                                <div class="monthly-chart" id="penetrationRateWrap"><canvas id="penetrationRateChart" role="img" aria-labelledby="penetrationRateHeading"></canvas></div>
+                                <h4 id="penetrationCountHeading">จำนวนครั้งเติม</h4>
+                                <div class="monthly-chart" id="penetrationCountWrap"><canvas id="penetrationCountChart" role="img" aria-labelledby="penetrationCountHeading"></canvas></div>
+                            </div>
+                            <p id="penetrationSummary" class="penetration-summary"></p>
+                            <div class="overflow-x-auto">
+                                <table class="coach-table branch-comparison-table">
+                                    <thead><tr><th scope="col">ช่วงวันที่</th><th scope="col">จำนวนครั้ง</th><th scope="col">ฐานคำนวณ (ครั้ง)</th><th scope="col">สัดส่วน</th></tr></thead>
+                                    <tbody id="penetrationRows"></tbody>
+                                </table>
+                            </div>
+                            <div id="penetrationProducts" hidden>
+                                <h4 id="penetrationProductsHeading">การใช้ Shell GO+ แยกตามชนิดน้ำมัน</h4>
+                                <div class="overflow-x-auto">
+                                    <table class="coach-table branch-comparison-table" aria-labelledby="penetrationProductsHeading">
+                                        <thead><tr><th scope="col">ช่วงวันที่</th><th scope="col">ชนิดน้ำมัน</th><th scope="col">เข้าเกณฑ์</th><th scope="col">ใช้ GO+</th><th scope="col">ไม่ใช้ GO+</th><th scope="col" id="penetrationUnknownHeading" hidden>ไม่ทราบสถานะ</th><th scope="col">% ใช้ GO+</th></tr></thead>
+                                        <tbody id="penetrationProductRows"></tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </section>
+                    </section>
                     <section id="branchComparison" class="branch-comparison" aria-labelledby="branchComparisonTitle">
                         <div class="branch-comparison-header">
                             <h3 id="branchComparisonTitle" class="font-semibold">เทียบสาขา</h3>
@@ -1079,7 +1231,7 @@
         };
         const employeeRosterRevision = '2026-11-01-roster-2';
         let employeeMapping = normalizeEmployeeDirectory(headquartersEmployees);
-        let charts = { emp: null, hr: null, veh: null, dr: null, growth: null };
+        let charts = { emp: null, hr: null, veh: null, dr: null, growth: null, monthly: null };
         let siteName = "ไม่ระบุสาขา"; 
         let activeEmpFilter = null; 
 
@@ -1141,7 +1293,7 @@
                     byId(tab.getAttribute('aria-controls')).hidden = !isActive;
                 }
                 if (focus) activeTab.focus();
-                if (activeTab.id === 'tab-trends' || activeTab.id === 'tab-overview') {
+                if (activeTab.id === 'tab-trends' || activeTab.id === 'tab-overview' || activeTab.id === 'tab-report') {
                     requestAnimationFrame(() => {
                         for (const chart of Object.values(charts)) chart?.resize?.();
                     });
@@ -1169,7 +1321,12 @@
             initTheme(); 
             renderEmpUI();
             initDashboardTabs();
-            byId('salesReportMode').addEventListener('change', renderSalesReport);
+            for (const id of ['salesReportMode', 'salesReportCurrentMonth', 'salesReportBaseMonth']) {
+                byId(id).addEventListener('change', () => renderSalesReport(id));
+            }
+            for (const control of byId('monthlyAnalysis').querySelectorAll('select, input')) {
+                control.addEventListener('change', () => renderSalesReport(control.id));
+            }
             byId('saveSalesReport').addEventListener('click', () => byId('exportBtn').click());
             for (const id of ['branchComparisonFirst', 'branchComparisonSecond', 'branchComparisonMonth']) {
                 byId(id).addEventListener('change', () => renderBranchComparison(id));
@@ -1532,8 +1689,8 @@
             return date.toISOString().slice(0, 10);
         }
 
-        function appendMessage(parent, message, className = '') {
-            const line = document.createElement('p');
+        function appendMessage(parent, message, className = '', tag = 'p') {
+            const line = document.createElement(tag);
             line.className = className;
             line.textContent = message;
             parent.appendChild(line);
@@ -2166,7 +2323,7 @@
                 const rate = goPlusRate(stats), baseRate = goPlusRate(base);
                 if (rate !== null && baseRate !== null) {
                     const change = document.createElement('span');
-                    change.textContent = reportDelta(roundReport(rate - baseRate, 1), ' จุดเปอร์เซ็นต์');
+                    appendReportChange(change, roundReport(rate - baseRate, 1), ' จุดเปอร์เซ็นต์');
                     header.appendChild(change);
                 }
                 group.appendChild(header);
@@ -2202,6 +2359,33 @@
             return { dates, start: dates[0], end };
         }
 
+        function shiftReportMonth(month, offset) {
+            const date = new Date(month + '-01T00:00:00Z');
+            date.setUTCMonth(date.getUTCMonth() + offset);
+            return date.toISOString().slice(0, 7);
+        }
+
+        function reportMonthEnd(month) {
+            return shiftReportDate(shiftReportMonth(month, 1) + '-01', -1);
+        }
+
+        function reportMonthsByLastDate(rowsByDate) {
+            const months = new Map();
+            for (const date of [...rowsByDate.keys()].sort()) months.set(date.slice(0, 7), date);
+            return months;
+        }
+
+        function reportMonthAnchor(lastDate) {
+            const close = confirmedClose(lastDate.slice(0, 7));
+            return close && close < lastDate ? close : lastDate;
+        }
+
+        function matchedMonthWindows(months, anchor) {
+            const length = Math.min(Number(anchor.slice(-2)), ...months.map(month => Number(reportMonthEnd(month).slice(-2))));
+            const day = '-' + String(length).padStart(2, '0');
+            return months.map(month => reportWindow(month + day, length));
+        }
+
         function salesComparisonWindows(anchor, mode) {
             if (mode === 'DAY') return [reportWindow(anchor, 1), reportWindow(shiftReportDate(anchor, -7), 1)];
             if (mode === 'MONTH') {
@@ -2212,6 +2396,45 @@
                 return [reportWindow(month + lastDay, length), reportWindow(previous.slice(0, 7) + lastDay, length)];
             }
             return [reportWindow(anchor, 7), reportWindow(shiftReportDate(anchor, -7), 7)];
+        }
+
+        function syncReportSelect(select, options, fallback) {
+            const oldValue = select.value;
+            if (select.options.length !== options.length || options.some(([value, label], i) =>
+                select.options[i].value !== value || select.options[i].textContent !== label)) {
+                select.replaceChildren(...options.map(([value, label]) => new Option(label, value)));
+            }
+            const value = options.some(([key]) => key === oldValue) ? oldValue : fallback;
+            select.value = value;
+            return select.value;
+        }
+
+        function resolveSalesComparison(anchor, mode, explicitDay, rowsByDate) {
+            const months = reportMonthsByLastDate(rowsByDate);
+            const available = [...months.keys()].reverse();
+            const currentMonth = anchor.slice(0, 7);
+            const priorMonth = available.find(month => month < currentMonth);
+            byId('salesReportMonthOptions').hidden = mode !== 'CUSTOM_MONTHS';
+            if (mode === 'CUSTOM_MONTHS') {
+                const first = byId('salesReportCurrentMonth');
+                const base = byId('salesReportBaseMonth');
+                const options = available.map(month => [month, reportMonthLabel(month)]);
+                syncReportSelect(first, options, currentMonth);
+                const bases = options.filter(([month]) => month !== first.value);
+                syncReportSelect(base, bases, bases[0]?.[0] || '');
+                const selectedAnchor = reportMonthAnchor(months.get(first.value));
+                if (!base.value) return { windows: [reportWindow(selectedAnchor, Number(selectedAnchor.slice(-2)))], note: 'เพิ่มข้อมูลอีกเดือนเพื่อเลือกเดือนฐาน' };
+                return { windows: matchedMonthWindows([first.value, base.value], selectedAnchor) };
+            }
+            if (mode !== 'AUTO') return { windows: salesComparisonWindows(anchor, mode) };
+            if (explicitDay) return { windows: salesComparisonWindows(anchor, 'DAY') };
+            if (priorMonth) return { windows: matchedMonthWindows([currentMonth, priorMonth], anchor) };
+            const weekly = salesComparisonWindows(anchor, 'WEEK');
+            const complete = windows => windows.every(window => window.dates.every(date => rowsByDate.has(date)));
+            if (complete(weekly)) return { windows: weekly, note: 'แสดงรายสัปดาห์ เพราะมีข้อมูลเพียงเดือนเดียวถึงช่วงที่เลือก' };
+            const daily = salesComparisonWindows(anchor, 'DAY');
+            if (complete(daily)) return { windows: daily, note: 'แสดงเทียบรายวัน เพราะข้อมูลรายสัปดาห์ยังไม่ครบ' };
+            return { windows: [weekly[0]], note: 'ข้อมูลช่วงก่อนยังไม่ครบสำหรับการเปรียบเทียบ' };
         }
 
         function groupReportDates(rows) {
@@ -2244,7 +2467,7 @@
         }
 
         function summarizeFuelPayments(rows, vehicles = stationKpiVehicles) {
-            const summary = { retail: 0, fleet: 0, retailVPower: 0, retailDeliveries: 0, mix: null,
+            const summary = { retail: 0, fleet: 0, retailVPower: 0, retailDeliveries: 0, fleetVPower: 0, fleetDeliveries: 0, mix: null,
                 unknownRows: 0, hasData: false, vehicles: Object.create(null) };
             let knownFuelRows = 0;
             let knownSelectedRows = 0;
@@ -2264,6 +2487,8 @@
                 knownSelectedRows++;
                 if (method === 'FLEET') {
                     summary.fleet += volume;
+                    summary.fleetDeliveries += deliveries;
+                    if (isVPower(row)) summary.fleetVPower += volume;
                 } else {
                     summary.retail += volume;
                     summary.retailDeliveries += deliveries;
@@ -2291,6 +2516,8 @@
         }
 
         const reportDateFormat = new Intl.DateTimeFormat('th-TH', { day: 'numeric', month: 'short', year: 'numeric', timeZone: 'UTC' });
+        const reportMonthFormat = new Intl.DateTimeFormat('th-TH', { month: 'short', year: 'numeric', timeZone: 'UTC' });
+        const reportMonthLabel = month => reportMonthFormat.format(new Date(month + '-01T00:00:00Z'));
         const reportDateLabel = date => reportDateFormat.format(new Date(date + 'T00:00:00Z'));
         const reportWindowLabel = window => window.start === window.end ? reportDateLabel(window.end)
             : reportDateLabel(window.start) + ' – ' + reportDateLabel(window.end);
@@ -2311,27 +2538,58 @@
             return (rounded > 0 ? '+' : '') + formatNumber(rounded) + suffix;
         }
 
-        function renderReportMetric(container, { label, value, base, unit = '', note = '', id, primary = false }) {
+        function compactReportWindow(window, showYear = false) {
+            if (showYear || window.start.slice(0, 7) !== window.end.slice(0, 7)) return reportWindowLabel(window);
+            const end = reportDateLabel(window.end).replace(/ \d{4}$/, '');
+            return window.start === window.end ? end : Number(window.start.slice(-2)) + '–' + end;
+        }
+
+        const reportChangeColor = value => value > 0 ? 'goal-met' : value < 0 ? 'goal-gap' : 'report-context';
+
+        function appendReportChange(parent, value, suffix, context = '') {
+            const change = document.createElement('span');
+            change.className = 'report-change ' + reportChangeColor(value);
+            const arrow = value > 0 ? '▲ ' : value < 0 ? '▼ ' : '';
+            change.textContent = value === null ? '—' : arrow + reportDelta(value, suffix).replace(/^-/, '−');
+            parent.append(change);
+            if (context) appendMessage(parent, context, 'report-context', 'span');
+        }
+
+        function appendReportReading(card, text, period, id, className = '') {
+            const reading = document.createElement('div');
+            reading.className = 'metric-reading';
+            const value = document.createElement('strong');
+            value.className = className;
+            if (id) value.id = id;
+            value.textContent = text;
+            reading.append(value);
+            appendMessage(reading, period, 'metric-period', 'span');
+            card.append(reading);
+        }
+
+        function renderReportMetric(container, { label, value, base, unit = '', note = '', id, primary = false, periods }) {
             const card = document.createElement('div');
             card.className = primary ? 'sales-report-metric is-primary' : 'sales-report-metric';
             appendMessage(card, label);
-            const metric = document.createElement('strong');
-            if (id) metric.id = id;
-            metric.textContent = value === null ? '–' : formatNumber(value) + unit;
-            card.appendChild(metric);
-            if (note) appendMessage(card, note);
+            appendReportReading(card, value === null ? '–' : formatNumber(value) + unit, periods.current, id);
+            const change = document.createElement('p');
+            change.className = 'report-change-line';
             if (value !== null && base !== null) {
-                const gap = roundReport(value - base);
-                const delta = unit === '%' ? reportDelta(gap, ' จุดเปอร์เซ็นต์')
-                    : base > 0 ? reportDelta((value - base) / base * 100, '% จากช่วงก่อน') : reportDelta(gap, ' จากช่วงก่อน');
-                appendMessage(card, delta, gap > 0 ? 'goal-met' : gap < 0 ? 'goal-gap' : '');
+                const gap = value - base;
+                const percent = unit !== '%' && base > 0;
+                appendReportChange(change, roundReport(percent ? gap / base * 100 : gap),
+                    unit === '%' ? ' จุดเปอร์เซ็นต์' : percent ? '%' : '', ' เทียบ ' + periods.previous);
+            } else {
+                appendReportChange(change, null, '', ' ข้อมูลไม่พอสำหรับเทียบ');
             }
+            card.append(change);
+            if (note) appendMessage(card, note, 'metric-detail');
             container.appendChild(card);
             return card;
         }
 
 
-        function renderLoyaltyMetric(container, currentRows, previousRows, comparable) {
+        function renderLoyaltyMetric(container, currentRows, previousRows, comparable, periods) {
             const card = document.createElement('div');
             card.className = 'sales-report-metric';
             appendMessage(card, 'อัตราใช้ Shell GO+');
@@ -2339,24 +2597,21 @@
             const { total: previous } = summarizeGoPlus(previousRows);
             const rate = goPlusRate(current);
             const baseRate = goPlusRate(previous);
-            const rateDisplay = document.createElement('strong');
-            rateDisplay.className = 'sales-loyalty-rate';
-            rateDisplay.textContent = goPlusRateText(current);
-            card.appendChild(rateDisplay);
+            appendReportReading(card, goPlusRateText(current), periods.current, null, 'sales-loyalty-rate');
             const fleetOnly = current.total > 0 && current.fleet === current.total;
             const canCompare = comparable && baseRate !== null && rate !== null &&
                 ![current, previous].some(stats => stats.unknownPayment || stats.unknownLoyalty);
+            const changeLine = document.createElement('p');
+            changeLine.className = 'report-change-line';
+            appendReportChange(changeLine, canCompare ? roundReport(rate - baseRate, 1) : null, ' จุดเปอร์เซ็นต์',
+                canCompare ? ' เทียบ ' + periods.previous + ' (' + goPlusRateText(previous) + ')' : ' ข้อมูลไม่พอสำหรับเทียบ');
+            card.append(changeLine);
+            if (rate !== null) appendMessage(card, goPlusCounts(current), 'metric-detail');
+            else if (fleetOnly) appendMessage(card, 'ไม่มีครั้งเติมที่เข้าเกณฑ์', 'metric-detail');
             if (canCompare) {
-                const rateChange = roundReport(rate - baseRate, 1);
-                const direction = rateChange > 0 ? ' goal-met' : rateChange < 0 ? ' goal-gap' : '';
-                appendMessage(card, 'อัตราช่วงก่อน ' + goPlusRateText(previous) + ' · ' + reportDelta(rateChange, ' จุดเปอร์เซ็นต์'),
-                    'sales-loyalty-rate-change' + direction);
-            }
-            if (rate !== null) appendMessage(card, goPlusCounts(current));
-            else if (fleetOnly) appendMessage(card, 'ไม่มีครั้งเติมที่เข้าเกณฑ์');
-            if (canCompare) {
-                const change = current.used - previous.used;
-                appendMessage(card, 'ช่วงก่อน ' + goPlusCountText(previous.used) + ' ครั้ง · ' + reportDelta(change, ' ครั้ง'));
+                const countChange = document.createElement('p');
+                appendReportChange(countChange, current.used - previous.used, ' ครั้ง', ' เทียบ ' + periods.previous + ' (' + goPlusCountText(previous.used) + ' ครั้ง)');
+                card.append(countChange);
             }
             const note = byId('salesLoyaltyNote');
             const status = goPlusDataNote(current);
@@ -2529,19 +2784,605 @@
             status.textContent = 'กระทบยอดช่วงปัจจุบัน · ' + reconciliationSummary(reconciliationDifferences(attendant, hourly));
         }
 
-        function renderSalesReport() {
+        const monthlyMetrics = {
+            liters: ['ยอดเติม (ลิตร)', 2],
+            litersPerDay: ['ลิตรเฉลี่ยต่อวัน', 2],
+            deliveries: ['จำนวนครั้งเติม', 0],
+            deliveriesPerDay: ['ครั้งเติมเฉลี่ยต่อวัน', 2],
+            litersPerDelivery: ['ลิตรต่อครั้ง', 2],
+            mix: ['V-Power Mix', 2, '%'],
+            goPlus: ['อัตราใช้ Shell GO+', 1, '%']
+        };
+
+        function monthlyComparisonSelection(months, changedControl) {
+            const controls = ['monthlyFirst', 'monthlySecond', 'monthlyThird'].map(byId);
+            const latest = months.slice(-3);
+            const first = controls[0];
+            if (first.dataset.site !== byId('siteFilter').value) {
+                first.dataset.site = byId('siteFilter').value;
+                delete first.dataset.custom;
+            }
+            if (controls.some(select => changedControl === select.id)) first.dataset.custom = 'true';
+            const selected = [];
+            for (const [index, select] of controls.entries()) {
+                const old = select.value;
+                if (!first.dataset.custom) {
+                    selected.push(latest[index] || '');
+                } else if (index === 2 && old === '') {
+                    selected.push('');
+                } else if (months.includes(old) && !selected.includes(old)) {
+                    selected.push(old);
+                } else {
+                    selected.push(latest.find(month => !selected.includes(month)) || '');
+                }
+            }
+            for (const [index, select] of controls.entries()) {
+                const options = months.filter(month => !selected.some((value, slot) => value === month && slot !== index))
+                    .map(month => [month, reportMonthLabel(month)]);
+                if (index === 2) options.unshift(['', 'เทียบ 2 เดือน']);
+                syncReportSelect(select, options, selected[index]);
+                select.value = selected[index];
+                select.disabled = !options.length;
+            }
+            return selected.filter(Boolean).sort();
+        }
+
+        function summarizeMonthlyWindow(month, window, rowsByDate, vehicles, employee, payment, { includePenetration = false, completeDays } = {}) {
+            const monthEnd = reportMonthEnd(month);
+            const missing = window.dates.filter(date => !rowsByDate.has(date));
+            const found = window.dates.length - missing.length;
+            const closed = confirmedClose(month) === monthEnd;
+            const rows = window.dates.flatMap(date => rowsByDate.get(date) || []);
+            const scoped = employee ? rows.filter(row => row.Attendant === employee) : rows;
+            const totals = summarizeFuelPayments(scoped, vehicles);
+            const stationTotals = employee ? summarizeFuelPayments(rows, vehicles) : totals;
+            const fleet = payment === 'FLEET';
+            // A day off is zero for a staff code when the station coverage and payment data are available.
+            const hasData = found > 0 && stationTotals.hasData;
+            const liters = hasData ? (fleet ? totals.fleet : totals.retail) : null;
+            const deliveries = hasData ? (fleet ? totals.fleetDeliveries : totals.retailDeliveries) : null;
+            const selectedRows = scoped.filter(row => vehicles.has(row['Vehicle Code']));
+            const membership = fleet ? null : summarizeGoPlus(selectedRows, includePenetration);
+            const loyalty = membership?.total ?? null;
+            const vpower = fleet ? totals.fleetVPower : totals.retailVPower;
+            const averageDates = completeDays
+                ? window.dates.filter(date => rowsByDate.has(date) && completeDays.has(date)) : [];
+            const averageRows = completeDays ? scoped.filter(row => completeDays.has(rowDate(row))) : [];
+            const averageTotals = averageDates.length ? summarizeFuelPayments(averageRows, vehicles) : null;
+            const daysUsed = averageDates.length;
+            return {
+                month, window, missing, found, closed, partial: window.end < monthEnd,
+                qualified: hasData && !missing.length && !totals.unknownRows,
+                goPlusQualified: loyalty && !loyalty.unknownPayment && !loyalty.unknownLoyalty,
+                loyalty, daysUsed,
+                penetration: includePenetration ? countPenetration(selectedRows, payment, membership) : null,
+                values: {
+                    liters, deliveries,
+                    litersPerDay: averageTotals && hasData && !averageTotals.unknownRows ? (fleet ? averageTotals.fleet : averageTotals.retail) / daysUsed : null,
+                    deliveriesPerDay: averageTotals && hasData && !averageTotals.unknownRows ? (fleet ? averageTotals.fleetDeliveries : averageTotals.retailDeliveries) / daysUsed : null,
+                    litersPerDelivery: deliveries > 0 ? liters / deliveries : null,
+                    mix: liters > 0 ? 100 * vpower / liters : null,
+                    goPlus: loyalty ? goPlusRate(loyalty) : null
+                }
+            };
+        }
+
+        function monthlyValueText(value, key) {
+            const [, digits, unit = ''] = monthlyMetrics[key];
+            return value === null ? '—' : formatNumber(value, digits) + unit;
+        }
+
+        function countPenetration(rows, payment, membership) {
+            const counts = { all: 0, vpd: 0, vpg: 0, diesel: 0, gasohol: 0, unknownPayment: 0 };
+            for (const row of rows) {
+                if (!isFuel(row)) continue;
+                const method = staffPaymentCode(row.MOP);
+                const count = numberField(row, 'Delivery Count');
+                if (!method) counts.unknownPayment += count;
+                if (method !== payment) continue;
+                const code = String(row['Product Code'] || '').trim();
+                const name = String(row['Product Name'] || '');
+                const diesel = code === '4020' || code === '4041' || /diesel|ดีเซล/i.test(name);
+                const gasohol = code === '4011' || code === '4033'
+                    || /gasohol|gsh|แก๊สโซฮอล์|\be\s*(20|85)\b/i.test(name) || /^(91|95)$/.test(name.trim());
+                counts.all += count;
+                if (diesel) counts.diesel += count;
+                if (gasohol) counts.gasohol += count;
+                if (code === '4020' || (isVPower(row) && diesel)) counts.vpd += count;
+                else if (code === '4011' || (isVPower(row) && gasohol && /95/.test(name))) counts.vpg += count;
+            }
+            return { ...counts, membership };
+        }
+
+        const penetrationMetrics = {
+            goPlus: 'Shell GO+', svp: 'SVP รวม', vpd: 'VPD · V-Power Diesel', vpg: 'VPG · V-Power Gasohol 95'
+        };
+
+        function penetrationSeries(period, metric, family) {
+            const counts = period.penetration;
+            if (metric === 'goPlus') {
+                const loyalty = counts.membership.total;
+                return { count: loyalty.used, basis: loyalty.eligible,
+                    rate: goPlusRate(loyalty), segments: [loyalty.used, loyalty.unused, loyalty.unknownLoyalty] };
+            }
+            if (metric === 'svp') return { count: counts.vpd + counts.vpg, basis: counts.all, segments: [counts.vpd, counts.vpg] };
+            const count = counts[metric];
+            const basis = family ? counts[metric === 'vpd' ? 'diesel' : 'gasohol'] : counts.all;
+            return { count, basis, segments: [count, basis - count] };
+        }
+
+        function renderPenetrationScatter(points, basisLabel, base) {
+            const wrap = byId('penetrationScatterWrap');
+            const legend = byId('penetrationLegend');
+            const detail = byId('penetrationPointDetail');
+            const colors = points.length === 2 ? ['#4285db', '#d59b08'] : ['#4285db', '#9862ce', '#d59b08'];
+            const plotted = points.map((point, index) => ({ ...point, color: colors[index] }))
+                .filter(point => point.rate !== null);
+            const hasReference = base?.rate != null;
+            const referenceLabel = hasReference
+                ? 'ฐานเทียบ ' + base.label + ' · ' + formatNumber(base.rate, 2) + '% · ' + formatNumber(base.count, 0) + ' ครั้ง'
+                : 'เส้นฐาน ' + (base?.label ?? '') + ' · ' + (base?.available ? 'คำนวณสัดส่วนไม่ได้' : 'ข้อมูลเดือนฐานไม่พอ');
+            byId('penetrationReference').textContent = referenceLabel;
+            byId('penetrationReferenceKey').hidden = !hasReference;
+            wrap.hidden = !plotted.length || typeof Chart === 'undefined';
+            legend.replaceChildren();
+            detail.replaceChildren();
+            if (!plotted.length && !hasReference) appendMessage(byId('penetrationSummary'), referenceLabel, 'report-context');
+            if (wrap.hidden) return;
+
+            const buttons = [];
+            function showMonth(index) {
+                const point = plotted[index];
+                buttons.forEach((button, slot) => button.setAttribute('aria-pressed', String(slot === index)));
+                detail.replaceChildren();
+                appendMessage(detail, compactReportWindow(point.period.window, true), '', 'strong');
+                appendMessage(detail, formatNumber(point.rate, 2) + '% · ' + formatNumber(point.count, 0) +
+                    ' จาก ' + formatNumber(point.basis, 0) + ' ครั้ง', '', 'span');
+            }
+            for (const [index, point] of plotted.entries()) {
+                const item = document.createElement('li');
+                const button = document.createElement('button');
+                button.type = 'button';
+                const dot = document.createElement('i');
+                dot.style.backgroundColor = point.color;
+                dot.setAttribute('aria-hidden', 'true');
+                button.append(dot, point.label);
+                button.addEventListener('click', () => showMonth(index));
+                buttons.push(button);
+                item.append(button);
+                legend.append(item);
+            }
+            showMonth(plotted.length - 1);
+
+            const rates = plotted.map(point => point.rate);
+            const low = Math.min(...rates), high = Math.max(...rates);
+            const padding = Math.max(1, (high - low) * .15);
+            const themeColor = name => ({ chart }) => getComputedStyle(chart.canvas).getPropertyValue(name).trim();
+            const gridColor = themeColor('--line');
+            const labelColor = themeColor('--muted');
+            const referenceLines = {
+                id: 'penetrationReferenceLines',
+                beforeDatasetsDraw(chart) {
+                    const { ctx, chartArea, scales } = chart;
+                    const { left, right, top, bottom } = chartArea;
+                    const x = scales.x.getPixelForValue(base.rate);
+                    const y = scales.y.getPixelForValue(base.count);
+                    ctx.save();
+                    ctx.strokeStyle = labelColor({ chart });
+                    ctx.lineWidth = 1.5;
+                    ctx.setLineDash([6, 4]);
+                    ctx.beginPath();
+                    ctx.moveTo(x, top);
+                    ctx.lineTo(x, bottom);
+                    ctx.moveTo(left, y);
+                    ctx.lineTo(right, y);
+                    ctx.stroke();
+                    ctx.restore();
+                }
+            };
+            charts.penetrationScatter = new Chart(byId('penetrationScatterChart').getContext('2d'), {
+                type: 'scatter',
+                plugins: hasReference ? [referenceLines] : [],
+                data: { datasets: [{
+                    data: plotted.map(point => ({ x: point.rate, y: point.count })),
+                    pointBackgroundColor: plotted.map(point => point.color),
+                    pointBorderColor: '#fff', pointBorderWidth: 1.5, pointRadius: 7, pointHoverRadius: 8, pointHitRadius: 15
+                }] },
+                options: {
+                    responsive: true, maintainAspectRatio: false, animation: false,
+                    interaction: { mode: 'nearest', intersect: true },
+                    onClick: (_event, elements) => {
+                        if (elements.length) showMonth(elements[0].index);
+                    },
+                    scales: {
+                        x: {
+                            min: Math.max(0, Math.floor(low - padding)), max: Math.min(100, Math.ceil(high + padding)),
+                            grid: { color: gridColor },
+                            title: { display: true, color: labelColor, text: 'Penetration · สัดส่วน (%)' },
+                            ticks: { color: labelColor, maxTicksLimit: 7, callback: value => value + '%' }
+                        },
+                        y: {
+                            beginAtZero: true, grace: '12%',
+                            grid: { color: gridColor },
+                            title: { display: true, color: labelColor, text: 'Transactions · จำนวนครั้งเติม' },
+                            ticks: { color: labelColor, precision: 0, maxTicksLimit: 7, callback: value => formatNumber(value, 0) }
+                        }
+                    },
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: { callbacks: {
+                            title: ([item]) => compactReportWindow(plotted[item.dataIndex].period.window, true),
+                            label: item => formatNumber(item.parsed.x, 2) + '% · ' + formatNumber(item.parsed.y, 0) + ' ครั้ง',
+                            footer: ([item]) => 'ฐาน ' + formatNumber(plotted[item.dataIndex].basis, 0) + ' ครั้ง · ' + basisLabel
+                        } }
+                    }
+                }
+            });
+        }
+
+        function renderPenetrationTimeline(points, metric, basisLabel) {
+            const groups = {
+                goPlus: [['ใช้ GO+', '#d79a09'], ['ไม่ใช้ GO+', '#5680a2'], ['ไม่ทราบสถานะ', '#8b728e']],
+                svp: [['VPD', '#8757bd'], ['VPG', '#d58020']],
+                vpd: [['VPD', '#8757bd'], ['ครั้งเติมอื่นในฐาน', '#5680a2']],
+                vpg: [['VPG', '#d58020'], ['ครั้งเติมอื่นในฐาน', '#5680a2']]
+            };
+            const labels = points.map(point => point.label);
+            const percentage = value => formatNumber(value, 2) + '%';
+            const bars = groups[metric].map(([label, backgroundColor], index) => ({
+                label, backgroundColor, data: points.map(point => point.available ? point.segments[index] : null),
+                maxBarThickness: 92
+            })).filter(group => group.label !== 'ไม่ทราบสถานะ' || group.data.some(value => value > 0));
+            const visible = points.some(point => point.available) && typeof Chart !== 'undefined';
+            byId('penetrationTimeline').hidden = !visible;
+            byId('penetrationCountWrap').hidden = !visible;
+            byId('penetrationRateWrap').hidden = !visible || !points.some(point => point.rate !== null);
+            if (!visible) return;
+            for (const type of ['Rate', 'Count']) {
+                if (byId('penetration' + type + 'Wrap').hidden) continue;
+                const line = type === 'Rate';
+                const valueLabels = {
+                    id: 'penetrationValueLabels',
+                    afterDatasetsDraw(chart) {
+                        const { ctx, scales } = chart;
+                        ctx.save();
+                        ctx.font = '600 12px Prompt, sans-serif';
+                        ctx.textAlign = 'center';
+                        ctx.fillStyle = getComputedStyle(chart.canvas).color;
+                        for (const [index, point] of points.entries()) {
+                            const value = line ? point.rate : metric === 'svp' ? point.count : point.basis;
+                            if (!point.available || value === null) continue;
+                            ctx.fillText(line ? percentage(value) : formatNumber(value, 0),
+                                scales.x.getPixelForValue(index), scales.y.getPixelForValue(value) - 9);
+                        }
+                        ctx.restore();
+                    }
+                };
+                charts['penetration' + type] = new Chart(byId('penetration' + type + 'Chart').getContext('2d'), {
+                    type: line ? 'line' : 'bar',
+                    data: { labels, datasets: line ? [{
+                        label: penetrationMetrics[metric], data: points.map(point => point.rate),
+                        borderColor: groups[metric][0][1], backgroundColor: groups[metric][0][1], pointRadius: 5, tension: 0
+                    }] : bars },
+                    options: {
+                        responsive: true, maintainAspectRatio: false, animation: false, spanGaps: false,
+                        layout: { padding: { top: 14, right: 25, left: 15 } },
+                        scales: { x: { stacked: !line, offset: true, grid: { display: false } },
+                            y: { stacked: !line, beginAtZero: true, grace: '12%',
+                                afterFit: axis => { axis.width = 54; },
+                                ticks: line ? { callback: value => value + '%' } : { precision: 0 } } },
+                        plugins: { legend: { display: !line },
+                            tooltip: { callbacks: { footer: items => {
+                                const point = points[items[0].dataIndex];
+                                return formatNumber(point.count, 0) + ' จาก ' + formatNumber(point.basis, 0) + ' ครั้ง · ' + basisLabel;
+                            } } } }
+                    },
+                    plugins: [valueLabels]
+                });
+            }
+        }
+
+        function renderPenetration(periods) {
+            const metric = byId('penetrationMetric').value;
+            const family = ['vpd', 'vpg'].includes(metric) && byId('penetrationBasis').value === 'family';
+            const basisLabel = metric === 'goPlus' ? 'ครั้งเติม B2C ที่เข้าเกณฑ์'
+                : family ? 'ครั้งเติม' + (metric === 'vpd' ? 'ดีเซล' : 'แก๊สโซฮอล์') + ' B2C' : 'ครั้งเติม B2C ทั้งหมด';
+            const scatter = byId('penetrationChartMode').value === 'scatter';
+            const body = byId('penetrationRows');
+            const productRows = byId('penetrationProductRows');
+            const summary = byId('penetrationSummary');
+            body.replaceChildren();
+            productRows.replaceChildren();
+            summary.replaceChildren();
+            byId('penetrationPanel').hidden = false;
+            byId('penetrationProducts').hidden = true;
+            byId('penetrationScatterWrap').hidden = true;
+            byId('penetrationTimeline').hidden = true;
+            byId('penetrationTitle').textContent = penetrationMetrics[metric] + ' · สัดส่วนและจำนวนครั้งเติม';
+            byId('penetrationBasisNote').textContent = 'ฐานคำนวณสัดส่วน · ' + basisLabel;
+            byId('penetrationRateHeading').textContent = penetrationMetrics[metric] + ' · สัดส่วนต่อ' + basisLabel + ' (%)';
+            byId('penetrationCountHeading').textContent = metric === 'svp' ? 'จำนวนครั้งเติม SVP แยก VPD และ VPG' : 'จำนวนครั้งเติม · ' + basisLabel;
+            const points = periods.map(period => {
+                const data = penetrationSeries(period, metric, family);
+                const available = period.qualified;
+                return { ...data, available, label: reportMonthLabel(period.month), period,
+                    rate: available && data.basis > 0 ? (metric === 'goPlus' ? data.rate : 100 * data.count / data.basis) : null };
+            });
+            for (const point of points) {
+                const { window, found, missing } = point.period;
+                const coverage = missing.length ? ' · พบข้อมูล ' + found + '/' + window.dates.length + ' วัน' : '';
+                const periodLabel = compactReportWindow(window, true) + coverage;
+                const number = value => point.available ? formatNumber(value, 0) : '—';
+                appendCells(body, [periodLabel, number(point.count), number(point.basis),
+                    point.rate === null ? '—' : formatNumber(point.rate, 2) + '%']);
+            }
+            const current = points.at(-1);
+            const base = points.at(-2);
+            if (base?.available && current.available) {
+                appendMessage(summary, compactReportWindow(current.period.window, true) + ' เทียบ ' + compactReportWindow(base.period.window, true), '', 'strong');
+                appendMessage(summary, ' · ' + basisLabel + ' ', '', 'span');
+                appendReportChange(summary, current.basis - base.basis, ' ครั้ง');
+                appendMessage(summary, ' · ' + penetrationMetrics[metric] + ' ', '', 'span');
+                appendReportChange(summary, current.count - base.count, ' ครั้ง');
+                appendMessage(summary, ' · สัดส่วน ', '', 'span');
+                appendReportChange(summary, current.rate === null || base.rate === null ? null : roundReport(current.rate - base.rate),
+                    ' จุดเปอร์เซ็นต์');
+            } else {
+                summary.textContent = 'ผลต่าง · ข้อมูลไม่พอสำหรับเทียบ';
+            }
+            const unknownPayment = periods.reduce((total, period) => total + period.penetration.unknownPayment, 0);
+            if (unknownPayment) appendMessage(summary, 'ไม่ทราบวิธีชำระ ' + formatNumber(unknownPayment, 0) + ' ครั้งในช่วงที่เลือก', 'report-context');
+            if (metric === 'goPlus') {
+                const products = points.filter(point => point.available)
+                    .flatMap(point => [...point.period.penetration.membership.products.values()].map(product => ({ product, point })));
+                const showUnknown = products.some(({ product }) => product.unknownLoyalty > 0);
+                byId('penetrationUnknownHeading').hidden = !showUnknown;
+                byId('penetrationProducts').hidden = !products.length;
+                for (const { product, point } of products) {
+                    appendCells(productRows, [compactReportWindow(point.period.window, true), product.label,
+                        formatNumber(product.eligible, 0), formatNumber(product.used, 0), formatNumber(product.unused, 0),
+                        ...(showUnknown ? [formatNumber(product.unknownLoyalty, 0)] : []), goPlusRateText(product)]);
+                }
+            }
+            if (scatter) renderPenetrationScatter(points, basisLabel, base);
+            else renderPenetrationTimeline(points, metric, basisLabel);
+        }
+
+        function monthlyDelta(current, previous, key) {
+            const value = current.values[key], base = previous?.values[key];
+            if (!current.qualified || !previous?.qualified || value === null || base === null) return '';
+            if (key === 'goPlus' && (!current.goPlusQualified || !previous.goPlusQualified)) return '';
+            const [, digits, unit] = monthlyMetrics[key];
+            const difference = roundReport(value - base, digits);
+            const percent = base ? reportDelta(roundReport(100 * (value - base) / base), '%') : '—';
+            return { difference, suffix: unit ? ' จุดเปอร์เซ็นต์' : ' (' + percent + ')',
+                context: ' เทียบ ' + compactReportWindow(previous.window, current.month.slice(0, 4) !== previous.month.slice(0, 4)) };
+        }
+
+        function renderMonthlyTable(periods, trend, metric, payment, closedOnly) {
+            const head = byId('monthlyTableHead');
+            const body = byId('monthlyTableBody');
+            head.replaceChildren();
+            body.replaceChildren();
+            const header = head.insertRow();
+            const addHeading = label => {
+                const th = document.createElement('th');
+                th.scope = 'col';
+                th.textContent = label;
+                header.append(th);
+                return th;
+            };
+            const coverage = period => {
+                if (!period.found) return 'ไม่มีข้อมูล';
+                const days = period.found + '/' + period.window.dates.length + ' วัน';
+                const missing = period.missing.length ? ' · ขาด ' + reportMissingDateLabels(period.missing) : '';
+                return reportWindowLabel(period.window) + ' · ' + days + missing
+                    + (closedOnly && !period.closed ? ' · รอปิดยอด' : '');
+            };
+            const goPlusText = period => payment === 'FLEET' ? 'ไม่เข้าเกณฑ์' : monthlyValueText(period.values.goPlus, 'goPlus');
+            if (trend) {
+                for (const label of ['เดือน', 'ช่วงข้อมูล', monthlyMetrics[metric][0]]) addHeading(label);
+                for (const period of periods) {
+                    const available = period.qualified && (!closedOnly || period.closed);
+                    const row = appendCells(body, [reportMonthLabel(period.month), coverage(period),
+                        available ? (metric === 'goPlus' ? goPlusText(period) : monthlyValueText(period.values[metric], metric)) : '—']);
+                    if (metric.endsWith('PerDay')) appendMessage(row.cells[2], 'ใช้ ' + period.daysUsed + ' วัน', 'section-note', 'small');
+                }
+                return;
+            }
+            addHeading('ตัวชี้วัด');
+            for (const period of periods) appendMessage(addHeading(reportMonthLabel(period.month)), coverage(period), 'section-note', 'small');
+            for (const [key, [label]] of Object.entries(monthlyMetrics)) {
+                const row = body.insertRow();
+                const heading = document.createElement('th');
+                heading.scope = 'row';
+                heading.textContent = label;
+                row.append(heading);
+                for (const [index, period] of periods.entries()) {
+                    const cell = row.insertCell();
+                    cell.textContent = key === 'goPlus' ? goPlusText(period) : monthlyValueText(period.values[key], key);
+                    if (key === 'goPlus' && period.loyalty?.eligible) {
+                        appendMessage(cell, goPlusCounts(period.loyalty), 'section-note', 'small');
+                    }
+                    if (key.endsWith('PerDay')) appendMessage(cell, 'ใช้ ' + period.daysUsed + ' วัน', 'section-note', 'small');
+                    const delta = monthlyDelta(period, periods[index - 1], key);
+                    if (delta) {
+                        const line = document.createElement('small');
+                        appendReportChange(line, delta.difference, delta.suffix, delta.context);
+                        cell.append(line);
+                    }
+                }
+            }
+        }
+
+        function monthlyChartValue(period, metric, closedOnly) {
+            if (!period.qualified || (closedOnly && !period.closed) || (metric === 'goPlus' && !period.goPlusQualified)) return null;
+            return period.values[metric];
+        }
+
+        function renderMonthlyChart(periods, trend, metric, closedOnly) {
+            const canvas = byId('monthlyChart');
+            const values = periods.map(period => monthlyChartValue(period, metric, closedOnly));
+            const label = monthlyMetrics[metric][0];
+            const rolling = trend && byId('monthlyRolling').checked;
+            const averages = rolling ? periods.map((period, index) => {
+                const group = periods.slice(Math.max(0, index - 2), index + 1);
+                const recent = values.slice(Math.max(0, index - 2), index + 1);
+                return group.length === 3 && group.every(month => month.closed && !month.partial) && recent.every(value => value !== null)
+                    ? recent.reduce((sum, value) => sum + value, 0) / 3 : null;
+            }) : [];
+            byId('monthlyChartWrap').hidden = !values.some(value => value !== null) || typeof Chart === 'undefined';
+            if (byId('monthlyChartWrap').hidden) return;
+            const color = '#cc9800';
+            const datasets = [{
+                label, data: values, maxBarThickness: 112, borderRadius: 6, borderWidth: 2,
+                borderColor: color, backgroundColor: trend ? color : '#ffcb05',
+                pointBackgroundColor: periods.map(period => period.partial ? 'transparent' : color),
+                pointBorderWidth: 2, pointRadius: 5
+            }];
+            if (averages.some(value => value !== null)) {
+                datasets.push({ label: 'ค่าเฉลี่ยย้อนหลัง 3 เดือน', data: averages, borderColor: '#3b82f6',
+                    backgroundColor: '#3b82f6', borderDash: [5, 4], pointRadius: 3 });
+            }
+            canvas.setAttribute('aria-label', label);
+            charts.monthly = new Chart(canvas.getContext('2d'), {
+                type: trend ? 'line' : 'bar',
+                data: {
+                    labels: periods.map(period => trend && period.partial
+                        ? [reportMonthLabel(period.month), 'ถึงวันที่ ' + Number(period.window.end.slice(-2))]
+                        : reportMonthLabel(period.month)),
+                    datasets
+                },
+                options: {
+                    responsive: true, maintainAspectRatio: false, animation: false, spanGaps: false,
+                    plugins: {
+                        legend: { display: datasets.length > 1 },
+                        tooltip: { callbacks: { label: context => context.dataset.label + ' · ' + monthlyValueText(context.parsed.y, metric) } }
+                    },
+                    scales: { x: { grid: { display: false }, ticks: { maxTicksLimit: 12 } }, y: { beginAtZero: !trend } }
+                }
+            });
+        }
+
+        function renderMonthlyAnalysis(rowsByDate, vehicles, changedControl, completeDays = completeHourlyDates(rawHourly)) {
+            charts.monthly?.destroy();
+            charts.monthly = null;
+            for (const key of ['penetrationScatter', 'penetrationRate', 'penetrationCount']) {
+                charts[key]?.destroy();
+                charts[key] = null;
+            }
+            byId('penetrationPanel').hidden = true;
+            byId('monthlyChartWrap').hidden = true;
+            byId('monthlyTableWrap').hidden = true;
+            const scope = byId('monthlyScope');
+            const monthsByDate = reportMonthsByLastDate(rowsByDate);
+            const months = [...monthsByDate.keys()];
+            const trend = byId('monthlyView').value === 'trend';
+            const penetration = byId('monthlyView').value === 'penetration';
+            const productBasis = ['vpd', 'vpg'].includes(byId('penetrationMetric').value);
+            byId('monthlyMetricControl').hidden = penetration;
+            byId('monthlyPaymentControl').hidden = penetration;
+            byId('penetrationMetricControl').hidden = !penetration;
+            byId('penetrationBasisControl').hidden = !penetration || !productBasis;
+            byId('monthlyControls').hidden = !months.length;
+            byId('monthlyCompareControls').hidden = trend;
+            byId('monthlyTrendControls').hidden = !trend;
+            if (!months.length) {
+                scope.textContent = 'นำเข้าไฟล์ CVGO Attendant เพื่อดูยอดรายเดือนของสาขาที่เลือก';
+                return;
+            }
+            if (changedControl === 'monthlyView') byId('monthlyMetric').value = trend ? 'litersPerDay' : 'liters';
+            const metric = byId('monthlyMetric').value;
+            const payment = penetration ? 'RETAIL' : byId('monthlyPayment').value;
+            const windowOptions = { includePenetration: penetration, completeDays: penetration ? null : completeDays };
+            const ids = new Set();
+            for (const rows of rowsByDate.values()) {
+                for (const row of rows) if (row.Attendant && isFuel(row)) ids.add(row.Attendant);
+            }
+            const employee = syncReportSelect(byId('monthlyEmployee'),
+                [['', 'ทั้งสถานี'], ...[...ids].sort((a, b) => a.localeCompare(b, 'th', { numeric: true }))
+                    .map(id => [id, 'รหัส ' + id + ' · ' + employeeLabel(id)])], '');
+            const selection = monthlyComparisonSelection(months, changedControl);
+            if (!trend && selection.length < 2) {
+                scope.textContent = 'เพิ่มไฟล์ Attendant อีกอย่างน้อย 1 เดือนเพื่อเปรียบเทียบ';
+                return;
+            }
+            const monthLabel = trend ? 'แนวโน้มรายเดือน' : 'เทียบเดือนที่เลือก';
+            const paymentLabel = payment === 'FLEET' ? 'Fleet Card' : 'B2C';
+            const person = employee ? 'รหัสพนักงาน ' + employee : 'ทั้งสถานี';
+            const notes = [monthLabel, person, paymentLabel, [...vehicles].map(code => kpiVehicleNames[code]).join(', ') || 'เลือกประเภทรถด้านบน',
+                penetration ? penetrationMetrics[byId('penetrationMetric').value] : monthlyMetrics[metric][0]];
+            const closedOnly = trend ? byId('monthlyClosedOnly').checked : byId('monthlyComparePeriod').value === 'closed';
+            if (closedOnly) notes.push('เฉพาะเดือนที่ปิดยอดแล้ว');
+            let periods;
+            if (trend) {
+                const latest = months.at(-1);
+                const first = months[0];
+                const range = byId('monthlyTrendRange').value;
+                const limit = range === 'all' ? first : shiftReportMonth(latest, 1 - Number(range));
+                const start = first > limit ? first : limit;
+                periods = [];
+                for (let month = start; month <= latest; month = shiftReportMonth(month, 1)) {
+                    const end = month === latest && !closedOnly ? reportMonthAnchor(monthsByDate.get(month)) : reportMonthEnd(month);
+                    periods.push(summarizeMonthlyWindow(month, reportWindow(end, Number(end.slice(-2))), rowsByDate, vehicles, employee, payment, windowOptions));
+                }
+                if (byId('monthlyRolling').checked && !periods.some((period, index) => index >= 2 &&
+                    periods.slice(index - 2, index + 1).every(item => item.closed && !item.partial && monthlyChartValue(item, metric, closedOnly) !== null))) {
+                    notes.push('เส้นค่าเฉลี่ยต้องมีข้อมูลครบและปิดยอด 3 เดือนติดกัน');
+                }
+                if (['liters', 'deliveries'].includes(metric) && periods.some(period => period.partial)) {
+                    notes.push('ยอดเดือนระหว่างปิดเป็นยอดสะสมถึงวันที่แสดง');
+                }
+            } else {
+                const last = selection.at(-1);
+                const windows = closedOnly ? selection.map(month => {
+                    const end = reportMonthEnd(month);
+                    return reportWindow(end, Number(end.slice(-2)));
+                }) : matchedMonthWindows(selection, reportMonthAnchor(monthsByDate.get(last)));
+                periods = selection.map((month, index) => summarizeMonthlyWindow(month, windows[index], rowsByDate, vehicles, employee, payment, windowOptions));
+                if (closedOnly) periods = periods.filter(period => period.closed);
+                else notes.push('เทียบวันที่ 1–' + windows[0].dates.length + ' ของทุกเดือน');
+            }
+            if (employee && periods.some(period => period.window.start < '2026-11-01')) {
+                notes.push('ยอดย้อนหลังอิงรหัส CVGO หากรหัสเปลี่ยนเจ้าของ ยอดอาจเป็นของคนละคน');
+            }
+            if (!penetration && payment === 'FLEET' && metric === 'goPlus') notes.push('Fleet Card ไม่เข้าเกณฑ์ Shell GO+');
+            if (periods.some(period => period.missing.length && period.found)) notes.push('เว้นผลต่างและจุดกราฟของช่วงที่ข้อมูลขาด');
+            if (!trend && closedOnly && periods.length < 2) {
+                scope.textContent = [...notes, 'เลือกอย่างน้อย 2 เดือนที่ยืนยันปิดยอดแล้ว'].join(' · ');
+                return;
+            }
+            if (!penetration) {
+                notes.push('ค่าเฉลี่ยต่อวันใช้วันที่ CVGO Hourly ครบ 17 ช่วง (05:00–22:00)');
+                if (!periods.some(period => period.daysUsed)) notes.push('ยังไม่พบวันที่ยืนยันความครบจากไฟล์ Hourly');
+            }
+            scope.textContent = notes.join(' · ');
+            if (penetration) {
+                renderPenetration(periods);
+                return;
+            }
+            renderMonthlyTable(periods, trend, metric, payment, closedOnly);
+            byId('monthlyTableWrap').hidden = false;
+            renderMonthlyChart(periods, trend, metric, closedOnly);
+        }
+
+        function renderSalesReport(changedControl) {
             const selection = byId('dateFilter').value;
             const month = selectedMonth();
             const fitsSelection = date => selection.startsWith('MONTH_') ? date.startsWith(month + '-')
                 : selection !== 'ALL' ? date === selection : true;
             const useAttendant = rawAttendant.some(row => fitsSelection(rowDate(row))) || !rawHourly.length;
             const attendantByDate = groupReportDates(rawAttendant);
+            const vehicles = new Set([...document.querySelectorAll('.staff-kpi-vehicle:checked')].map(choice => choice.value));
+            renderMonthlyAnalysis(attendantByDate, vehicles, changedControl);
             const hourlyByDate = groupReportDates(rawHourly);
             const rowsByDate = useAttendant ? attendantByDate : hourlyByDate;
             const matchedDates = [...rowsByDate.keys()].filter(fitsSelection).sort();
             const datesLabel = byId('salesReportDates');
             byId('salesReportBranch').textContent = siteName;
             if (!matchedDates.length) {
+                byId('salesReportMonthOptions').hidden = true;
+                byId('salesReportQuality').hidden = true;
                 datesLabel.textContent = 'ไม่พบรายงาน CVGO ในช่วงที่เลือก';
                 delete datesLabel.dataset.end;
                 byId('salesReportCoverage').textContent = '';
@@ -2555,32 +3396,35 @@
             }
             const lastDate = matchedDates.at(-1);
             const explicitDay = /^\d{4}-\d{2}-\d{2}$/.test(selection);
-            const storedClose = confirmedClose(lastDate.slice(0, 7));
-            const anchor = !explicitDay && storedClose && storedClose < lastDate ? storedClose : lastDate;
-            let mode = byId('salesReportMode').value;
-            if (mode === 'AUTO') {
-                mode = explicitDay ? 'DAY' : ['MONTH', 'WEEK', 'DAY'].find(option =>
-                    salesComparisonWindows(anchor, option).every(period => period.dates.every(date => rowsByDate.has(date)))
-                ) || 'WEEK';
-            }
-            const [currentWindow, previousWindow] = salesComparisonWindows(anchor, mode);
+            const anchor = explicitDay ? lastDate : reportMonthAnchor(lastDate);
+            const mode = byId('salesReportMode').value;
+            const { windows, note } = resolveSalesComparison(anchor, mode, explicitDay, rowsByDate);
+            const [currentWindow, previousWindow = { dates: [] }] = windows;
             const current = summarizeSalesWindow(rowsByDate, currentWindow);
             const previous = summarizeSalesWindow(rowsByDate, previousWindow);
-            const comparable = !current.missing.length && !previous.missing.length;
+            const comparable = windows.length === 2 && !current.missing.length && !previous.missing.length;
             const hasCurrent = current.missing.length < currentWindow.dates.length;
+            const crossYear = windows.length === 2 && currentWindow.end.slice(0, 4) !== previousWindow.end.slice(0, 4);
+            const periods = { current: compactReportWindow(currentWindow, crossYear),
+                previous: windows.length === 2 ? compactReportWindow(previousWindow, crossYear) : '' };
             datesLabel.dataset.end = currentWindow.end;
-            datesLabel.textContent = 'ช่วงปัจจุบัน ' + reportWindowLabel(currentWindow) + ' · เทียบ ' + reportWindowLabel(previousWindow);
+            datesLabel.textContent = 'ช่วงปัจจุบัน ' + reportWindowLabel(currentWindow)
+                + (windows.length === 2 ? ' · เทียบ ' + reportWindowLabel(previousWindow) : '');
             const source = 'CVGO ' + (useAttendant ? 'Attendant' : 'Hourly') + ' · ภาพรวมสถานีรวมทุกวิธีชำระเงิน';
-            byId('salesReportCoverage').textContent = comparable ? source + ' · พบไฟล์ครบทุกวันทั้งสองช่วง'
-                : source + ' · ขาดข้อมูลช่วงปัจจุบัน ' + current.missing.length + ' วัน / ช่วงก่อน ' + previous.missing.length + ' วัน';
+            const coverage = comparable ? 'พบไฟล์ครบทุกวันทั้งสองช่วง'
+                : windows.length === 2 ? 'ขาดข้อมูลช่วงปัจจุบัน ' + current.missing.length + ' วัน / ช่วงก่อน ' + previous.missing.length + ' วัน' : '';
+            byId('salesReportCoverage').textContent = [source, coverage, note].filter(Boolean).join(' · ');
+            const quality = byId('salesReportQuality');
+            quality.hidden = false;
+            quality.querySelector('summary').textContent = comparable ? 'ข้อมูลครบทั้งสองช่วง · ดูรายละเอียดและการกระทบยอด'
+                : 'รายละเอียดข้อมูลและการกระทบยอด';
             const missing = byId('salesReportMissingDates');
-            missing.hidden = comparable;
             missing.textContent = [[current, 'ปัจจุบัน'], [previous, 'ก่อน']]
                 .filter(([period]) => period.missing.length)
                 .map(([period, label]) => 'วันที่ขาดช่วง' + label + ' ' + reportMissingDateLabels(period.missing)).join(' · ');
+            missing.hidden = !missing.textContent;
             renderReportVerification(currentWindow, previousWindow, attendantByDate, hourlyByDate);
 
-            const vehicles = new Set([...document.querySelectorAll('.staff-kpi-vehicle:checked')].map(choice => choice.value));
             const rowsFor = window => window.dates.flatMap(date => rowsByDate.get(date) || []);
             const currentRows = rowsFor(currentWindow), previousRows = rowsFor(previousWindow);
             const payment = summarizeReportPayments(useAttendant ? currentRows : [], vehicles);
@@ -2600,22 +3444,22 @@
             const container = byId('salesReportMetrics');
             container.replaceChildren();
             const stationMetric = (label, key, unit = '', note = '') => renderReportMetric(container, {
-                label, value: hasCurrent ? current[key] : null, base: comparable ? previous[key] : null, unit, note
+                label, value: hasCurrent ? current[key] : null, base: comparable ? previous[key] : null, unit, note, periods
             });
             const paymentMetric = (label, key, note, id, unit = '') => renderReportMetric(container, {
                 label, value: payment.hasData ? payment[key] : null, base: comparePayments ? basePayment[key] : null,
-                note, id, unit, primary: key === 'retail'
+                note, id, unit, periods, primary: key === 'retail'
             });
             stationMetric('ยอดเติมรวมสถานี (ลิตร)', 'volume', '', 'ทุกประเภทรถ · ทุกวิธีชำระ');
             const retailCard = paymentMetric('ยอด B2C (ลิตร)', 'retail', 'ทุกวิธีชำระยกเว้น Fleet Card', 'salesReportB2C');
             if (payment.hasData) {
                 const service = stats => formatNumber(stats.retailDeliveries, 0) + ' ครั้ง · '
                     + (stats.retailDeliveries > 0 ? formatNumber(stats.retail / stats.retailDeliveries) + ' ลิตร/ครั้ง' : '– ลิตร/ครั้ง');
-                appendMessage(retailCard, service(payment));
-                if (comparePayments) appendMessage(retailCard, 'ช่วงก่อน ' + service(basePayment));
+                appendMessage(retailCard, service(payment), 'metric-detail');
+                if (comparePayments) appendMessage(retailCard, periods.previous + ' · ' + service(basePayment), 'metric-detail');
             }
             paymentMetric('ยอด Fleet Card (ลิตร)', 'fleet', 'เฉพาะ Fleet Card · B2B', 'salesReportFleet');
-            renderLoyaltyMetric(container, currentRows, previousRows, comparable);
+            renderLoyaltyMetric(container, currentRows, previousRows, comparable, periods);
             paymentMetric('ยอด V-Power B2C (ลิตร)', 'retailVPower', 'รถที่เลือก · ยกเว้น Fleet Card', 'salesReportB2CVPower');
             paymentMetric('V-Power เข้า KPI พนักงาน (ลิตร)', 'staffSvp', 'B2C · รถที่เลือก · ระบุรหัสพนักงาน', 'salesReportKpiSvp');
             paymentMetric('V-Power Mix (B2C)', 'mix', 'ลิตร V-Power ÷ ลิตร B2C ของรถที่เลือก', 'salesReportB2CMix', '%');
@@ -3238,30 +4082,64 @@
             });
         }
 
-        function processHourlyData(hrData) {
+        const stationOpeningHour = 5;
+        const stationClosingHour = 22;
+
+        function hourlyFuelByDate(hrData) {
             const rowsByDate = new Map();
             for (const row of hrData) {
                 if (!isFuel(row)) continue;
                 const date = rowDate(row);
-                const hour = String(row.Hour ?? '').trim().match(/^(\d{1,2})(?::\d{2}(?::\d{2})?)?$/);
-                if (!date || !hour || Number(hour[1]) > 23) continue;
-                if (!rowsByDate.has(date)) rowsByDate.set(date, []);
-                rowsByDate.get(date).push({ row, hour: Number(hour[1]) });
+                const match = String(row.Hour ?? '').trim().match(/^(\d{1,2})(?::\d{2}(?::\d{2})?)?$/);
+                if (!date || !match) continue;
+                const hour = Number(match[1]);
+                if (hour < stationOpeningHour || hour >= stationClosingHour) continue;
+                if (!rowsByDate.has(date)) rowsByDate.set(date, { rows: [], reportedHours: new Set() });
+                const day = rowsByDate.get(date);
+                day.rows.push({ row, hour });
+                day.reportedHours.add(hour);
             }
+            return rowsByDate;
+        }
+
+        function completeHourlyDates(hrData) {
+            return new Set([...hourlyFuelByDate(hrData)]
+                .filter(([, day]) => day.reportedHours.size === stationClosingHour - stationOpeningHour)
+                .map(([date]) => date));
+        }
+
+        function processHourlyData(hrData) {
+            const openingHour = stationOpeningHour;
+            const closingHour = stationClosingHour;
+            const timeLabel = hour => String(hour).padStart(2, '0') + ':00';
+            const hours = Array.from({ length: closingHour - openingHour }, (_, index) => openingHour + index);
+            const rowsByDate = hourlyFuelByDate(hrData);
             const available = [...rowsByDate.keys()].sort().reverse();
+            const isComplete = date => rowsByDate.get(date).reportedHours.size === hours.length;
+            const latestComplete = available.find(isComplete);
             const dateSelect = byId('hourlyDate');
             const selection = dateSelect.value || 'LATEST';
-            dateSelect.replaceChildren(new Option('วันล่าสุดที่มีข้อมูล', 'LATEST'),
-                ...available.map(date => new Option(reportDateLabel(date), date)),
+            dateSelect.replaceChildren(new Option('วันล่าสุดที่ข้อมูลครบ', 'LATEST'),
+                ...available.map(date => {
+                    const coverage = isComplete(date) ? '' : ' · ข้อมูลบางส่วน ' + rowsByDate.get(date).reportedHours.size + '/' + hours.length + ' ช่วง';
+                    return new Option(reportDateLabel(date) + coverage, date);
+                }),
                 new Option('เฉลี่ยรายวันในช่วงที่เลือก', 'AVERAGE'));
             dateSelect.value = available.includes(selection) || selection === 'AVERAGE' ? selection : 'LATEST';
             dateSelect.disabled = !available.length;
 
             const average = dateSelect.value === 'AVERAGE';
+            const automatic = dateSelect.value === 'LATEST';
+            const dailyDate = automatic ? latestComplete : dateSelect.value;
             const weekday = byId('hourlyDayFilter').value;
             byId('hourlyWeekdayControl').hidden = !average;
-            const dates = average ? available.filter(date => weekday === 'ALL' || new Date(date).getUTCDay() === Number(weekday))
-                : available.length ? [dateSelect.value === 'LATEST' ? available[0] : dateSelect.value] : [];
+            const selectedDates = average ? available.filter(date => weekday === 'ALL' || new Date(date).getUTCDay() === Number(weekday))
+                : dailyDate ? [dailyDate] : [];
+            const dates = average ? selectedDates.filter(isComplete) : selectedDates;
+            const excludedDays = selectedDates.length - dates.length;
+            const operatingHours = timeLabel(openingHour) + '–' + timeLabel(closingHour);
+            const excludedText = 'ตัดออก ' + formatNumber(excludedDays, 0) + ' วันที่ข้อมูลไม่ครบ';
+            const scope = byId('hourlyScope');
             const vehicles = new Set([...document.querySelectorAll('.hr-veh:checked')].map(input => input.value));
             const result = byId('hourlyResult');
             result.hidden = !dates.length || !vehicles.size;
@@ -3270,7 +4148,9 @@
                 delete charts.hr;
             }
             if (result.hidden) {
-                byId('hourlyScope').textContent = !available.length ? 'นำเข้าไฟล์ CVGO Hourly ของสาขาและช่วงวันที่ที่เลือก'
+                scope.textContent = !available.length ? 'นำเข้าไฟล์ CVGO Hourly ของสาขาและช่วงวันที่ที่เลือก'
+                    : automatic && !latestComplete ? 'ไม่มีวันที่ข้อมูลครบในช่วงที่เลือก · เลือกวันที่จากรายการเพื่อดูข้อมูลที่มี'
+                    : excludedDays && !dates.length ? 'ไม่มีวันที่ข้อมูลครบสำหรับคำนวณค่าเฉลี่ย · ' + excludedText + ' · เวลาเปิด ' + operatingHours
                     : !vehicles.size ? 'เลือกประเภทรถอย่างน้อย 1 ประเภท' : 'ไม่มีข้อมูลสำหรับวันในสัปดาห์ที่เลือก';
                 return;
             }
@@ -3279,37 +4159,49 @@
             const field = isVolume ? 'Volume' : 'Delivery Count';
             const unit = isVolume ? 'ลิตร' : 'ครั้ง';
             const digits = isVolume ? 2 : average ? 1 : 0;
-            const values = Array.from({ length: 24 }, () => ({ total: 0, nm: 0, vp: 0 }));
-            const observed = new Set();
+            const values = new Map(hours.map(hour => [hour, { total: 0, nm: 0, vp: 0, reported: false }]));
             for (const date of dates) {
-                for (const { row, hour } of rowsByDate.get(date)) {
-                    observed.add(hour);
+                const day = rowsByDate.get(date);
+                for (const hour of day.reportedHours) values.get(hour).reported = true;
+                for (const { row, hour } of day.rows) {
                     if (!vehicles.has(row['Vehicle Code'])) continue;
                     const amount = numberField(row, field);
-                    values[hour][isVPower(row) ? 'vp' : 'nm'] += amount;
-                    values[hour].total += amount;
+                    const bucket = values.get(hour);
+                    bucket[isVPower(row) ? 'vp' : 'nm'] += amount;
+                    bucket.total += amount;
                 }
             }
 
-            const first = average ? Math.min(5, ...observed) : Math.min(...observed);
-            const last = average ? Math.max(22, ...observed) : Math.max(...observed);
-            const hours = Array.from({ length: last - first + 1 }, (_, index) => first + index);
-            const labels = hours.map(hour => String(hour).padStart(2, '0') + ':00');
-            const totals = values.reduce((sum, hour) => ({
+            const labels = [...hours, closingHour].map(timeLabel);
+            const totals = [...values.values()].reduce((sum, hour) => ({
                 total: sum.total + hour.total, nm: sum.nm + hour.nm, vp: sum.vp + hour.vp
             }), { total: 0, nm: 0, vp: 0 });
-            const display = value => formatNumber(value / dates.length, digits);
-            byId('hourlyScope').textContent = average ? 'เฉลี่ยต่อวันจาก ' + formatNumber(dates.length, 0) + ' วันที่มีรายงาน'
-                : reportDateLabel(dates[0]) + ' · ยอดทั้งวันที่มีรายงาน';
-            byId('hourlyTotal').textContent = display(totals.total) + ' ' + unit;
-            byId('hourlyNormal').textContent = display(totals.nm) + ' ' + unit;
-            byId('hourlyVPower').textContent = display(totals.vp) + ' ' + unit;
+            const display = value => formatNumber(value, digits);
+            const hourValue = (hour, key) => hour.reported ? hour[key] / dates.length : null;
+            const coverage = byId('hourlyCoverage');
+            const reportedHours = hours.filter(hour => values.get(hour).reported);
+            const latest = reportedHours.at(-1);
+            const hasGaps = reportedHours.length < hours.length;
+            scope.textContent = average
+                ? 'เฉลี่ยต่อวันจาก ' + formatNumber(dates.length, 0) + ' วันที่ข้อมูลครบ ' + hours.length + ' ช่วง · '
+                    + excludedText + ' · เวลาเปิด ' + operatingHours
+                : reportDateLabel(dates[0]) + ' · เวลาเปิด ' + operatingHours + ' · มีรายงาน ' + reportedHours.length + '/' + hours.length
+                    + ' ช่วง' + (hasGaps ? ' · ล่าสุดช่วง ' + timeLabel(latest) + '–' + timeLabel(latest + 1) : '')
+                    + (automatic && latestComplete !== available[0] ? ' · วันที่ใหม่กว่ามีข้อมูลบางส่วน' : '');
+            coverage.hidden = !hasGaps;
+            coverage.textContent = 'การ์ดด้านบนรวมเฉพาะยอดที่พบในไฟล์ · ช่วงที่ยังไม่มีรายงานเว้นเส้นกราฟและแสดง — ในตาราง';
+            byId('hourlyTotal').textContent = display(totals.total / dates.length) + ' ' + unit;
+            byId('hourlyNormal').textContent = display(totals.nm / dates.length) + ' ' + unit;
+            byId('hourlyVPower').textContent = display(totals.vp / dates.length) + ' ' + unit;
             byId('hourlyTableUnit').textContent = '(' + (average ? unit + 'เฉลี่ยต่อวัน' : unit) + ')';
 
             const body = byId('hourlyRows');
             body.replaceChildren();
-            hours.forEach((hour, index) => appendCells(body, [labels[index], display(values[hour].nm),
-                display(values[hour].vp), display(values[hour].total)]));
+            for (const hour of hours) {
+                const bucket = values.get(hour);
+                const stats = ['nm', 'vp', 'total'].map(key => bucket.reported ? display(hourValue(bucket, key)) : '—');
+                appendCells(body, [timeLabel(hour), ...stats]);
+            }
 
             const mode = byId('hrFuelMode').querySelector('[aria-pressed="true"]').dataset.fuel;
             const comparing = mode === 'COMPARE';
@@ -3325,29 +4217,35 @@
             charts.hr = new Chart(canvas.getContext('2d'), {
                 type: 'line',
                 data: { labels, datasets: visibleSeries.map(item => ({
-                    label: item.label, data: hours.map(hour => values[hour][item.key] / dates.length),
+                    label: item.label, data: [...hours.map(hour => hourValue(values.get(hour), item.key)), null],
                     borderColor: item.color, backgroundColor: comparing ? item.color : item.fill, borderWidth: 2.5,
                     borderDash: comparing && item.key === 'nm' ? [5, 4] : [],
-                    fill: !comparing, tension: .2, pointRadius: 2.5, pointHoverRadius: 5
+                    spanGaps: false, fill: !comparing, tension: .2, pointRadius: 2.5, pointHoverRadius: 5
                 })) },
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
                     interaction: { mode: 'index', intersect: false, axis: 'x' },
                     scales: {
-                        x: { ticks: { maxTicksLimit: 12 } },
-                        y: { beginAtZero: true, suggestedMax: Math.max(1, ...hours.map(hour => values[hour].total / dates.length)),
+                        x: { ticks: { autoSkip: false, maxRotation: 0, callback(index) {
+                            const stride = this.chart.width < 460 ? 4 : 2;
+                            return index === labels.length - 1 || (index % stride === 0 && index < labels.length - 2) ? labels[index] : '';
+                        } } },
+                        y: { beginAtZero: true, suggestedMax: Math.max(1, ...[...values.values()].map(hour => hourValue(hour, 'total') ?? 0)),
                             ticks: isVolume || average ? {} : { precision: 0 } }
                     },
                     plugins: {
                         legend: { display: comparing },
                         tooltip: { displayColors: false, callbacks: {
-                            title: items => items[0].label + '–' + items[0].label.slice(0, 2) + ':59',
+                            title: items => items[0].label + '–' + timeLabel(hours[items[0].dataIndex] + 1),
                             label: () => [],
                             beforeBody: items => {
-                                const hour = values[hours[items[0].dataIndex]];
-                                return ['รวม ' + display(hour.total) + ' ' + unit,
-                                    'ธรรมดา ' + display(hour.nm) + ' ' + unit, 'V-Power ' + display(hour.vp) + ' ' + unit];
+                                const hour = values.get(hours[items[0].dataIndex]);
+                                const summary = ['รวม ' + display(hourValue(hour, 'total')) + ' ' + unit,
+                                    'ธรรมดา ' + display(hourValue(hour, 'nm')) + ' ' + unit,
+                                    'V-Power ' + display(hourValue(hour, 'vp')) + ' ' + unit];
+                                if (average) summary.push('ใช้วันที่ข้อมูลครบ ' + dates.length + ' วัน');
+                                return summary;
                             }
                         } }
                     }
@@ -3818,11 +4716,11 @@
                         appendCells(body, [employee.label, employee.days, '–', formatNumber(actual), 'รอระบุตำแหน่ง', ...extraCells]);
                         continue;
                     }
-                    const gap = Number((actual - expected).toFixed(4));
-                    const difference = gap >= 0 ? 'ถึงเป้า (+' + formatNumber(gap) + ')'
-                        : 'ต่ำกว่าเป้า (' + formatNumber(gap) + ')';
+                    const gap = roundReport(actual - expected);
+                    const difference = gap > 0 ? 'เกินเป้า ' + formatNumber(gap) + ' ลิตร'
+                        : gap < 0 ? 'ขาดอีก ' + formatNumber(-gap) + ' ลิตร' : 'ถึงเป้าพอดี';
                     const row = appendCells(body, [employee.label, employee.days, formatNumber(expected), formatNumber(actual), difference, ...extraCells]);
-                    row.cells[4].classList.add(gap >= 0 ? 'goal-met' : 'goal-gap');
+                    row.cells[4].classList.add('report-change', reportChangeColor(gap));
                 }
             }
             renderGoalRows(volumeBody, 'volume', 0);
